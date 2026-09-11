@@ -3,7 +3,7 @@ from pathlib import Path
 import os
 import pytest
 
-from src.data.kite_auth import update_env_file, save_access_token_file, ZerodhaAuthenticator
+from src.data.kite_auth import update_env_file, ZerodhaAuthenticator
 
 def test_update_env_file(tmp_path):
     env_file = tmp_path / ".env"
@@ -14,12 +14,6 @@ def test_update_env_file(tmp_path):
 
     assert "KITE_ACCESS_TOKEN=new_token_123" in content
     assert "KITE_API_KEY=test_key" in content
-
-def test_save_access_token_file(tmp_path):
-    token_file = tmp_path / "access_token.txt"
-    save_access_token_file("test_token_abc", token_path=token_file)
-
-    assert token_file.read_text() == "test_token_abc"
 
 @patch("src.data.kite_auth.KiteConnect")
 def test_is_token_valid_true(mock_kite_cls):

@@ -16,7 +16,6 @@ load_dotenv()
 
 ROOT = Path(__file__).resolve().parents[2]
 ENV_PATH = ROOT / ".env"
-TOKEN_FILE_PATH = ROOT / "access_token.txt"
 
 def update_env_file(key: str, value: str, env_path: Path = ENV_PATH) -> None:
     """Helper function to update or set a key in the .env file."""
@@ -43,11 +42,6 @@ def update_env_file(key: str, value: str, env_path: Path = ENV_PATH) -> None:
         f.writelines(new_lines)
 
     os.environ[key] = value
-
-def save_access_token_file(token: str, token_path: Path = TOKEN_FILE_PATH) -> None:
-    """Saves the access token to access_token.txt for legacy compatibility."""
-    with open(token_path, "w", encoding="utf-8") as f:
-        f.write(token)
 
 class _CallbackHandler(http.server.BaseHTTPRequestHandler):
     received_request_token: str | None = None
@@ -215,7 +209,6 @@ class ZerodhaAuthenticator:
         new_access_token = session_data["access_token"]
 
         update_env_file("KITE_ACCESS_TOKEN", new_access_token)
-        save_access_token_file(new_access_token)
 
         print("[Zerodha Auth] Authentication complete! New KITE_ACCESS_TOKEN saved to .env.\n")
         return new_access_token
