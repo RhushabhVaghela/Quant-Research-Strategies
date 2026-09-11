@@ -70,6 +70,7 @@ Primary references:
 - **Data Validation & Quality Checks**: Enforces strict OHLCV validation rules including price bounds, non-negative volume, duplicate timestamps, and monotonic ordering.
 - **Intraday Dataset Audit**: Verifies session structure, expected bar spacing, bar counts, zero-volume rows, and basic within-session return distributions.
 - **Leakage-Safe Event Study**: Measures forward returns after explicitly defined intraday events without using future observations to define the event.
+- **Universe-Level Audit**: Compares multiple saved 5-minute datasets using the same structural quality rules without selecting instruments by historical strategy performance.
 - **Capital/Execution Research Controls**: Documents the small-account feasibility, regulatory/API constraints, live-trading safety gates, and research-universe rules before deployment.
 - **Extensible Architecture**: Clean separation between data ingestion, authentication, validation, auditing, research, and future strategy modules.
 
@@ -90,17 +91,20 @@ Quant-Research-Strategies/
 │   │   └── validation.py       # Data validation rules & quality reports
 │   └── research/
 │       ├── __init__.py
-│       └── event_study.py      # Forward-return event-study framework
+│       ├── event_study.py      # Forward-return event-study framework
+│       └── universe.py         # Comparable multi-instrument audit utilities
 ├── scripts/
 │   ├── authenticate_kite.py    # Standalone session verification & token refresh
 │   ├── audit_historical.py     # CLI for historical OHLCV dataset audit
+│   ├── audit_universe.py       # CLI for multi-instrument universe audit
 │   ├── download_historical.py  # CLI to download historical candle data
 │   └── run_event_study.py      # CLI for exploratory intraday event study
 ├── tests/
 │   ├── test_auth.py            # Authentication/environment tests
 │   ├── test_validation.py      # OHLCV validation tests
 │   ├── test_audit.py           # Intraday dataset audit tests
-│   └── test_event_study.py     # Event-study leakage/behavior tests
+│   ├── test_event_study.py     # Event-study leakage/behavior tests
+│   └── test_universe.py        # Universe selection safeguards
 ├── research/                   # Research notes, hypotheses & methodology
 ├── trading_resources/          # Reference materials, notebooks & strategy guides
 ├── .env.example                # Template for environment configuration
@@ -217,6 +221,22 @@ The audit is deliberately separate from the trading strategy. It tells us whethe
 
 ---
 
+## 🧭 Multi-Instrument Universe Audit
+
+Once several candidate datasets have been downloaded, run:
+
+```powershell
+python scripts/audit_universe.py data/raw --output data/reports/universe_audit.csv
+```
+
+The command compares all `*_5minute.csv` datasets using the same structural checks.
+
+The default eligibility filter requires at least 20 trading sessions and 1,000 rows, with zero duplicate timestamps, zero unexpected intraday gaps, and zero zero-volume rows. **It does not rank instruments by returns or strategy P&L.**
+
+This keeps universe selection separate from strategy optimization and reduces the risk of selecting instruments because they happen to produce attractive historical results.
+
+---
+
 ## 🧪 Intraday Event Study
 
 The first research layer after the data audit is an **event study**. Instead of immediately optimizing a trading strategy, we ask whether a measurable market condition is followed by statistically different forward returns.
@@ -272,7 +292,7 @@ Run the complete test suite:
 pytest
 ```
 
-Tests cover authentication helpers, OHLCV validation, dataset auditing, and event-study leakage safeguards.
+Tests cover authentication helpers, OHLCV validation, dataset auditing, event-study leakage safeguards, and universe-selection safeguards.
 
 ---
 
@@ -285,7 +305,7 @@ Phase 0 — ₹30k capital feasibility specification     ✅
 Phase 0 — Research universe specification             ✅
 Phase 1 — Historical data validation & audit          ✅
 Phase 1 — Initial intraday event study               ✅ exploratory
-Phase 1 — Multi-instrument universe audit             ▶ next
+Phase 1 — Multi-instrument universe audit             ▶ current
 Phase 2 — Directional event studies + statistics
 Phase 3 — Baseline strategy construction
 Phase 4 — Feature engineering
