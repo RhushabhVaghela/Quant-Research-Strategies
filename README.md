@@ -1,6 +1,6 @@
 # Quant Research Strategies
 
-A modular Python repository for **research-grade quantitative trading**: historical market-data ingestion, data-quality auditing, hypothesis-driven intraday event studies, strategy development, backtesting, and automated Zerodha Kite Connect integration.
+A modular Python repository for **research-grade quantitative trading**: historical market-data ingestion, data-quality auditing, hypothesis-driven intraday event studies, strategy development, backtesting, and controlled Zerodha Kite Connect integration.
 
 The project is intentionally built as a research process rather than a collection of indicator-based trading scripts. The objective is to identify repeatable intraday behavior, test it without look-ahead bias, and only then consider strategy construction and machine-learning filters.
 
@@ -11,15 +11,55 @@ The project is intentionally built as a research process rather than a collectio
 - Start with a **financial hypothesis**, not a machine-learning model.
 - Treat reference/Quantra strategies as educational building blocks, not assumed profitable systems.
 - Prefer intraday research with realistic execution constraints.
-- Separate **data validation → event study → baseline → ML → backtest → walk-forward validation → paper/live validation**.
+- Separate **regulatory design → data validation → event study → baseline → ML → backtest → walk-forward validation → paper/live validation**.
 - Prevent look-ahead bias, leakage, survivorship bias, and unnecessary data snooping.
 - Include realistic transaction costs and slippage before judging a strategy.
 - Never infer future performance from a small in-sample result.
+- Respect the realities of a **₹30,000 total-account-capital constraint**.
 - Prefer a small number of well-tested strategies over a large collection of weak ones.
 
 Current research question:
 
 > **Can we identify repeatable intraday conditions under which a directional price move is more likely to continue or reverse, and use statistical/ML methods to selectively trade only the conditions that demonstrate robust out-of-sample evidence?**
+
+---
+
+## ⚠️ Current Project Status
+
+**We are deliberately not live trading yet.**
+
+NIFTYBEES was used first because it successfully exercised the historical-data pipeline. It is **not** automatically the final strategy instrument.
+
+Before we build an ML model or deploy capital, the project now inserts a Phase 0 specification covering:
+
+- Indian retail algorithmic-trading/API constraints;
+- Zerodha execution requirements;
+- ₹30,000 capital feasibility;
+- transaction-cost and slippage assumptions;
+- reproducible research-universe selection.
+
+See:
+
+- `research/phase_00_india_retail_trading_spec.md`
+- `research/phase_00_capital_and_execution_spec.md`
+- `research/phase_00_research_universe_spec.md`
+
+These documents are project controls, not legal/tax/investment advice. Current rules must be re-verified before live deployment.
+
+---
+
+## 📌 Regulatory / Execution Baseline
+
+SEBI issued its February 4, 2025 circular on safer participation of retail investors in algorithmic trading, followed by implementation-timeline extensions and exchange implementation standards. NSE's current retail-algo material treats client API orders as algo orders and provides a framework for client-generated algorithms below the applicable order-rate threshold.
+
+Current Zerodha documentation states that API-based order placement requires a whitelisted static IP and that its API order rate is capped at 10 orders/second per client account. These requirements are treated as part of the execution design rather than added after the strategy is finished.
+
+Primary references:
+
+- SEBI: https://www.sebi.gov.in/legal/circulars/feb-2025/safer-participation-of-retail-investors-in-algorithmic-trading_91614.html
+- NSE: https://www.nseindia.com/static/trade/platform-services-non-neat-decision-support-tools-algorithm-trading
+- Zerodha Kite Connect: https://zerodha.com/products/api
+- Zerodha Kite Connect FAQ: https://support.zerodha.com/category/trading-and-markets/general-kite/kite-api/articles/kite-connect-api-faqs
 
 ---
 
@@ -30,6 +70,7 @@ Current research question:
 - **Data Validation & Quality Checks**: Enforces strict OHLCV validation rules including price bounds, non-negative volume, duplicate timestamps, and monotonic ordering.
 - **Intraday Dataset Audit**: Verifies session structure, expected bar spacing, bar counts, zero-volume rows, and basic within-session return distributions.
 - **Leakage-Safe Event Study**: Measures forward returns after explicitly defined intraday events without using future observations to define the event.
+- **Capital/Execution Research Controls**: Documents the small-account feasibility, regulatory/API constraints, live-trading safety gates, and research-universe rules before deployment.
 - **Extensible Architecture**: Clean separation between data ingestion, authentication, validation, auditing, research, and future strategy modules.
 
 ---
@@ -203,6 +244,12 @@ The default exploratory event asks roughly:
 
 This is intentionally an **investigative hypothesis**, not a claim that the event is profitable.
 
+### Current interpretation
+
+The first NIFTYBEES event study generated only 23 events. Usable observations fell to 12 at the longest horizon. The result did not provide convincing evidence of a robust continuation edge. This is exactly why the project does not proceed directly to ML optimization.
+
+The result should be treated as an exploratory diagnostic, not as a failed final strategy and not as evidence of a profitable reversal strategy.
+
 ### Leakage controls
 
 The implementation is designed so that:
@@ -233,17 +280,22 @@ Tests cover authentication helpers, OHLCV validation, dataset auditing, and even
 
 ```text
 Phase 0 — Research design & data specification        ✅
+Phase 0 — India regulatory/execution specification    ✅
+Phase 0 — ₹30k capital feasibility specification     ✅
+Phase 0 — Research universe specification             ✅
 Phase 1 — Historical data validation & audit          ✅
-Phase 1 — Intraday event study                        ▶ current
-Phase 2 — Statistical hypothesis testing
+Phase 1 — Initial intraday event study               ✅ exploratory
+Phase 1 — Multi-instrument universe audit             ▶ next
+Phase 2 — Directional event studies + statistics
 Phase 3 — Baseline strategy construction
 Phase 4 — Feature engineering
 Phase 5 — ML conditional signal/filter
 Phase 6 — Robust backtesting + transaction costs
 Phase 7 — Walk-forward / out-of-sample validation
-Phase 8 — Paper trading
-Phase 9 — Small controlled live validation
-Phase 10 — Portfolio of validated strategies
+Phase 8 — Paper / shadow trading
+Phase 9 — Broker execution validation
+Phase 10 — Small controlled live validation
+Phase 11 — Portfolio of validated strategies
 ```
 
 The project will not move to ML merely because ML is available. A model must demonstrate that it adds information beyond a defensible statistical baseline.
@@ -253,3 +305,5 @@ The project will not move to ML merely because ML is available. A model must dem
 ## 📜 License & Compliance
 
 This codebase is designed for quantitative research, backtesting, and controlled paper/live validation. Ensure compliance with your broker's API terms, market-data licensing requirements, exchange rules, and applicable regulations.
+
+**Last regulatory baseline review:** 2026-09-11.
