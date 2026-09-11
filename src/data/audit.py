@@ -89,7 +89,8 @@ def audit_ohlcv(df: pd.DataFrame, expected_minutes: int = 5) -> DatasetAuditRepo
     day = ordered.index.date
     delta = ordered.index.to_series().diff()
     same_day = pd.Series(day, index=ordered.index).eq(pd.Series(day, index=ordered.index).shift(1))
-    unexpected = int((delta.gt(pd.Timedelta(minutes=expected_minutes)) & same_day).sum())
+    expected_delta = __import__('datetime').timedelta(minutes=expected_minutes)
+    unexpected = int(((delta > expected_delta).fillna(False) & same_day.fillna(False)).sum())
 
     bars_per_day = ordered.groupby(ordered.index.date).size()
     stats = _return_stats(ordered)
