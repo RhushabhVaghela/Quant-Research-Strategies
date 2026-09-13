@@ -31,6 +31,15 @@ Before advancing to ML or live execution, the project now explicitly documents:
 
 These are research controls and operational specifications, not legal, tax, or investment advice.
 
+## Phase 1 universe work
+
+The multi-instrument research-universe workflow is now defined in:
+
+- `phase_01_universe_audit.md` — candidate resolution, common historical-data collection, audit gates, liquidity/capital checks, and universe-bias controls.
+- `universe_candidates.csv` — reproducible initial candidate manifest.
+
+The candidate manifest is intentionally defined independently of strategy performance. The current tooling resolves symbols against the locally refreshed NSE instrument master and records broker-reported price information only as a capital-feasibility screening diagnostic.
+
 ## Current status
 
 - Phase 0 — Regulatory/execution specification: **complete**.
@@ -39,5 +48,6 @@ These are research controls and operational specifications, not legal, tax, or i
 - Phase 1 — NIFTYBEES data validation/audit: **complete as a pipeline checkpoint**.
 - Phase 1 — Initial NIFTYBEES event study: **exploratory; insufficient evidence for strategy approval**.
 - Phase 1 — Multi-instrument universe audit tooling: **implemented**.
+- Phase 1 — Initial candidate manifest and broker-master resolution workflow: **implemented; local execution pending**.
 
 **No strategy is approved for trading yet.**
