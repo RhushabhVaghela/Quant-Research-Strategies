@@ -11,11 +11,22 @@ from src.research.mean_reversion import make_mean_reversion_events
 
 
 def load_ohlcv(path: Path) -> pd.DataFrame:
+    """Load an OHLCV CSV using the repository's canonical timestamp schema.
+
+    ``timestamp`` is the canonical historical-data column. ``date`` remains
+    supported for compatibility with older research CSVs.
+    """
     df = pd.read_csv(path)
-    if "date" not in df.columns:
-        raise ValueError("CSV must contain a 'date' column")
-    df["date"] = pd.to_datetime(df["date"], utc=True).dt.tz_convert("Asia/Kolkata")
-    df = df.set_index("date").sort_index()
+    if "timestamp" in df.columns:
+        timestamp_column = "timestamp"
+    elif "date" in df.columns:
+        timestamp_column = "date"
+    else:
+        raise ValueError("CSV must contain a 'timestamp' or 'date' column")
+
+    df[timestamp_column] = pd.to_datetime(df[timestamp_column], utc=True).dt.tz_convert("Asia/Kolkata")
+    df = df.set_index(timestamp_column).sort_index()
+    df.index.name = "timestamp"
     return df
 
 
@@ -76,7 +87,7 @@ def main() -> None:
     metadata = pd.DataFrame([{
         "input": str(args.csv),
         "rows": len(df),
-        "sessions": df.index.date.astype("datetime64[D]").nunique(),
+        "sessions": df.index.normalize().nunique(),
         "lookback_bars": args.lookback,
         "z_threshold": args.z_threshold,
         "total_events": int(events["event"].sum()),
