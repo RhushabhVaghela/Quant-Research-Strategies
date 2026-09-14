@@ -1,6 +1,6 @@
 # Strategy 001 — GOLDBEES Intraday Mean Reversion
 
-**Status:** 🔬 Research — Experiment 001 pending local execution
+**Status:** 🔴 Rejected as a symmetric mean-reversion signal; continuation diagnostics in progress
 
 ## Research question
 
@@ -57,56 +57,79 @@ For mean reversion, the important directional question is whether:
 
 We therefore report both raw forward returns and **reversion-aligned returns**.
 
-### What would count as evidence?
+## Experiment 001 result
 
-A promising result would require more than a positive mean. We want to see:
+The GOLDBEES dataset contained **30,912 five-minute bars** from January 2025 through August 2026. The baseline event study produced **2,953 combined directional event observations** at the 2.0 z-score threshold.
 
-- a meaningful number of independent events;
-- consistent direction across related horizons;
-- evidence in both deviation directions or a clearly explainable asymmetry;
-- a distribution that is not dominated by a few observations;
-- statistical evidence that is not obviously explained by noise;
-- persistence across different periods and market conditions;
-- eventual improvement after realistic transaction costs and slippage.
+The symmetric mean-reversion hypothesis was **not supported**. Reversion-aligned returns for all events were negative at every tested horizon:
 
-No fixed profitability threshold is declared in advance because economic significance depends on execution costs, turnover, capital usage, and the eventual trading implementation.
+| Horizon | Mean reversion-aligned return |
+|---|---:|
+| 5 min | -0.00365% |
+| 15 min | -0.00901% |
+| 30 min | -0.01703% |
+| 60 min | -0.02105% |
 
-### Decision rule for Experiment 001
+The positive-deviation side was particularly notable: mean raw forward returns increased from approximately **+0.00764% at 5 minutes** to **+0.05577% at 60 minutes**. That is continuation, not reversion. Negative deviations were much weaker and inconsistent.
 
-- **REJECTED:** evidence is inconsistent with the stated hypothesis or clearly too weak to justify further testing.
-- **INCONCLUSIVE:** the effect may exist, but sample size, instability, or other limitations prevent a decision.
-- **PROMISING:** evidence justifies a second experiment designed to test robustness rather than optimize the signal.
+The raw all-event forward returns were also positive and increased with horizon, but this alone is **not evidence of a tradable momentum edge**. Events can cluster, forward horizons overlap, and GOLDBEES can exhibit persistent drift. The simple rolling mean of raw price may also be an imperfect equilibrium definition for a trending asset.
 
-A promising event study is **not** a live-trading recommendation.
+Exploratory t-statistics were calculated, but they must not be interpreted as definitive significance tests because event observations are not necessarily independent.
 
-## Results
+### Decision
 
-**Pending local execution.**
+**REJECTED as a symmetric mean-reversion signal.**
 
-Run:
+This is a research result, not a trading loss: the hypothesis was falsified enough that we should not turn it into a trading rule merely because another parameterization might look profitable.
 
-```powershell
-python scripts/run_mean_reversion_event_study.py data/raw/NSE_GOLDBEES_5minute.csv
+## Experiment 001A — Event structure & conditioning diagnostics
+
+The next experiment is deliberately a **diagnostic stage, not parameter optimization**. Its purpose is to determine whether the continuation-like behavior is robust to basic dependence controls and whether it is concentrated in identifiable conditions.
+
+The predefined diagnostics are:
+
+1. **Event clustering / non-overlap:** retain the first event and suppress subsequent events for a fixed **12-bar cooldown**, equal to the longest tested horizon.
+2. **Time of day:** compare predefined intraday periods.
+3. **Recent trend:** classify the six-bar return before the event as down, flat, or up.
+4. **Volatility regime:** compare the prior 30-bar realized-volatility regime against a trailing intraday reference.
+5. **Volume regime:** compare event-bar volume with its prior 30-bar median.
+6. **Event severity:** inspect the predefined `2.0–2.5`, `2.5–3.0`, and `3.0+` absolute-z-score bands.
+7. **Directional continuation:** test whether positive-deviation continuation survives after removing overlapping event episodes.
+
+The 12-bar cooldown is a **dependence diagnostic, not a tuned trading parameter**. No thresholds will be selected because they produce the best return.
+
+Implementation is in:
+
+```text
+src/research/mean_reversion_diagnostics.py
+scripts/run_mean_reversion_diagnostics.py
+research/journal/001A_diagnostics_plan.md
 ```
 
-The script writes machine-readable results and charts under `data/reports/goldbees_mean_reversion/`.
+Run locally:
 
-## What we will record after execution
+```powershell
+python scripts/run_mean_reversion_diagnostics.py data/raw/NSE_GOLDBEES_5minute.csv
+```
 
-The next journal update will include:
+The output directory is:
 
-- dataset period and number of sessions;
-- event count overall and by direction;
-- forward-return statistics by horizon;
-- reversion-aligned return statistics;
-- t-statistics and confidence intervals as exploratory diagnostics;
-- event distribution and cumulative event outcome charts;
-- limitations and possible sources of bias;
-- the explicit decision: rejected, inconclusive, or promising;
-- the next experiment, if justified.
+```text
+data/reports/goldbees_mean_reversion_diagnostics/
+```
+
+## Current limitations
+
+- The baseline event study is exploratory and not a complete trading backtest.
+- Event clustering means the raw event count overstates the amount of independent evidence.
+- Forward horizons overlap.
+- The simple price-mean definition may mix trend and deviation effects.
+- No transaction costs, spread, slippage, or order-execution model has been applied yet.
+- No out-of-sample or walk-forward test has been performed.
+- No live or paper deployment is justified at this stage.
 
 ## Promotion path
 
-If Experiment 001 is promising, we will **not** immediately optimize thresholds. The next stage will investigate whether the effect survives across time periods and whether conditioning variables such as volatility, volume, time of day, or market regime explain the signal.
+Only if Experiment 001A identifies a stable, economically interpretable continuation relationship will we create a **separate continuation hypothesis**. That hypothesis would then receive its own event study, baseline trading rule, cost model, out-of-sample test, and paper/shadow validation.
 
-If Experiment 001 is rejected, the failure remains part of the research history. A new hypothesis may be proposed, but it must be documented separately rather than silently rewriting this experiment.
+The original mean-reversion hypothesis remains permanently recorded as rejected rather than being rewritten after seeing the data.
