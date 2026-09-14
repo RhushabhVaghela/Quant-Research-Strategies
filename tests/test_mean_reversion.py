@@ -20,7 +20,9 @@ def test_features_use_only_prior_bars() -> None:
 
 def test_events_are_directional() -> None:
     idx = pd.date_range("2026-08-03 09:15", periods=6, freq="5min", tz="Asia/Kolkata")
-    df = pd.DataFrame({"close": [100, 100, 100, 100, 100, 110]}, index=idx)
+    # Use non-zero prior dispersion so the z-score is defined. The final 110
+    # close should be an unambiguous positive deviation from the prior window.
+    df = pd.DataFrame({"close": [100, 101, 99, 100, 100, 110]}, index=idx)
     out = make_mean_reversion_events(df, lookback_bars=4, z_threshold=2.0)
     assert out.loc[idx[-1], "positive_event"]
     assert not out.loc[idx[-1], "negative_event"]
