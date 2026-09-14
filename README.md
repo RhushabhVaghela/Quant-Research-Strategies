@@ -21,7 +21,7 @@ Statistical experiment
         ↓
 Decision: reject / inconclusive / promising
         ↓
-Refinement
+Refinement / diagnostics
         ↓
 Retest
         ↓
@@ -47,7 +47,8 @@ Controlled live validation
 | Research-universe framework | ✅ Complete |
 | Historical data validation | ✅ Complete |
 | Initial exploratory event study | ✅ Complete — insufficient evidence |
-| Strategy 001 — GOLDBEES mean reversion | 🔬 Experiment 001 |
+| Strategy 001 — GOLDBEES mean reversion | 🔴 Rejected as symmetric mean reversion |
+| Strategy 001A — event structure diagnostics | 🔬 Implemented — local execution pending |
 | Robust backtesting | ⏳ Not started |
 | Out-of-sample validation | ⏳ Not started |
 | Paper trading | ⏳ Not started |
@@ -61,88 +62,74 @@ Controlled live validation
 
 ## Strategy 001 — GOLDBEES Intraday Mean Reversion
 
-**Status:** 🔬 Experiment 001 pending local execution
+**Status:** 🔴 Rejected as a symmetric mean-reversion signal
 
 ### Research question
 
 > Does an unusually large short-term deviation of GOLDBEES from its recent intraday equilibrium tend to be followed by a statistically meaningful move back toward that equilibrium?
 
-### Why GOLDBEES?
+### Experiment 001 — Baseline event study
 
-GOLDBEES is our first research instrument because it is suitable for investigating an intraday mean-reversion hypothesis and is accessible for eventual small-account validation.
+We began with an event study rather than a full trading strategy. The predefined research defaults were 5-minute bars, a 30-bar prior lookback, absolute z-score ≥ 2.0, and same-session forward horizons of 1, 3, 6, and 12 bars.
 
-Its lower nominal unit price is useful for later capital-feasibility analysis, but **price alone does not create an edge**. Eventual trading decisions must account for liquidity, spread, slippage, transaction costs, position sizing, and the ₹30,000 maximum-account-capital constraint.
+The GOLDBEES dataset contained **30,912 five-minute bars** from January 2025 through August 2026. The baseline study produced **2,953 combined event observations**.
 
-### Experiment 001 — Baseline deviation event study
+The symmetric mean-reversion hypothesis was rejected. Reversion-aligned mean returns were negative at every horizon:
 
-We deliberately begin with an **event study rather than a full trading strategy**.
+| Horizon | Mean reversion-aligned return |
+|---|---:|
+| 5 min | -0.00365% |
+| 15 min | -0.00901% |
+| 30 min | -0.01703% |
+| 60 min | -0.02105% |
 
-The initial hypothesis is:
+Positive deviations were followed by positive average returns, increasing from approximately **+0.00764% at 5 minutes** to **+0.05577% at 60 minutes**. This is continuation-like behavior rather than mean reversion. Negative deviations were weaker and inconsistent.
 
-> If GOLDBEES closes unusually far from its recent intraday mean, the subsequent return should tend to have the opposite sign if short-term mean reversion exists.
+These observations are **not yet a momentum strategy**. Event clustering, overlapping horizons, persistent price drift, the choice of raw-price rolling mean, and the absence of execution costs all require further investigation.
 
-Initial research defaults:
+The failed hypothesis is intentionally preserved in `research/journal/001_strategy_001_goldbees_mean_reversion.md`.
 
-- 5-minute bars
-- 30-bar prior lookback
-- absolute deviation z-score ≥ 2.0
-- forward horizons: 1, 3, 6, and 12 bars
-- same-session forward returns only
-- positive and negative deviations analysed separately
+---
 
-These are **predefined research defaults, not optimized parameters**.
+## Strategy 001A — Event structure & conditioning diagnostics
 
-### What we will measure
+The next research question is:
 
-- event count;
-- mean and median forward return;
-- return dispersion;
-- win rate;
-- reversion-aligned return;
-- exploratory t-statistic and 95% confidence interval;
-- consistency across horizons;
-- positive vs negative deviation behavior;
-- event distribution and cumulative event outcomes.
+> Does the continuation-like behavior survive basic dependence controls, and is it concentrated in identifiable market conditions?
 
-### Decision framework
+This stage deliberately avoids parameter optimization. The fixed diagnostics are:
 
-- 🔴 **REJECTED** — evidence does not justify continuing this hypothesis.
-- 🟡 **INCONCLUSIVE** — potentially interesting, but evidence is insufficient or unstable.
-- 🟢 **PROMISING** — justifies a robustness experiment.
-- 🔵 **ROBUST** — survives predefined out-of-sample and robustness testing.
-- 🟣 **PAPER READY** — survives research and execution checks and can enter paper/shadow trading.
-- ⚫ **LIVE CANDIDATE** — only after paper/shadow validation and execution controls.
+- event clustering and a 12-bar non-overlap filter;
+- time of day;
+- six-bar prior trend;
+- prior 30-bar volatility regime;
+- event-bar volume relative to the prior 30-bar median;
+- absolute z-score severity;
+- positive vs negative deviations after non-overlap filtering.
 
-A promising event study is **not** a live-trading recommendation.
+The 12-bar cooldown equals the longest tested forward horizon. It is a **dependence diagnostic, not a tuned trading parameter**.
 
-### Experiment 001 result
-
-**Pending local execution.**
-
-Run:
-
-```powershell
-python scripts/run_mean_reversion_event_study.py data/raw/NSE_GOLDBEES_5minute.csv
-python scripts/plot_mean_reversion_results.py
-```
-
-The generated outputs will be placed under:
+Implementation:
 
 ```text
-data/reports/goldbees_mean_reversion/
-├── summary.csv
-├── events.csv
-└── charts/
-    ├── mean_reversion_by_horizon.png
-    ├── deviation_vs_reversion_30m.png
-    └── cumulative_event_aligned_return_30m.png
+src/research/mean_reversion_diagnostics.py
+scripts/run_mean_reversion_diagnostics.py
+research/journal/001A_diagnostics_plan.md
 ```
 
-After execution, the observed metrics and charts will be added to this journal **without changing the original hypothesis after seeing the results**.
+Run locally:
 
-### Research record
+```powershell
+python scripts/run_mean_reversion_diagnostics.py data/raw/NSE_GOLDBEES_5minute.csv
+```
 
-Detailed Strategy 001 notes are kept in `research/journal/001_strategy_001_goldbees_mean_reversion.md`.
+Outputs are written to:
+
+```text
+data/reports/goldbees_mean_reversion_diagnostics/
+```
+
+We will only create a separate continuation hypothesis if these diagnostics produce a stable and economically interpretable relationship. Any such hypothesis will get its own event study and will not inherit success merely because it descended from Strategy 001.
 
 ---
 
@@ -249,9 +236,8 @@ The historical-data pipeline uses Zerodha Kite Connect. Credentials and access t
 Phase 0 — Research design / execution constraints      ✅
 Phase 1 — Historical data validation                    ✅
 Phase 1 — Initial exploratory event study              ✅
-Strategy 001 — GOLDBEES mean reversion                🔬 current
-Experiment 001 — Baseline event study                  🔬 pending
-Strategy refinement / additional experiments            ⏳
+Strategy 001 — GOLDBEES mean reversion                🔴 rejected
+Strategy 001A — event structure diagnostics             🔬 current
 Robust backtesting + realistic costs                     ⏳
 Out-of-sample / walk-forward validation                  ⏳
 Paper / shadow trading                                   ⏳
