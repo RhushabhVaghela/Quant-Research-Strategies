@@ -13,7 +13,6 @@ from src.research.continuation_backtest import (
 def make_session(n=50):
     idx = pd.date_range("2026-01-01 09:15", periods=n, freq="5min", tz="Asia/Kolkata")
     close = np.full(n, 100.0)
-    # Make the final part clearly upward and create a large positive deviation.
     close[30:42] = np.linspace(100.0, 104.0, 12)
     close[42:] = np.linspace(110.0, 111.0, n - 42)
     return pd.DataFrame(
@@ -26,14 +25,14 @@ def test_signal_uses_only_prior_completed_bars():
     df = make_session()
     signals = build_signals(df)
     assert pd.isna(signals.iloc[0]["z_score"])
-    assert pd.isna(signals.iloc[30]["z_score"])
+    assert pd.isna(signals.iloc[29]["z_score"])
+    assert pd.notna(signals.iloc[30]["z_score"])
     assert "selected_event" in signals
 
 
 def test_trade_enters_next_bar_and_exits_six_bars_later():
     df = make_session()
     signals = build_signals(df, z_threshold=1.0)
-    # Force a known selected event for a deterministic execution test.
     event_pos = 31
     signals["selected_event"] = False
     signals.iloc[event_pos, signals.columns.get_loc("selected_event")] = True
