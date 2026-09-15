@@ -48,7 +48,9 @@ Controlled live validation
 | Historical data validation | ✅ Complete |
 | Strategy 001 — GOLDBEES mean reversion | 🔴 Rejected |
 | Strategy 001A — event structure diagnostics | ✅ Complete — continuation lead identified |
-| Strategy 001B — continuation attribution | 🔬 Implemented — empirical result pending |
+| Strategy 001B — continuation attribution | 🟡 Promising research lead |
+| Continuation strategy specification | ⏳ Next |
+| Multi-instrument hypothesis validation | ⏳ Not started |
 | Robust trading backtest | ⏳ Not started |
 | Out-of-sample / walk-forward validation | ⏳ Not started |
 | Paper trading | ⏳ Not started |
@@ -110,7 +112,7 @@ We deliberately did **not** optimize parameters. The diagnostics used a fixed 12
 
 The mean-reversion hypothesis remains **REJECTED**.
 
-A continuation hypothesis is **PROMISING as an exploratory lead**, but it is not yet an approved trading hypothesis because we still need to determine whether the event adds information beyond ordinary intraday drift and the trend that was already present.
+A continuation hypothesis became a **PROMISING exploratory lead**, but we needed to determine whether the event added information beyond ordinary intraday drift and the trend already present.
 
 Details are recorded in `research/journal/001A_diagnostics_plan.md`.
 
@@ -118,65 +120,61 @@ Details are recorded in `research/journal/001A_diagnostics_plan.md`.
 
 ## Strategy 001B — Continuation Attribution
 
-### Current hypothesis
+### Research question
 
-> A large positive deviation, especially during an existing short-term uptrend, may contain continuation information beyond ordinary intraday drift and the recent trend itself.
+> Does the continuation-like return after a large deviation contain information beyond ordinary intraday drift and the recent six-bar trend?
 
-001B tests this rather than assuming it is true.
+001B compared positive/negative deviations, prior down/flat/up six-bar trend, predefined time-of-day buckets, fixed non-overlapping events, and matched non-event observations.
 
-It compares:
+### What 001B taught us
 
-- positive versus negative deviations;
-- prior down/flat/up six-bar trend;
-- the fixed non-overlapping event set;
-- predefined time-of-day buckets;
-- event returns versus matched non-event observations with the same time-of-day and prior-trend buckets.
+The strongest subgroup was **positive deviation + prior uptrend**. In the fixed 12-bar non-overlapping event set, event returns exceeded the matched non-event baseline at every tested horizon:
 
-The non-event comparison is explicitly a **descriptive attribution benchmark**, not a prospective trading signal. It is calculated over the research sample to answer the attribution question. If the result is promising, a separate point-in-time benchmark will be required before any trading rule is built.
+| Horizon | Events | Event mean | Matched baseline | Incremental return |
+|---|---:|---:|---:|---:|
+| 5 min | 363 | +0.0156% | +0.0025% | **+0.0128%** |
+| 15 min | 343 | +0.0202% | +0.0084% | **+0.0113%** |
+| 30 min | 299 | +0.0443% | +0.0177% | **+0.0255%** |
+| 60 min | 246 | +0.0532% | +0.0270% | **+0.0243%** |
 
-Implementation:
+Positive deviations also remained above the matched baseline when trend regimes were pooled. Negative deviations did not show the symmetric reversal pattern expected from mean reversion.
 
-```text
-src/research/continuation_attribution.py
-scripts/run_continuation_attribution.py
-tests/test_continuation_attribution.py
-research/journal/001B_continuation_attribution.md
-```
+In simple terms:
 
-Run locally:
+> When GOLDBEES was already moving upward and then made an unusually large positive move, subsequent returns were historically stronger than comparable non-event periods.
 
-```powershell
-python scripts/run_continuation_attribution.py data/raw/NSE_GOLDBEES_5minute.csv
-```
+### Decision
 
-### 001B decision gate
+**🟡 PROMISING RESEARCH LEAD.**
 
-- **REJECTED:** continuation disappears relative to matched normal behavior or is not sufficiently stable.
-- **INCONCLUSIVE:** interesting direction, but evidence is insufficient.
-- **PROMISING:** continuation survives non-overlap and remains incremental after trend/time-of-day attribution.
+The evidence is strong enough to stop trying to rescue the original symmetric mean-reversion hypothesis and to formalize a continuation hypothesis for broader validation.
 
-Only a promising result justifies creating a separate continuation trading specification.
+However, 001B is **not a validated trading strategy**. The event-vs-non-event comparison is a full-sample descriptive attribution benchmark. It is useful for diagnosis but must not be turned directly into a live signal. A strictly point-in-time benchmark, costs/slippage, and chronological out-of-sample validation are still required.
+
+Detailed results are recorded in `research/journal/001B_continuation_attribution_results.md`.
 
 ---
 
-# Why we do not jump directly to a stock universe
+# Why we do not cherry-pick the universe
 
-The project has a predefined multi-instrument universe framework, and the next research stage will eventually test hypotheses across that universe rather than cherry-picking instruments.
+The project has a predefined multi-instrument universe framework. Now that the 001B attribution question has produced a promising lead, the next stage can move into **multi-instrument validation**.
 
-However, we do not want to move to broad universe testing **before finishing the attribution question for the current lead**. Otherwise we could accidentally select instruments because they happen to show the same attractive-looking pattern and increase data-snooping risk.
+The important rule is that we do not choose stocks because they look best after seeing the result. The continuation hypothesis must be frozen first and then applied consistently across the predefined universe.
 
 The intended sequence is:
 
 ```text
-Discover relationship
+Discovery on GOLDBEES
         ↓
-Check whether it is real or explained by simpler effects
+Attribution / falsification
         ↓
-Define the strategy hypothesis
+Freeze continuation hypothesis
         ↓
-Test the same hypothesis across the predefined universe
+Point-in-time benchmark
         ↓
-Cost model + execution constraints
+Apply unchanged hypothesis to predefined universe
+        ↓
+Cost + execution analysis
         ↓
 Out-of-sample / walk-forward
         ↓
@@ -250,7 +248,7 @@ Quant-Research-Strategies/
 
 1. Start with an economic hypothesis, not a model.
 2. Define the prediction target before choosing a model.
-3. Use point-in-time information only.
+3. Use point-in-time information only for prospective strategy construction.
 4. Keep event definitions and forward outcomes strictly separated.
 5. Establish a simple baseline before ML.
 6. Record negative and inconclusive results.
@@ -291,8 +289,9 @@ Phase 0 — Research design / execution constraints      ✅
 Phase 1 — Historical data validation                    ✅
 Strategy 001 — GOLDBEES mean reversion                🔴 rejected
 Strategy 001A — event structure diagnostics             ✅ continuation lead
-Strategy 001B — continuation attribution                🔬 current
-Continuation trading specification                        ⏳
+Strategy 001B — continuation attribution                🟡 promising lead
+Continuation strategy specification                        ⏳ NEXT
+Point-in-time benchmark                                   ⏳
 Multi-instrument hypothesis test                          ⏳
 Robust backtesting + realistic costs                      ⏳
 Out-of-sample / walk-forward validation                   ⏳
