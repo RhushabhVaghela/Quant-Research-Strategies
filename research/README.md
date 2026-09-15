@@ -75,19 +75,45 @@ The strongest subgroup was positive deviation during a prior uptrend. In the fix
 
 Positive deviations also showed an incremental advantage when trend regimes were pooled. Negative deviations did not show a symmetric reversal pattern.
 
-The result is **promising but exploratory** because the event-vs-non-event benchmark is a full-sample descriptive attribution benchmark, not a point-in-time trading benchmark.
+The result is **promising but exploratory** because the event-vs-non-event benchmark was a full-sample descriptive attribution benchmark, not a point-in-time trading benchmark.
 
 Detailed results are recorded in `journal/001B_continuation_attribution_results.md`.
+
+### 001C — frozen continuation hypothesis
+
+**Decision: 🟡 Specification frozen — validation pending.**
+
+The 001B lead is now locked before broader validation. The frozen hypothesis is:
+
+> When a 5-minute bar closes at least 2.0 standard deviations above the previous 30 completed closes and the prior six-bar return is positive, the subsequent 30-minute return should be positive and stronger than the historical point-in-time return of comparable non-event observations.
+
+Frozen baseline conventions:
+
+- 5-minute bars;
+- 30 completed-bar deviation lookback;
+- z-score ≥ +2.0;
+- prior six-bar return > 0;
+- 30-minute (6-bar) primary horizon;
+- decision at event-bar close;
+- entry at next-bar open;
+- exit at the close of bar t+6;
+- 12-bar session cooldown;
+- no overnight feature construction;
+- minimum 30 completed historical benchmark observations;
+- no parameter search during this validation stage.
+
+The point-in-time benchmark is explicitly leakage-safe: a historical non-event observation can enter an event's benchmark only after that observation's own forward outcome has fully completed strictly before the event timestamp.
 
 Implementation:
 
 ```text
-src/research/continuation_attribution.py
-scripts/run_continuation_attribution.py
-tests/test_continuation_attribution.py
-research/journal/001B_continuation_attribution.md
-research/journal/001B_continuation_attribution_results.md
+src/research/point_in_time_baseline.py
+scripts/run_point_in_time_baseline.py
+tests/test_point_in_time_baseline.py
+research/journal/001C_continuation_hypothesis_spec.md
 ```
+
+The next research action is to run this implementation on GOLDBEES as a leakage audit and then apply the frozen hypothesis unchanged across the predefined multi-instrument universe.
 
 ## Promotion rule
 
@@ -98,9 +124,9 @@ The sequence is:
 ```text
 001B attribution
       ↓
-freeze continuation hypothesis
+001C freeze continuation hypothesis
       ↓
-point-in-time benchmark
+point-in-time benchmark audit
       ↓
 predefined multi-instrument universe
       ↓
