@@ -58,9 +58,15 @@ def add_diagnostic_features(df: pd.DataFrame) -> pd.DataFrame:
         ["down", "up"],
         default="flat",
     )
-    prior_volatility_median = out["prior_volatility_30bar"].groupby(session).transform(
-        lambda s: s.shift(1).rolling(60, min_periods=30).median()
-    )
+
+    # Compare the event bar's already-computed prior volatility with a
+    # point-in-time baseline made only from earlier completed volatility
+    # observations.  The rolling window intentionally spans sessions so the
+    # regime can be established early in a new session without using future
+    # observations from that session.
+    prior_volatility_median = out["prior_volatility_30bar"].shift(1).rolling(
+        60, min_periods=30
+    ).median()
     out["volatility_regime"] = np.select(
         [out["prior_volatility_30bar"] >= prior_volatility_median,
          out["prior_volatility_30bar"] < prior_volatility_median],
