@@ -1,6 +1,6 @@
 # Strategy 001 — GOLDBEES Intraday Mean Reversion
 
-**Status:** 🔴 Original mean-reversion hypothesis rejected; continuation lead promoted to broader validation
+**Status:** 🔴 Original mean-reversion hypothesis rejected; continuation lead promoted to frozen validation
 
 ## Research question
 
@@ -108,6 +108,48 @@ The evidence is also sufficient to formalize a continuation hypothesis for broad
 
 Detailed results are recorded in `research/journal/001B_continuation_attribution_results.md`.
 
+## Experiment 001C — Frozen Continuation Hypothesis
+
+001C is the lock between discovery and broader validation. The continuation hypothesis is frozen before instrument selection, parameter search, or ML filtering.
+
+### Frozen hypothesis
+
+> **When a 5-minute bar closes at least 2.0 standard deviations above the previous 30 completed closes and the prior six-bar return is positive, the subsequent 30-minute return should be positive and stronger than the historical point-in-time return of comparable non-event observations.**
+
+### Frozen trading baseline
+
+- deviation lookback: 30 completed five-minute bars;
+- z-score: ≥ +2.0;
+- trend: prior six-bar return > 0;
+- primary horizon: 6 bars / 30 minutes;
+- decision: after event-bar close;
+- entry: next-bar open;
+- exit: close of bar `t+6`;
+- overlap control: fixed 12-bar session cooldown;
+- no overnight feature construction;
+- minimum point-in-time benchmark history: 30 completed comparable observations.
+
+The 30-minute horizon is a fixed middle-horizon baseline, not a post-hoc selection of the best-performing horizon.
+
+### Point-in-time benchmark
+
+For an event at timestamp `t`, a historical non-event observation is eligible only if:
+
+- it belongs to the same predefined time-of-day bucket;
+- it belongs to the same prior-trend bucket;
+- its own six-bar forward outcome has fully completed **strictly before `t`**;
+- its outcome is valid and observed.
+
+This prevents the subtle leakage where an observation starts before the event but its future outcome would not yet have been known at the event decision time.
+
+The implementation is in `src/research/point_in_time_baseline.py`, with tests in `tests/test_point_in_time_baseline.py` and a reproducible runner in `scripts/run_point_in_time_baseline.py`.
+
+### Decision
+
+**Specification frozen — validation pending.**
+
+No instrument will be selected because of its GOLDBEES discovery performance. The exact hypothesis will first be audited for leakage and then applied unchanged across the predefined research universe.
+
 ## What changed in our research direction?
 
 We are no longer asking:
@@ -118,23 +160,22 @@ We are now asking:
 
 > "Does an unusually large positive move, when combined with an already-positive short-term trend, provide repeatable continuation information across a predefined universe?"
 
-This is a new hypothesis and will be treated independently from the rejected mean-reversion hypothesis.
+This is a new hypothesis and is treated independently from the rejected mean-reversion hypothesis.
 
 ## Next phase
 
-1. Freeze the continuation hypothesis before broad testing.
-2. Define event, trend feature, entry timing, holding period, and exit logic using only information available before the decision.
-3. Build a strictly point-in-time benchmark.
-4. Apply the unchanged hypothesis across the predefined multi-instrument universe.
-5. Evaluate cross-instrument consistency rather than cherry-picking winners.
-6. Add realistic transaction costs, spread, slippage, and execution constraints.
-7. Perform chronological out-of-sample / walk-forward validation.
-8. Only then consider paper/shadow trading.
+1. Run the 001C point-in-time benchmark on GOLDBEES as an implementation/leakage audit.
+2. Verify the frozen event and execution conventions on synthetic tests and historical data.
+3. Apply the unchanged hypothesis across the predefined multi-instrument universe.
+4. Evaluate cross-instrument consistency rather than cherry-picking winners.
+5. Add realistic transaction costs, spread, slippage, and execution constraints.
+6. Perform chronological out-of-sample / walk-forward validation.
+7. Only then consider paper/shadow trading.
 
 ## Current limitations
 
-- No complete trading backtest has been approved.
-- No transaction costs, spread, slippage, or order-execution model has yet been applied to the continuation hypothesis.
+- No complete cost-aware trading backtest has been approved.
 - No out-of-sample or walk-forward test has been performed.
+- The point-in-time benchmark has been implemented but its historical GOLDBEES result has not yet been run and reviewed in this repository state.
 - No live or paper deployment is justified by these experiments alone.
 - The original mean-reversion hypothesis remains permanently rejected and will not be rewritten based on later results.
