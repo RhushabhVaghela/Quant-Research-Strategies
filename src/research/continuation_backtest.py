@@ -26,6 +26,24 @@ def _session_key(index: pd.DatetimeIndex) -> pd.Series:
     return pd.Series(index.normalize(), index=index)
 
 
+def _prior_rolling(series: pd.Series, session: pd.Series, window: int, func: str) -> pd.Series:
+    """Calculate a session-local rolling statistic using only prior bars.
+
+    The implementation deliberately avoids a chained groupby/rolling index
+    construction so the result is aligned one-to-one with the source index.
+    """
+    shifted = series.groupby(session, sort=False).shift(1)
+    if func == "mean":
+        return shifted.groupby(session, sort=False).transform(
+            lambda s: s.rolling(window, min_periods=window).mean()
+        )
+    if func == "std":
+        return shifted.groupby(session, sort=False).transform(
+            lambda s: s.rolling(window, min_periods=window).std(ddof=1)
+        )
+    raise ValueError(f"Unsupported rolling function: {func}")
+
+
 def build_signals(
     df: pd.DataFrame,
     lookback_bars: int = 30,
@@ -47,16 +65,24 @@ def build_signals(
 
     out = df.copy()
     session = _session_key(out.index)
-    grouped = out.groupby(session)["close"]
 
     # Shift first: the event bar itself cannot enter its feature window.
-    prior = grouped.shift(1)
-    out["prior_mean_30"] = prior.groupby(session).rolling(lookback_bars).mean().reset_index(level=0, drop=True)
-    out["prior_std_30"] = prior.groupby(session).rolling(lookback_bars).std(ddof=1).reset_index(level=0, drop=True)
-    out["z_score"] = (out["close"] - out["prior_mean_30"]) / out["prior_std_30"].replace(0, np.nan)
+    # At bar 30, exactly bars 0..29 are therefore available to the 30-bar
+    # lookback. Each session is isolated so overnight observations are never
+    # used in feature construction.
+    out["prior_mean_30"] = _prior_rolling(
+        out["close"], session, lookback_bars, "mean"
+    )
+    out["prior_std_30"] = _prior_rolling(
+        out["close"], session, lookback_bars, "std"
+    )
+    out["z_score"] = (
+        (out["close"] - out["prior_mean_30"])
+        / out["prior_std_30"].replace(0, np.nan)
+    )
 
-    prior_6 = grouped.shift(1)
-    prior_7 = grouped.shift(trend_bars + 1)
+    prior_6 = out["close"].groupby(session, sort=False).shift(1)
+    prior_7 = out["close"].groupby(session, sort=False).shift(trend_bars + 1)
     out["prior_return_6bar"] = prior_6 / prior_7 - 1.0
     out["event"] = (out["z_score"] >= z_threshold) & (out["prior_return_6bar"] > 0)
 
