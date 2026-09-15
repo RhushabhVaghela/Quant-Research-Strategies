@@ -1,6 +1,6 @@
 # Strategy 001 — GOLDBEES Intraday Mean Reversion
 
-**Status:** 🔴 Rejected as a symmetric mean-reversion signal; continuation diagnostics in progress
+**Status:** 🔴 Rejected as a symmetric mean-reversion signal; continuation attribution in progress
 
 ## Research question
 
@@ -84,52 +84,60 @@ This is a research result, not a trading loss: the hypothesis was falsified enou
 
 ## Experiment 001A — Event structure & conditioning diagnostics
 
-The next experiment is deliberately a **diagnostic stage, not parameter optimization**. Its purpose is to determine whether the continuation-like behavior is robust to basic dependence controls and whether it is concentrated in identifiable conditions.
+001A tested whether the continuation-like behavior survived basic dependence controls and whether it was concentrated in predefined conditions. It used the same fixed 30-bar / 2.0-z-score baseline and a fixed 12-bar non-overlap diagnostic.
 
-The predefined diagnostics are:
+### Main findings
 
-1. **Event clustering / non-overlap:** retain the first event and suppress subsequent events for a fixed **12-bar cooldown**, equal to the longest tested horizon.
-2. **Time of day:** compare predefined intraday periods.
-3. **Recent trend:** classify the six-bar return before the event as down, flat, or up.
-4. **Volatility regime:** compare the prior 30-bar realized-volatility regime against a trailing intraday reference.
-5. **Volume regime:** compare event-bar volume with its prior 30-bar median.
-6. **Event severity:** inspect the predefined `2.0–2.5`, `2.5–3.0`, and `3.0+` absolute-z-score bands.
-7. **Directional continuation:** test whether positive-deviation continuation survives after removing overlapping event episodes.
+- Raw events were highly clustered; the fixed 12-bar non-overlap filter removed most of the clustering.
+- Positive-deviation continuation remained visible after non-overlap filtering.
+- The strongest concentration was positive deviation combined with an existing **upward six-bar prior trend**.
+- Negative-deviation behavior was weaker and inconsistent.
+- Volatility and volume did not provide a simple primary explanation.
+- Late-session behavior and larger deviations were interesting exploratory concentrations, but no parameters were optimized from them.
 
-The 12-bar cooldown is a **dependence diagnostic, not a tuned trading parameter**. No thresholds will be selected because they produce the best return.
+### Decision
 
-Implementation is in:
+**Symmetric mean reversion remains rejected. Continuation is a promising exploratory lead, not an approved strategy.**
+
+The key unresolved question is whether continuation contains information beyond ordinary intraday drift and the recent trend that was already present before the event.
+
+## Experiment 001B — Continuation Attribution
+
+001B is the next falsifiable experiment. It asks:
+
+> **Does the continuation-like return after a large deviation contain information beyond ordinary intraday drift and the recent six-bar trend?**
+
+It compares positive and negative deviations, prior-trend regimes, and predefined time-of-day buckets. The primary event set remains the fixed 12-bar non-overlapping events.
+
+A descriptive non-event benchmark matches observations on predefined **time-of-day + prior-trend** buckets. This benchmark is used only to attribute the observed return; it is explicitly **not** a prospective trading signal because it is calculated over the full research sample.
+
+Implementation:
 
 ```text
-src/research/mean_reversion_diagnostics.py
-scripts/run_mean_reversion_diagnostics.py
-research/journal/001A_diagnostics_plan.md
+src/research/continuation_attribution.py
+scripts/run_continuation_attribution.py
+tests/test_continuation_attribution.py
+research/journal/001B_continuation_attribution.md
 ```
 
 Run locally:
 
 ```powershell
-python scripts/run_mean_reversion_diagnostics.py data/raw/NSE_GOLDBEES_5minute.csv
+python scripts/run_continuation_attribution.py data/raw/NSE_GOLDBEES_5minute.csv
 ```
 
-The output directory is:
+### Promotion rule
 
-```text
-data/reports/goldbees_mean_reversion_diagnostics/
-```
+- **REJECTED:** continuation disappears relative to matched normal behavior or is not stable enough to justify further work.
+- **INCONCLUSIVE:** evidence is interesting but insufficient.
+- **PROMISING:** continuation survives the non-overlap check, remains coherent after trend/time conditioning, and shows an incremental relationship versus the matched non-event benchmark.
+
+Even a **PROMISING** result does not make the strategy paper-ready. It would then require a separate trading specification, realistic costs/slippage, multi-instrument testing, and chronological out-of-sample/walk-forward validation.
 
 ## Current limitations
 
-- The baseline event study is exploratory and not a complete trading backtest.
-- Event clustering means the raw event count overstates the amount of independent evidence.
-- Forward horizons overlap.
-- The simple price-mean definition may mix trend and deviation effects.
-- No transaction costs, spread, slippage, or order-execution model has been applied yet.
+- No complete trading backtest has been approved.
+- No transaction costs, spread, slippage, or order-execution model has yet been applied to a continuation strategy.
 - No out-of-sample or walk-forward test has been performed.
 - No live or paper deployment is justified at this stage.
-
-## Promotion path
-
-Only if Experiment 001A identifies a stable, economically interpretable continuation relationship will we create a **separate continuation hypothesis**. That hypothesis would then receive its own event study, baseline trading rule, cost model, out-of-sample test, and paper/shadow validation.
-
-The original mean-reversion hypothesis remains permanently recorded as rejected rather than being rewritten after seeing the data.
+- The original mean-reversion hypothesis remains rejected and will not be rewritten based on later results.
