@@ -1,6 +1,6 @@
 # Strategy 001B — Continuation Attribution
 
-**Status:** 🔬 Research experiment — implementation complete; empirical result pending
+**Status:** 🟡 Promising research lead — not paper-ready and not a trading rule
 
 ## Why this experiment exists
 
@@ -8,7 +8,7 @@ Strategy 001 began with a symmetric mean-reversion hypothesis: unusually large d
 
 Experiment 001 rejected that hypothesis. Large positive deviations were followed by positive returns rather than negative returns. Experiment 001A then showed that this continuation-like behavior survived a fixed non-overlap filter and was especially visible when the prior six-bar trend was upward.
 
-That is a useful clue, but it is **not yet evidence of a tradable momentum strategy**. A price that continues upward after an event may simply be experiencing normal intraday drift or may already be trending before the event. 001B is designed to separate those explanations.
+001B asks whether this continuation contains information beyond ordinary intraday drift and the trend that was already present before the event.
 
 ## Research question
 
@@ -50,55 +50,78 @@ The experiment inherits the Strategy 001 defaults without optimization:
 
 ### Non-event benchmark
 
-The benchmark uses all available non-event observations matched on the same predefined time-of-day and prior-trend buckets.
+The benchmark uses available non-event observations matched on the same predefined time-of-day and prior-trend buckets.
 
-This is a **descriptive attribution benchmark**, not a prospective trading signal. Because the benchmark is calculated over the full research sample, it must not be used directly to construct a live signal. If the attribution result is promising, a separate point-in-time baseline and trading experiment will be required.
+This is a **descriptive attribution benchmark**, not a prospective trading signal. It is calculated over the full research sample to answer the narrow attribution question. It must not be used directly to construct a live signal. A separate point-in-time benchmark is required before trading.
 
-## What would count as evidence?
+## 001B empirical result
 
-### Reject
+The strongest and most interpretable subgroup was **positive deviation + prior uptrend**. After the fixed 12-bar non-overlap filter, it contained hundreds of observations and showed positive event returns above the matched non-event baseline at every tested horizon:
 
-Reject the continuation lead if positive-deviation events do not show a stable directional effect, or if their apparent return advantage disappears relative to matched non-event observations.
+| Horizon | Events | Event mean | Matched baseline | Incremental return | Event win rate | Baseline win rate |
+|---|---:|---:|---:|---:|---:|---:|
+| 5 min | 363 | +0.0156% | +0.0025% | **+0.0128%** | 49.6% | 46.4% |
+| 15 min | 343 | +0.0202% | +0.0084% | **+0.0113%** | 50.7% | 50.4% |
+| 30 min | 299 | +0.0443% | +0.0177% | **+0.0255%** | 56.2% | 51.8% |
+| 60 min | 246 | +0.0532% | +0.0270% | **+0.0243%** | 57.3% | 52.4% |
 
-### Inconclusive
+Positive deviations pooled across all trend regimes also remained above the matched baseline at all four horizons. The incremental differences were approximately +0.0124%, +0.0161%, +0.0354%, and +0.0349% for 5, 15, 30, and 60 minutes respectively.
 
-Use this label if the direction is interesting but sample sizes, consistency across horizons/conditions, or baseline comparisons are insufficient to support a clear conclusion.
+Negative deviations did not show a symmetric reversal pattern. Pooled incremental returns were approximately -0.0085%, +0.0019%, -0.0133%, and -0.0214% across the same horizons.
 
-### Promising
+The detailed result table and methodology are recorded in `research/journal/001B_continuation_attribution_results.md`.
 
-Use this label only if the continuation effect:
+## Interpretation
 
-- remains visible after the 12-bar non-overlap filter;
-- is directionally coherent across sensible horizons;
-- is not explained by the ordinary matched non-event baseline;
-- remains interpretable after conditioning on prior trend and time of day; and
-- is strong enough to justify a separate baseline trading strategy and out-of-sample test.
+In simple terms:
 
-Even a **Promising** result does not mean Paper Ready.
+> When GOLDBEES was already in an upward short-term trend and then made an unusually large positive move, the next 15–60 minutes were historically stronger than comparable non-event periods.
 
-## Outputs
+This supports the continuation lead and provides exploratory evidence that the event contains information beyond the matched trend/time-of-day baseline.
 
-The runner writes:
+It does **not** prove a tradable edge. The benchmark is descriptive and full-sample, and costs, execution, and out-of-sample stability have not yet been tested.
 
-```text
-data/reports/goldbees_continuation_attribution/
-├── direction_trend_summary.csv
-├── event_vs_non_event_summary.csv
-└── metadata.csv
-```
+## Decision gates
 
-Run with:
+### H1 — Continuation lead: **PROMISING**
 
-```powershell
-python scripts/run_continuation_attribution.py data/raw/NSE_GOLDBEES_5minute.csv
-```
+The positive-deviation continuation survived the non-overlap filter and remained coherent across the tested horizons, particularly in the prior-uptrend regime.
 
-## Research interpretation rule
+### H2 — Incremental information: **PROMISING, exploratory**
 
-We will not select a time window, z-score threshold, trend threshold, or other parameter because it produces the best result in this experiment. Any parameter optimization belongs to a later, explicitly controlled model-development stage with time-ordered out-of-sample validation.
+Event returns exceeded the matched non-event baseline across the strongest positive/uptrend subgroup and positive deviations overall. Because the current baseline is full-sample descriptive attribution, this result must be confirmed using a strictly point-in-time benchmark before it can support a trading rule.
 
-## Promotion path
+### H3 — Directional asymmetry: **PROMISING**
 
-If 001B is promising, the next stage is **not immediately live trading**. We will create a separate continuation strategy specification, define a simple baseline trading rule, model costs/slippage, test across the predefined multi-instrument universe, and then perform chronological out-of-sample/walk-forward validation.
+Positive and negative deviations behave differently. The data does not support a symmetric reversal rule.
 
-If 001B is rejected, the failure will remain in the journal and we will formulate a new economic hypothesis rather than rewriting Strategy 001.
+## Final 001B decision
+
+### **PROMISING RESEARCH LEAD**
+
+We have enough evidence to stop trying to rescue the original symmetric mean-reversion strategy and to formalize a continuation hypothesis for broader validation.
+
+We will **not** optimize the hypothesis around GOLDBEES based on these results. The next stage should lock the hypothesis first and then apply it consistently across the predefined multi-instrument universe.
+
+## Important limitations
+
+- The event-vs-non-event benchmark is descriptive and full-sample, not point-in-time.
+- No complete trading backtest has been approved.
+- No transaction costs, spread, slippage, or market-impact model has yet been applied.
+- No chronological out-of-sample or walk-forward validation has been performed.
+- No statistical significance framework has yet been finalized for the eventual trading signal.
+- GOLDBEES is a discovery/prototype instrument, not evidence that it is the best instrument to trade.
+- No parameter optimization should be inferred from the strongest subgroup.
+
+## Next phase
+
+1. Freeze a continuation strategy specification.
+2. Define the event, trend feature, entry timing, holding period, and exit logic using only information available before the decision.
+3. Build a point-in-time baseline.
+4. Apply the locked hypothesis across the predefined research universe.
+5. Evaluate cross-instrument consistency rather than cherry-picking winners.
+6. Add realistic transaction costs, spread, slippage, and execution constraints.
+7. Perform chronological out-of-sample / walk-forward validation.
+8. Only then consider paper/shadow trading.
+
+**001B alone does not justify live trading.**
