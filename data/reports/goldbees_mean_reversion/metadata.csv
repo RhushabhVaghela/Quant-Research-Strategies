@@ -1,0 +1,2 @@
+input,rows,sessions,lookback_bars,z_threshold,total_events,positive_events,negative_events
+data\raw\NSE_GOLDBEES_5minute.csv,30912,413,30,2.0,3037,1720,1317

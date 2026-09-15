@@ -1,0 +1,3 @@
+event_set,events,same_session_gap_median_bars,same_session_gap_p10_bars,same_session_gap_lt_12_bars_pct
+all_events,3037,1.0,1.0,0.9180576631259484
+non_overlapping,733,18.5,12.0,0.0

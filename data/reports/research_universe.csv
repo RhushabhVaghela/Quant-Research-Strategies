@@ -1,0 +1,21 @@
+symbol,category,rationale,exchange,instrument_token,instrument_type,segment,last_price,capital_for_one_unit,units_at_capital,resolution_status
+NIFTYBEES,broad_market_etf,Nifty 50 market proxy and existing pipeline checkpoint,NSE,2707457,EQ,NSE,0.0,0.0,0,RESOLVED
+BANKBEES,sector_etf,banking-sector proxy for cross-instrument validation,NSE,2928385,EQ,NSE,0.0,0.0,0,RESOLVED
+ITBEES,sector_etf,IT-sector proxy for sector/regime comparison,NSE,4885505,EQ,NSE,0.0,0.0,0,RESOLVED
+GOLDBEES,commodity_etf,gold ETF for cross-asset behavior comparison,NSE,3693569,EQ,NSE,0.0,0.0,0,RESOLVED
+RELIANCE,large_cap_equity,high-liquidity large-cap candidate,NSE,738561,EQ,NSE,0.0,0.0,0,RESOLVED
+HDFCBANK,large_cap_equity,high-liquidity banking candidate,NSE,341249,EQ,NSE,0.0,0.0,0,RESOLVED
+ICICIBANK,large_cap_equity,high-liquidity banking candidate,NSE,1270529,EQ,NSE,0.0,0.0,0,RESOLVED
+SBIN,large_cap_equity,high-liquidity public-sector banking candidate,NSE,779521,EQ,NSE,0.0,0.0,0,RESOLVED
+AXISBANK,large_cap_equity,high-liquidity banking candidate,NSE,1510401,EQ,NSE,0.0,0.0,0,RESOLVED
+KOTAKBANK,large_cap_equity,high-liquidity banking candidate,NSE,492033,EQ,NSE,0.0,0.0,0,RESOLVED
+BHARTIARTL,large_cap_equity,high-liquidity telecom candidate,NSE,2714625,EQ,NSE,0.0,0.0,0,RESOLVED
+INFY,large_cap_equity,high-liquidity technology candidate,NSE,408065,EQ,NSE,0.0,0.0,0,RESOLVED
+HCLTECH,large_cap_equity,high-liquidity technology candidate,NSE,1850625,EQ,NSE,0.0,0.0,0,RESOLVED
+LT,large_cap_equity,high-liquidity industrial candidate,NSE,2939649,EQ,NSE,0.0,0.0,0,RESOLVED
+ITC,large_cap_equity,high-liquidity consumer candidate,NSE,424961,EQ,NSE,0.0,0.0,0,RESOLVED
+TATASTEEL,large_cap_equity,high-liquidity metal candidate,NSE,895745,EQ,NSE,0.0,0.0,0,RESOLVED
+M&M,large_cap_equity,high-liquidity auto candidate,NSE,519937,EQ,NSE,0.0,0.0,0,RESOLVED
+MARUTI,large_cap_equity,liquid auto candidate,NSE,2815745,EQ,NSE,0.0,0.0,0,RESOLVED
+SUNPHARMA,large_cap_equity,liquid pharmaceutical candidate,NSE,857857,EQ,NSE,0.0,0.0,0,RESOLVED
+HINDUNILVR,large_cap_equity,liquid consumer candidate,NSE,356865,EQ,NSE,0.0,0.0,0,RESOLVED

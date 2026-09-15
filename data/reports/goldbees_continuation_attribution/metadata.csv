@@ -1,0 +1,2 @@
+input,rows,sessions,lookback_bars,z_threshold,cooldown_bars,total_events,non_overlapping_events,baseline_definition,baseline_note
+data\raw\NSE_GOLDBEES_5minute.csv,30912,413,30,2.0,12,3037,733,all non-event observations matched on predefined time-of-day and prior-trend buckets,descriptive attribution benchmark only; not a prospective trading signal

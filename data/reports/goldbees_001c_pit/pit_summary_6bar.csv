@@ -1,0 +1,2 @@
+event_set,horizon_bars,direction,trend_regime,events_with_pit_baseline,mean_event_forward_return,mean_pit_baseline_forward_return,mean_pit_incremental_forward_return,positive_incremental_rate
+non_overlapping_event,6,positive,up,312,0.00044348287900173434,0.0001942014135633671,0.0002492814654383672,0.5096153846153846

@@ -1,0 +1,2 @@
+lookback_bars,z_threshold,trend_definition,primary_horizon_bars,cooldown_bars,min_baseline_observations
+30,2.0,prior_return_6bar > 0,6,12,30
