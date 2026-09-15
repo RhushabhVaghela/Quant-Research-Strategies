@@ -61,13 +61,14 @@ def add_diagnostic_features(df: pd.DataFrame) -> pd.DataFrame:
 
     # Compare the event bar's already-computed prior volatility with a
     # point-in-time baseline made only from earlier completed volatility
-    # observations.  The observation window intentionally spans sessions and
-    # counts valid volatility observations rather than raw dataframe rows.
-    # This avoids an overnight NaN gap consuming part of the 60-observation
-    # baseline and incorrectly leaving early next-session bars as "unknown".
+    # observations. The baseline is calculated on valid observations across
+    # sessions, then carried through session-boundary rows until a newer
+    # completed observation becomes available. No future observation is used.
     prior_volatility_observations = out["prior_volatility_30bar"].shift(1).dropna()
     prior_volatility_median = (
-        prior_volatility_observations.rolling(60, min_periods=30).median().reindex(out.index)
+        prior_volatility_observations.rolling(60, min_periods=30).median()
+        .reindex(out.index)
+        .ffill()
     )
     out["volatility_regime"] = np.select(
         [out["prior_volatility_30bar"] >= prior_volatility_median,
