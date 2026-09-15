@@ -19,6 +19,22 @@ def make_frame(n: int = 80) -> pd.DataFrame:
     return pd.DataFrame({"close": close, "volume": volume}, index=index)
 
 
+def make_two_session_frame() -> pd.DataFrame:
+    first = pd.date_range(
+        "2026-08-03 09:15:00", periods=75, freq="5min", tz="Asia/Kolkata"
+    )
+    second = pd.date_range(
+        "2026-08-04 09:15:00", periods=75, freq="5min", tz="Asia/Kolkata"
+    )
+    index = first.append(second)
+    # Vary returns so the rolling volatility is non-constant while keeping
+    # the fixture deterministic.
+    steps = np.tile(np.array([0.01, 0.03, -0.015, 0.02, -0.005]), 30)
+    close = 100.0 + np.cumsum(steps[:150])
+    volume = np.full(150, 1000.0)
+    return pd.DataFrame({"close": close, "volume": volume}, index=index)
+
+
 def test_diagnostic_features_are_point_in_time() -> None:
     df = make_frame()
     events = make_mean_reversion_events(df, lookback_bars=30, z_threshold=2.0)
@@ -27,6 +43,25 @@ def test_diagnostic_features_are_point_in_time() -> None:
     assert pd.isna(out["prior_return_6bar"].iloc[6])
     assert pd.isna(out["prior_volatility_30bar"].iloc[30])
     assert out["volume_ratio_30bar"].iloc[31] == pytest.approx(1.0)
+
+
+def test_volatility_regime_uses_prior_completed_observations_across_sessions() -> None:
+    df = make_two_session_frame()
+    events = make_mean_reversion_events(df, lookback_bars=30, z_threshold=0.0)
+    out = add_diagnostic_features(events)
+
+    second_session_start = 75
+    first_event_bar = second_session_start + 30
+    assert pd.notna(out["prior_volatility_30bar"].iloc[first_event_bar])
+    assert out["volatility_regime"].iloc[first_event_bar] in {"high", "low"}
+
+    # Changing a future observation must not change the regime at the earlier
+    # second-session event bar.
+    changed = df.copy()
+    changed.iloc[first_event_bar + 1, changed.columns.get_loc("close")] *= 1.20
+    changed_events = make_mean_reversion_events(changed, lookback_bars=30, z_threshold=0.0)
+    changed_out = add_diagnostic_features(changed_events)
+    assert changed_out["volatility_regime"].iloc[first_event_bar] == out["volatility_regime"].iloc[first_event_bar]
 
 
 def test_non_overlapping_filter_enforces_cooldown_within_session() -> None:
