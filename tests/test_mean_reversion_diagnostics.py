@@ -53,7 +53,10 @@ def test_volatility_regime_uses_prior_completed_observations_across_sessions() -
     out = add_diagnostic_features(events)
 
     second_session_start = 75
-    first_event_bar = second_session_start + 30
+    # A 30-observation rolling std of returns needs 30 prior returns, and the
+    # feature also shifts by one bar. Therefore the first defined observation
+    # is session start + 31, not + 30.
+    first_event_bar = second_session_start + 31
     assert pd.notna(out["prior_volatility_30bar"].iloc[first_event_bar])
     assert out["volatility_regime"].iloc[first_event_bar] in {"high", "low"}
 
