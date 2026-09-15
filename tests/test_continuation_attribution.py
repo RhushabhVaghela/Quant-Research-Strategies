@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from src.research.continuation_attribution import (
     add_attribution_features,
@@ -41,7 +42,7 @@ def test_directional_summary_separates_positive_events_from_trend() -> None:
     out = directional_trend_summary(make_frame(), horizon=1)
     row = out[(out["direction"] == "positive") & (out["trend_regime"] == "up")].iloc[0]
     assert row["events"] == 2
-    assert row["mean_forward_return"] == 0.009
+    assert row["mean_forward_return"] == pytest.approx(0.009)
 
 
 def test_non_event_baseline_excludes_event_bars() -> None:
