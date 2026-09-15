@@ -23,7 +23,11 @@ Decision: reject / inconclusive / promising
         ↓
 Refinement / attribution
         ↓
-Retest
+Freeze hypothesis
+        ↓
+Point-in-time validation
+        ↓
+Multi-instrument validation
         ↓
 Out-of-sample / walk-forward validation
         ↓
@@ -49,7 +53,8 @@ Controlled live validation
 | Strategy 001 — GOLDBEES mean reversion | 🔴 Rejected |
 | Strategy 001A — event structure diagnostics | ✅ Complete — continuation lead identified |
 | Strategy 001B — continuation attribution | 🟡 Promising research lead |
-| Continuation strategy specification | ⏳ Next |
+| Strategy 001C — frozen continuation specification | 🟡 Frozen — validation pending |
+| Point-in-time benchmark audit | ⏳ Next |
 | Multi-instrument hypothesis validation | ⏳ Not started |
 | Robust trading backtest | ⏳ Not started |
 | Out-of-sample / walk-forward validation | ⏳ Not started |
@@ -155,11 +160,57 @@ Detailed results are recorded in `research/journal/001B_continuation_attribution
 
 ---
 
+## Strategy 001C — Frozen Continuation Hypothesis
+
+001C is the methodological lock between discovery and validation. We freeze the hypothesis **before** looking for the best-performing instrument or parameter combination.
+
+### Frozen hypothesis
+
+> When a 5-minute bar closes at least 2.0 standard deviations above the previous 30 completed closes and the prior six-bar return is positive, the subsequent 30-minute return should be positive and stronger than the historical point-in-time return of comparable non-event observations.
+
+### Frozen baseline
+
+- 5-minute bars
+- 30 completed-bar deviation lookback
+- z-score ≥ +2.0
+- prior six-bar return > 0
+- 30-minute (6-bar) primary horizon
+- signal decision after the event-bar close
+- entry at next-bar open
+- exit at the close of bar t+6
+- 12-bar session cooldown
+- no overnight feature construction
+- minimum 30 completed historical benchmark observations
+- no parameter search during this validation stage
+
+The 30-minute horizon is a fixed middle-horizon baseline, not a choice made because it had the best historical return.
+
+### Point-in-time benchmark rule
+
+At event time `t`, a historical non-event observation is eligible for the benchmark only if its forward outcome has **fully completed strictly before `t`**, and it belongs to the same predefined time-of-day and prior-trend bucket.
+
+This matters because merely having a historical starting timestamp before the event is not sufficient: its outcome must already have been observable. The new implementation enforces this rule.
+
+### Decision
+
+**🟡 Specification frozen — validation pending.**
+
+This is the point where the project stops changing the hypothesis and starts testing whether it generalizes.
+
+Implementation is recorded in:
+
+```text
+research/journal/001C_continuation_hypothesis_spec.md
+src/research/point_in_time_baseline.py
+scripts/run_point_in_time_baseline.py
+tests/test_point_in_time_baseline.py
+```
+
+---
+
 # Why we do not cherry-pick the universe
 
-The project has a predefined multi-instrument universe framework. Now that the 001B attribution question has produced a promising lead, the next stage can move into **multi-instrument validation**.
-
-The important rule is that we do not choose stocks because they look best after seeing the result. The continuation hypothesis must be frozen first and then applied consistently across the predefined universe.
+The project has a predefined multi-instrument universe framework. The continuation hypothesis is now frozen, so the next validation can move across that universe without selecting instruments based on post-discovery performance.
 
 The intended sequence is:
 
@@ -170,7 +221,7 @@ Attribution / falsification
         ↓
 Freeze continuation hypothesis
         ↓
-Point-in-time benchmark
+Point-in-time benchmark audit
         ↓
 Apply unchanged hypothesis to predefined universe
         ↓
@@ -278,6 +329,12 @@ Run tests:
 pytest
 ```
 
+Run the frozen 001C point-in-time audit on the current GOLDBEES dataset:
+
+```powershell
+python scripts/run_point_in_time_baseline.py data/raw/NSE_GOLDBEES_5minute.csv
+```
+
 The historical-data pipeline uses Zerodha Kite Connect. Credentials and access tokens must remain local and must never be committed.
 
 ---
@@ -290,8 +347,8 @@ Phase 1 — Historical data validation                    ✅
 Strategy 001 — GOLDBEES mean reversion                🔴 rejected
 Strategy 001A — event structure diagnostics             ✅ continuation lead
 Strategy 001B — continuation attribution                🟡 promising lead
-Continuation strategy specification                        ⏳ NEXT
-Point-in-time benchmark                                   ⏳
+Strategy 001C — frozen continuation specification      🟡 validation pending
+Point-in-time benchmark audit                             ⏳ NEXT
 Multi-instrument hypothesis test                          ⏳
 Robust backtesting + realistic costs                      ⏳
 Out-of-sample / walk-forward validation                   ⏳
