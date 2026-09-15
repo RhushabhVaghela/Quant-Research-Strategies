@@ -12,7 +12,10 @@ from src.research.continuation_backtest import (
 
 def make_session(n=50):
     idx = pd.date_range("2026-01-01 09:15", periods=n, freq="5min", tz="Asia/Kolkata")
-    close = np.full(n, 100.0)
+    # Keep the first 30 completed bars non-constant so the 30-bar sample
+    # standard deviation is defined at bar 30. The test is checking timing,
+    # not a zero-volatility edge case.
+    close = 100.0 + 0.01 * np.arange(n)
     close[30:42] = np.linspace(100.0, 104.0, 12)
     close[42:] = np.linspace(110.0, 111.0, n - 42)
     return pd.DataFrame(
