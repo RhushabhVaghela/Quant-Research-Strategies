@@ -47,7 +47,9 @@ def test_diagnostic_features_are_point_in_time() -> None:
 
 def test_volatility_regime_uses_prior_completed_observations_across_sessions() -> None:
     df = make_two_session_frame()
-    events = make_mean_reversion_events(df, lookback_bars=30, z_threshold=0.0)
+    # Use the smallest valid positive threshold so event generation remains
+    # subject to the production function's input contract.
+    events = make_mean_reversion_events(df, lookback_bars=30, z_threshold=1e-9)
     out = add_diagnostic_features(events)
 
     second_session_start = 75
@@ -59,9 +61,14 @@ def test_volatility_regime_uses_prior_completed_observations_across_sessions() -
     # second-session event bar.
     changed = df.copy()
     changed.iloc[first_event_bar + 1, changed.columns.get_loc("close")] *= 1.20
-    changed_events = make_mean_reversion_events(changed, lookback_bars=30, z_threshold=0.0)
+    changed_events = make_mean_reversion_events(
+        changed, lookback_bars=30, z_threshold=1e-9
+    )
     changed_out = add_diagnostic_features(changed_events)
-    assert changed_out["volatility_regime"].iloc[first_event_bar] == out["volatility_regime"].iloc[first_event_bar]
+    assert (
+        changed_out["volatility_regime"].iloc[first_event_bar]
+        == out["volatility_regime"].iloc[first_event_bar]
+    )
 
 
 def test_non_overlapping_filter_enforces_cooldown_within_session() -> None:
