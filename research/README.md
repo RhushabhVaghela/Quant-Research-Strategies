@@ -23,7 +23,7 @@ Can we identify repeatable intraday conditions under which a directional price m
 
 ## Phase 0 controls
 
-Before advancing to ML or live execution, the project now explicitly documents:
+Before advancing to ML or live execution, the project explicitly documents:
 
 - `phase_00_india_retail_trading_spec.md` — Indian retail algo/API and execution requirements.
 - `phase_00_capital_and_execution_spec.md` — ₹30,000 capital feasibility, costs, liquidity and deployment rules.
@@ -33,21 +33,78 @@ These are research controls and operational specifications, not legal, tax, or i
 
 ## Phase 1 universe work
 
-The multi-instrument research-universe workflow is now defined in:
+The multi-instrument research-universe workflow is defined in:
 
 - `phase_01_universe_audit.md` — candidate resolution, common historical-data collection, audit gates, liquidity/capital checks, and universe-bias controls.
 - `universe_candidates.csv` — reproducible initial candidate manifest.
 
 The candidate manifest is intentionally defined independently of strategy performance. The current tooling resolves symbols against the locally refreshed NSE instrument master and records broker-reported price information only as a capital-feasibility screening diagnostic.
 
-## Current status
+## Strategy 001 research path
 
-- Phase 0 — Regulatory/execution specification: **complete**.
-- Phase 0 — Capital feasibility specification: **complete**.
-- Phase 0 — Research universe specification: **complete**.
-- Phase 1 — NIFTYBEES data validation/audit: **complete as a pipeline checkpoint**.
-- Phase 1 — Initial NIFTYBEES event study: **exploratory; insufficient evidence for strategy approval**.
-- Phase 1 — Multi-instrument universe audit tooling: **implemented**.
-- Phase 1 — Initial candidate manifest and broker-master resolution workflow: **implemented; local execution pending**.
+### 001 — GOLDBEES mean reversion
+
+**Decision: 🔴 Rejected.**
+
+The initial hypothesis was that unusually large deviations from a recent intraday mean would reverse. The baseline event study did not support that relationship; positive deviations were followed by positive rather than negative returns.
+
+### 001A — event structure & conditioning
+
+**Decision: ✅ Complete — continuation lead identified.**
+
+A fixed 12-bar non-overlap diagnostic reduced event clustering while preserving the positive-deviation continuation pattern. Prior six-bar trend was the clearest conditioning variable. Volatility and volume did not provide a simple primary explanation.
+
+No parameters were optimized.
+
+### 001B — continuation attribution
+
+**Status: 🔬 Implemented — empirical result pending.**
+
+The research question is:
+
+> Does continuation after a large deviation contain information beyond ordinary intraday drift and the recent trend?
+
+The experiment compares positive/negative deviations, prior trend, predefined time-of-day buckets, and fixed non-overlapping events against matched non-event observations.
+
+Implementation:
+
+```text
+src/research/continuation_attribution.py
+scripts/run_continuation_attribution.py
+tests/test_continuation_attribution.py
+research/journal/001B_continuation_attribution.md
+```
+
+Run:
+
+```powershell
+python scripts/run_continuation_attribution.py data/raw/NSE_GOLDBEES_5minute.csv
+```
+
+The non-event benchmark is descriptive attribution only. It must not be used as a live signal because it is calculated over the full research sample.
+
+## Promotion rule
+
+A continuation lead is not promoted merely because its average return is positive.
+
+The sequence is:
+
+```text
+001B attribution
+      ↓
+separate continuation hypothesis
+      ↓
+simple baseline strategy
+      ↓
+realistic costs + slippage
+      ↓
+predefined multi-instrument universe
+      ↓
+out-of-sample / walk-forward
+      ↓
+paper / shadow trading
+      ↓
+controlled live validation
+```
 
 **No strategy is approved for trading yet.**
