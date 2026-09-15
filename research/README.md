@@ -58,13 +58,26 @@ No parameters were optimized.
 
 ### 001B — continuation attribution
 
-**Status: 🔬 Implemented — empirical result pending.**
+**Decision: 🟡 Promising research lead — empirical attribution supports further validation.**
 
-The research question is:
+The research question was:
 
 > Does continuation after a large deviation contain information beyond ordinary intraday drift and the recent trend?
 
-The experiment compares positive/negative deviations, prior trend, predefined time-of-day buckets, and fixed non-overlapping events against matched non-event observations.
+The strongest subgroup was positive deviation during a prior uptrend. In the fixed non-overlapping event set, event returns exceeded the matched non-event baseline at every tested horizon:
+
+| Horizon | Event mean | Baseline mean | Incremental |
+|---|---:|---:|---:|
+| 5 min | +0.0156% | +0.0025% | +0.0128% |
+| 15 min | +0.0202% | +0.0084% | +0.0113% |
+| 30 min | +0.0443% | +0.0177% | +0.0255% |
+| 60 min | +0.0532% | +0.0270% | +0.0243% |
+
+Positive deviations also showed an incremental advantage when trend regimes were pooled. Negative deviations did not show a symmetric reversal pattern.
+
+The result is **promising but exploratory** because the event-vs-non-event benchmark is a full-sample descriptive attribution benchmark, not a point-in-time trading benchmark.
+
+Detailed results are recorded in `journal/001B_continuation_attribution_results.md`.
 
 Implementation:
 
@@ -73,15 +86,8 @@ src/research/continuation_attribution.py
 scripts/run_continuation_attribution.py
 tests/test_continuation_attribution.py
 research/journal/001B_continuation_attribution.md
+research/journal/001B_continuation_attribution_results.md
 ```
-
-Run:
-
-```powershell
-python scripts/run_continuation_attribution.py data/raw/NSE_GOLDBEES_5minute.csv
-```
-
-The non-event benchmark is descriptive attribution only. It must not be used as a live signal because it is calculated over the full research sample.
 
 ## Promotion rule
 
@@ -92,13 +98,15 @@ The sequence is:
 ```text
 001B attribution
       ↓
-separate continuation hypothesis
+freeze continuation hypothesis
+      ↓
+point-in-time benchmark
+      ↓
+predefined multi-instrument universe
       ↓
 simple baseline strategy
       ↓
 realistic costs + slippage
-      ↓
-predefined multi-instrument universe
       ↓
 out-of-sample / walk-forward
       ↓
