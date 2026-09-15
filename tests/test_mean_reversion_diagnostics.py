@@ -64,4 +64,6 @@ def test_dependence_summary_counts_filtered_events() -> None:
     filtered_row = summary.loc[summary["event_set"] == "non_overlapping"].iloc[0]
     assert all_row["events"] == 4
     assert filtered_row["events"] == 2
-    assert filtered_row["same_session_gap_lt_12_bars_pct"] == pytest.approx(0.0)
+    # The test deliberately uses a 3-bar cooldown, so the retained
+    # 30->40 gap is 10 bars and is correctly below the 12-bar horizon.
+    assert filtered_row["same_session_gap_lt_12_bars_pct"] == pytest.approx(1.0)
