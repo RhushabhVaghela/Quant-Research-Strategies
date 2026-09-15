@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from scripts.run_mean_reversion_event_study import load_ohlcv
+from run_mean_reversion_event_study import load_ohlcv
 from src.research.event_study import add_forward_returns
 from src.research.mean_reversion import make_mean_reversion_events
 from src.research.mean_reversion_diagnostics import (
