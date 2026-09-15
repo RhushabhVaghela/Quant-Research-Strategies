@@ -21,7 +21,7 @@ Statistical experiment
         ↓
 Decision: reject / inconclusive / promising
         ↓
-Refinement / diagnostics
+Refinement / attribution
         ↓
 Retest
         ↓
@@ -46,15 +46,15 @@ Controlled live validation
 | ₹30,000 capital feasibility framework | ✅ Complete |
 | Research-universe framework | ✅ Complete |
 | Historical data validation | ✅ Complete |
-| Initial exploratory event study | ✅ Complete — insufficient evidence |
-| Strategy 001 — GOLDBEES mean reversion | 🔴 Rejected as symmetric mean reversion |
-| Strategy 001A — event structure diagnostics | 🔬 Implemented — local execution pending |
-| Robust backtesting | ⏳ Not started |
-| Out-of-sample validation | ⏳ Not started |
+| Strategy 001 — GOLDBEES mean reversion | 🔴 Rejected |
+| Strategy 001A — event structure diagnostics | ✅ Complete — continuation lead identified |
+| Strategy 001B — continuation attribution | 🔬 Implemented — empirical result pending |
+| Robust trading backtest | ⏳ Not started |
+| Out-of-sample / walk-forward validation | ⏳ Not started |
 | Paper trading | ⏳ Not started |
 | Live trading | ⛔ Not started |
 
-**No live strategy has been approved.**
+**No strategy is approved for trading.**
 
 ---
 
@@ -62,19 +62,17 @@ Controlled live validation
 
 ## Strategy 001 — GOLDBEES Intraday Mean Reversion
 
-**Status:** 🔴 Rejected as a symmetric mean-reversion signal
+### Original hypothesis
 
-### Research question
+> When GOLDBEES closes unusually far from its recent intraday mean, the subsequent return should tend to have the opposite sign and move back toward the mean.
 
-> Does an unusually large short-term deviation of GOLDBEES from its recent intraday equilibrium tend to be followed by a statistically meaningful move back toward that equilibrium?
-
-### Experiment 001 — Baseline event study
-
-We began with an event study rather than a full trading strategy. The predefined research defaults were 5-minute bars, a 30-bar prior lookback, absolute z-score ≥ 2.0, and same-session forward horizons of 1, 3, 6, and 12 bars.
+The first experiment used 5-minute bars, a 30-bar prior lookback, an absolute z-score threshold of 2.0, and same-session forward horizons of 1, 3, 6, and 12 bars.
 
 The GOLDBEES dataset contained **30,912 five-minute bars** from January 2025 through August 2026. The baseline study produced **2,953 combined event observations**.
 
-The symmetric mean-reversion hypothesis was rejected. Reversion-aligned mean returns were negative at every horizon:
+### What Experiment 001 taught us
+
+The symmetric mean-reversion hypothesis was **rejected**. Reversion-aligned mean returns were negative at every tested horizon:
 
 | Horizon | Mean reversion-aligned return |
 |---|---:|
@@ -83,53 +81,109 @@ The symmetric mean-reversion hypothesis was rejected. Reversion-aligned mean ret
 | 30 min | -0.01703% |
 | 60 min | -0.02105% |
 
-Positive deviations were followed by positive average returns, increasing from approximately **+0.00764% at 5 minutes** to **+0.05577% at 60 minutes**. This is continuation-like behavior rather than mean reversion. Negative deviations were weaker and inconsistent.
+Positive deviations were followed by positive average returns, increasing from approximately **+0.00764% at 5 minutes** to **+0.05577% at 60 minutes**. That is continuation-like behavior, not mean reversion. Negative deviations were weaker and inconsistent.
 
-These observations are **not yet a momentum strategy**. Event clustering, overlapping horizons, persistent price drift, the choice of raw-price rolling mean, and the absence of execution costs all require further investigation.
+This did **not** immediately become a momentum strategy because the events were clustered, forward horizons overlapped, and ordinary intraday drift or prior trend could explain part of the result.
 
-The failed hypothesis is intentionally preserved in `research/journal/001_strategy_001_goldbees_mean_reversion.md`.
+The failed hypothesis remains permanently recorded in `research/journal/001_strategy_001_goldbees_mean_reversion.md`.
 
 ---
 
-## Strategy 001A — Event structure & conditioning diagnostics
+## Strategy 001A — Event Structure & Conditioning Diagnostics
 
-The next research question is:
+001A asked:
 
 > Does the continuation-like behavior survive basic dependence controls, and is it concentrated in identifiable market conditions?
 
-This stage deliberately avoids parameter optimization. The fixed diagnostics are:
+We deliberately did **not** optimize parameters. The diagnostics used a fixed 12-bar non-overlap filter, predefined time-of-day buckets, six-bar prior trend, prior volatility, volume relative to its prior median, and predefined z-score severity bands.
 
-- event clustering and a 12-bar non-overlap filter;
-- time of day;
-- six-bar prior trend;
-- prior 30-bar volatility regime;
-- event-bar volume relative to the prior 30-bar median;
-- absolute z-score severity;
-- positive vs negative deviations after non-overlap filtering.
+### What we learned
 
-The 12-bar cooldown equals the longest tested forward horizon. It is a **dependence diagnostic, not a tuned trading parameter**.
+1. **Event clustering was substantial.** The raw event stream contained many events within 12 bars of each other. The fixed cooldown reduced this dependence.
+2. **Positive-deviation continuation survived non-overlap.** Therefore the observed direction was not solely an artifact of counting every nearby event.
+3. **Prior trend mattered.** Positive deviations occurring during an existing upward six-bar trend showed the clearest continuation behavior.
+4. **Negative deviations were weaker and inconsistent.** The effect is therefore not obviously symmetric.
+5. **Volume and volatility did not provide a simple primary explanation.**
+6. Some late-session and high-severity concentrations were interesting, but we explicitly did not optimize around them.
+
+### Decision
+
+The mean-reversion hypothesis remains **REJECTED**.
+
+A continuation hypothesis is **PROMISING as an exploratory lead**, but it is not yet an approved trading hypothesis because we still need to determine whether the event adds information beyond ordinary intraday drift and the trend that was already present.
+
+Details are recorded in `research/journal/001A_diagnostics_plan.md`.
+
+---
+
+## Strategy 001B — Continuation Attribution
+
+### Current hypothesis
+
+> A large positive deviation, especially during an existing short-term uptrend, may contain continuation information beyond ordinary intraday drift and the recent trend itself.
+
+001B tests this rather than assuming it is true.
+
+It compares:
+
+- positive versus negative deviations;
+- prior down/flat/up six-bar trend;
+- the fixed non-overlapping event set;
+- predefined time-of-day buckets;
+- event returns versus matched non-event observations with the same time-of-day and prior-trend buckets.
+
+The non-event comparison is explicitly a **descriptive attribution benchmark**, not a prospective trading signal. It is calculated over the research sample to answer the attribution question. If the result is promising, a separate point-in-time benchmark will be required before any trading rule is built.
 
 Implementation:
 
 ```text
-src/research/mean_reversion_diagnostics.py
-scripts/run_mean_reversion_diagnostics.py
-research/journal/001A_diagnostics_plan.md
+src/research/continuation_attribution.py
+scripts/run_continuation_attribution.py
+tests/test_continuation_attribution.py
+research/journal/001B_continuation_attribution.md
 ```
 
 Run locally:
 
 ```powershell
-python scripts/run_mean_reversion_diagnostics.py data/raw/NSE_GOLDBEES_5minute.csv
+python scripts/run_continuation_attribution.py data/raw/NSE_GOLDBEES_5minute.csv
 ```
 
-Outputs are written to:
+### 001B decision gate
+
+- **REJECTED:** continuation disappears relative to matched normal behavior or is not sufficiently stable.
+- **INCONCLUSIVE:** interesting direction, but evidence is insufficient.
+- **PROMISING:** continuation survives non-overlap and remains incremental after trend/time-of-day attribution.
+
+Only a promising result justifies creating a separate continuation trading specification.
+
+---
+
+# Why we do not jump directly to a stock universe
+
+The project has a predefined multi-instrument universe framework, and the next research stage will eventually test hypotheses across that universe rather than cherry-picking instruments.
+
+However, we do not want to move to broad universe testing **before finishing the attribution question for the current lead**. Otherwise we could accidentally select instruments because they happen to show the same attractive-looking pattern and increase data-snooping risk.
+
+The intended sequence is:
 
 ```text
-data/reports/goldbees_mean_reversion_diagnostics/
+Discover relationship
+        ↓
+Check whether it is real or explained by simpler effects
+        ↓
+Define the strategy hypothesis
+        ↓
+Test the same hypothesis across the predefined universe
+        ↓
+Cost model + execution constraints
+        ↓
+Out-of-sample / walk-forward
+        ↓
+Paper / shadow trading
 ```
 
-We will only create a separate continuation hypothesis if these diagnostics produce a stable and economically interpretable relationship. Any such hypothesis will get its own event study and will not inherit success merely because it descended from Strategy 001.
+GOLDBEES is therefore a **discovery/prototype instrument**, not a claim that GOLDBEES is the best instrument to trade.
 
 ---
 
@@ -163,7 +217,7 @@ This was a **data-quality checkpoint, not evidence of a trading edge**.
 
 ### Initial exploratory event study
 
-The first NIFTYBEES momentum/volume event study produced only 23 events and did not provide convincing continuation evidence. We therefore did not jump directly to ML or strategy optimization.
+The first NIFTYBEES event study produced only 23 events and did not provide convincing continuation evidence. We therefore did not jump directly to ML or strategy optimization.
 
 That result remains part of the research history because rejecting weak evidence is itself part of the methodology.
 
@@ -235,16 +289,18 @@ The historical-data pipeline uses Zerodha Kite Connect. Credentials and access t
 ```text
 Phase 0 — Research design / execution constraints      ✅
 Phase 1 — Historical data validation                    ✅
-Phase 1 — Initial exploratory event study              ✅
 Strategy 001 — GOLDBEES mean reversion                🔴 rejected
-Strategy 001A — event structure diagnostics             🔬 current
-Robust backtesting + realistic costs                     ⏳
-Out-of-sample / walk-forward validation                  ⏳
-Paper / shadow trading                                   ⏳
-Broker execution validation                              ⏳
-Controlled live validation                               ⏳
-Additional asset-class strategies                         ⏳
-Portfolio construction                                   ⏳
+Strategy 001A — event structure diagnostics             ✅ continuation lead
+Strategy 001B — continuation attribution                🔬 current
+Continuation trading specification                        ⏳
+Multi-instrument hypothesis test                          ⏳
+Robust backtesting + realistic costs                      ⏳
+Out-of-sample / walk-forward validation                   ⏳
+Paper / shadow trading                                    ⏳
+Broker execution validation                               ⏳
+Controlled live validation                                ⏳
+Additional asset-class strategies                          ⏳
+Portfolio construction                                    ⏳
 ```
 
 **The project is intentionally incomplete. The research journey is the deliverable.**
