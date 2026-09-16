@@ -2,110 +2,129 @@
 
 ## Status
 
-**Implementation added; empirical run pending local execution.**
+**🟡 Complete — replay reconciled; forward-path diagnostics are informative; strategy remains not paper/live ready.**
 
-This journal entry is intentionally separated from the specification. No 001G numerical result is recorded until the replay is run against the validated GOLDBEES dataset and reconciled against the frozen 001D trade export.
+The frozen 001D strategy was reconstructed directly from the validated GOLDBEES OHLCV data and compared against the frozen 001D gross trade export. The replay matched all reference trades within the documented floating-point tolerance.
 
-## Implementation delivered
+## 1. Replay integrity
 
-001G now provides:
+| Check | Result |
+|---|---:|
+| Replayed frozen 001D trades | 310 |
+| Reference 001D trades | 310 |
+| Exact reconciliations within tolerance | 310 |
+| Reconciliation discrepancies | 0 |
 
-- raw GOLDBEES OHLCV loading with Asia/Kolkata timestamp normalization;
-- exact reuse of the frozen 001D signal/execution implementation;
-- signal-time feature retention for prior 30-bar mean/std, z-score, prior six-bar return, volume baseline/ratio, and time-of-day;
-- session-local, shifted rolling features to prevent overnight and look-ahead leakage;
-- forward close returns at 5/10/15/20/25/30/45/60 minutes from the signal timestamp, always measured from the executable next-bar-open entry price;
-- MFE/MAE from next-open entry through the frozen exit;
-- reconciliation against `trades_gross.csv` using signal timestamps and gross returns;
-- reproducible summary CSVs and diagnostic chart generation.
+The uploaded `reconciliation.csv` contains 310 matched rows. Gross-return absolute differences were floating-point scale only; no trade-level mismatch was observed.
 
-## Important horizon convention
+This is an important implementation gate: 001G did not alter the frozen 001D signal or execution logic while recovering additional diagnostic information.
 
-The frozen 001D signal occurs at the close of bar `t`, entry occurs at the open of `t+1`, and the frozen exit is the close of `t+6`.
+## 2. Forward-path results
 
-Therefore:
+Forward returns are measured from the executable next-bar-open entry price to the close at each signal-relative horizon. Therefore the frozen 30-minute signal horizon corresponds to approximately 25 minutes of entry-to-exit elapsed time on regular 5-minute bars.
 
-- the frozen **30-minute signal horizon** is measured from the signal timestamp to `t+6`;
-- the actual elapsed time from executable entry (`t+1` open) to the frozen exit (`t+6` close) is approximately **25 minutes** on regular 5-minute data.
+| Signal-relative horizon | Observations | Mean | Median | Win rate | P10 | P90 |
+|---:|---:|---:|---:|---:|---:|---:|
+| 5 min | 310 | +1.36 bps | 0.00 bps | 47.10% | -4.88 bps | +7.62 bps |
+| 10 min | 310 | +2.44 bps | +0.99 bps | 52.26% | -7.23 bps | +12.54 bps |
+| 15 min | 310 | +2.22 bps | +0.86 bps | 51.61% | -8.01 bps | +15.77 bps |
+| 20 min | 310 | +3.40 bps | +1.75 bps | 56.45% | -9.53 bps | +17.98 bps |
+| 25 min | 310 | +4.51 bps | +2.47 bps | 57.42% | -12.42 bps | +19.85 bps |
+| 30 min | 310 | +4.77 bps | +2.41 bps | 55.81% | -12.99 bps | +22.16 bps |
+| 45 min | 284 | +5.83 bps | +3.49 bps | 58.45% | -13.88 bps | +29.37 bps |
+| 60 min | 255 | +5.43 bps | +3.79 bps | 56.86% | -19.03 bps | +27.94 bps |
 
-This distinction is recorded explicitly so that forward-path analysis does not accidentally reinterpret the frozen strategy as a 30-minute holding period after entry.
+### Interpretation
 
-## Run command
+The forward path does **not** show the gross effect appearing only at the final frozen exit. The mean and median are already positive by 10 minutes and the mean rises substantially between 15 and 25 minutes. The 25–30 minute region is therefore consistent with the original frozen holding horizon rather than looking like an isolated terminal observation.
 
-```powershell
-python scripts/run_strategy_001g_replay.py data/raw/NSE_GOLDBEES_5minute.csv
-python scripts/plot_strategy_001g_results.py data/reports/goldbees_strategy_001g_replay
-```
+However, the path is noisy and positively skewed. At 5 minutes the median is exactly 0 bps and the win rate is below 50%, while the positive mean is partly driven by larger winners. The 30-minute distribution has a standard deviation of approximately 20.47 bps and skewness of approximately 3.22. This is evidence of a noisy, tail-sensitive gross effect, not proof of a stable executable alpha.
 
-The runner writes:
+The 45- and 60-minute observations are fewer because forward paths cannot cross the session boundary under the current same-session convention. They should not be treated as directly equivalent samples to the 5–30 minute results.
 
-```text
-data/reports/goldbees_strategy_001g_replay/
-├── replayed_trades.csv
-├── forward_path.csv
-├── forward_path_summary.csv
-├── mfe_mae.csv
-└── reconciliation.csv
-```
+## 3. MFE / MAE diagnostics
 
-The plotting script additionally writes:
+MFE and MAE are measured from the next-open entry through the frozen exit window. They are OHLC-range diagnostics and do **not** prove that an intrabar order could have captured the exact high or low because the data does not reveal intrabar sequencing.
 
-```text
-forward_path_returns.png
-mfe_mae_distribution.png
-```
+| Statistic | MFE | MAE |
+|---|---:|---:|
+| Mean | +15.35 bps | -9.63 bps |
+| Median | +9.48 bps | -6.88 bps |
+| P10 | +1.50 bps | -19.89 bps |
+| P25 | +4.80 bps | -12.77 bps |
+| P75 | +17.96 bps | -3.57 bps |
+| P90 | +35.82 bps | -1.52 bps |
+| Minimum | 0.00 bps | -93.59 bps |
+| Maximum | +192.63 bps | 0.00 bps |
 
-## Acceptance checks
+MFE was positive for approximately 93.23% of trades; MAE was negative for approximately 97.10% of trades.
 
-The local run should explicitly report:
+MFE reached its maximum at a median of 15 minutes from entry. MAE reached its maximum adverse excursion at a median of 5 minutes from entry. The timing is descriptive only and is not a basis for changing the exit or adding a stop.
 
-1. replayed trade count;
-2. reference 001D trade count;
-3. number of exact reconciliations within the documented tolerance;
-4. number of discrepancies.
+Among the 173 gross-winning trades, final gross return captured a median of approximately 66.7% of that trade's MFE. This indicates that many winners gave back part of their favorable path before the frozen exit, but the statistic should not be converted into an optimized exit rule without a separate, pre-specified experiment and untouched evaluation period.
 
-The known 001D baseline contains approximately **310 trades**. A mismatch is a research finding requiring investigation; it must not be repaired by silently changing the frozen strategy.
+The MFE/MAE chart is stored as `data/reports/goldbees_strategy_001g_replay/mfe_mae_distribution.png` after local execution.
 
-## What will be analyzed after execution
+## 4. Signal-time feature diagnostics
 
-### A. Replay integrity
+The replay also recovered the point-in-time variables that were unavailable in the compact 001D export.
 
-- signal timestamps;
-- entry timestamps/prices;
-- exit timestamps/prices;
-- gross returns;
-- missing/extra trades;
-- floating-point differences.
+### Time of day
 
-### B. Forward-path shape
+| Signal bucket | Trades | Mean gross | Median gross |
+|---|---:|---:|---:|
+| 11–12 | 61 | +2.82 bps | -0.82 bps |
+| 12–13 | 70 | +0.56 bps | +1.06 bps |
+| 13–14 | 86 | +6.09 bps | +2.41 bps |
+| 14–15 | 93 | +7.98 bps | +3.72 bps |
 
-For each fixed signal-relative horizon:
+Later-session buckets are descriptively stronger in this same historical sample. This is **not** being promoted to an afternoon-only filter; selecting it from the same sample would introduce another research degree of freedom.
 
-- observations;
-- mean return;
-- median return;
-- win rate;
-- p10/p90 return.
+### Z-score
 
-The key question is whether the gross edge appears broadly after entry or only very late in the frozen holding window.
+| Z-score bucket | Trades | Mean gross | Median gross |
+|---|---:|---:|---:|
+| 2.00–2.25 | 123 | +5.46 bps | +2.46 bps |
+| 2.25–2.50 | 77 | +2.13 bps | +1.28 bps |
+| 2.50–3.00 | 63 | +5.58 bps | +1.23 bps |
+| 3.00+ | 47 | +6.18 bps | +3.64 bps |
 
-### C. Excursion behavior
+There is no clean monotonic relationship between z-score magnitude and gross outcome.
 
-Measure:
+### Other signal-time relationships
 
-- MFE distribution;
-- MAE distribution;
-- time from entry to MFE/MAE;
-- relationship between MFE/MAE and final gross return.
+Simple correlations with gross trade return were small for z-score (approximately +0.02), prior six-bar return (+0.05), and volume ratio (-0.04). Prior 30-bar standard deviation had a larger positive correlation (+0.18), but this is a descriptive scale relationship and should not be interpreted as evidence that volatility itself is an independent alpha feature.
 
-MFE/MAE are OHLC-range diagnostics. They do not prove that an intrabar order could have captured the exact high or low because OHLCV does not reveal intrabar sequencing.
+Volume-ratio distribution: median approximately 1.09× the prior 30-bar average, P25 approximately 0.67×, P75 approximately 1.71×, and P90 approximately 3.04×.
 
-### D. Feature slices
+## 5. What 001G establishes
 
-The replay retains the point-in-time variables needed for descriptive slices. These can be examined without turning them into new trading rules. Any proposed filter or parameter change must receive a new experiment identifier and an untouched evaluation period.
+001G establishes four useful facts:
 
-## Decision rule
+1. **The frozen 001D implementation is reproducible.** All 310 trades reconcile exactly within tolerance.
+2. **The gross effect has a measurable forward path.** The effect is already visible before the frozen exit and strengthens through the 20–30 minute region.
+3. **The trade path contains substantial excursion relative to the final return.** Median MFE is about 9.48 bps versus a 2.41 bps median final gross return, while median MAE is about -6.88 bps.
+4. **The descriptive feature slices do not yet justify a new filter.** Later-session strength is visible, but z-score, prior trend, and volume relationships do not provide a sufficiently clean basis for rule changes from this same sample.
 
-Until the local run is completed and reviewed, 001G remains **execution pending**.
+## 6. What 001G does NOT establish
 
-Even if the replay is clean and the forward path is attractive, the next gate remains predefined robustness and chronological out-of-sample/walk-forward validation. 001G does not authorize paper or live trading.
+001G does not establish:
+
+- that the strategy survives realistic bid/ask spread and market impact;
+- that the 001D gross edge is statistically stable out of sample;
+- that a particular stop, profit target, or alternative holding period is superior;
+- that MFE can actually be captured in live execution;
+- that the signal remains predictive after accounting for costs;
+- that the strategy is ready for paper or live trading.
+
+The existing 001E cost grid remains a central unresolved issue: the gross mean trade return is only about +4.77 bps, so execution friction can consume a large fraction of the observed edge.
+
+## 7. Decision
+
+**🟡 001G complete — proceed to predefined robustness and chronological validation.**
+
+The replay passed its integrity gate and provides enough evidence to move forward, but it does not authorize parameter changes or deployment.
+
+The next experiment is **001H — Predefined Robustness & Chronological Holdout Validation**. It will test temporal stability, cost sensitivity, and explicitly separated historical development/holdout periods without selecting new parameters from the full sample.
+
+A genuinely untouched prospective OOS period is not available for this historical dataset because the 2025–2026 sample has already been examined during Strategy 001 research. Therefore the historical holdout will be labeled an **OOS-style chronological holdout**, while future paper/shadow trading will provide the clean prospective out-of-sample evidence.
