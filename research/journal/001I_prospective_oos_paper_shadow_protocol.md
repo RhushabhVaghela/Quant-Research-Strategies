@@ -10,14 +10,14 @@ The historical research sample has been examined through August 2026. Therefore 
 
 ## 1. OOS boundary
 
-**Prospective OOS start:** the 2026-09-16 market session if the capture process is operational before the relevant signal, otherwise the first complete market session after this protocol is committed and the logging system is operational.
+**Prospective OOS start:** the first complete market session for which the capture process is operational before the relevant signal. The exact activation timestamp is recorded in `data/prospective/strategy_001i/run_manifest.json`.
 
-The activation timestamp must be recorded in the prospective run manifest.
+The previously proposed September 16 date is not automatically used if the capture system was not operational then. No session is retroactively declared prospective.
 
 Rules:
 
 1. Data observed before activation remains historical/research data.
-2. A signal must be captured at or immediately after the event-bar close, before the fixed future exit is known.
+2. A signal must be captured at the event-bar boundary, before the fixed future exit is known.
 3. Once a prospective signal is logged, its strategy parameters cannot be changed for that signal.
 4. No prospective outcome may be used to alter the frozen rules during the same validation window.
 5. If a strategy rule is later changed, the current 001I cohort is closed; the changed version receives a new version identifier and a new prospective OOS boundary.
@@ -40,6 +40,8 @@ Rules:
 - one position at a time;
 - no leverage or optimized sizing.
 
+For the live collector, a candle timestamp is treated as the **start** of the 5-minute candle. Thus a signal on candle `t` is captured when that candle completes at `t+5`, the intended entry is the next candle open at `t+5`, and the frozen exit price is the close of the candle starting at `t+30`, which becomes known when that exit candle completes at `t+35`.
+
 **No threshold, lookback, holding period, cooldown, time-of-day filter, stop, target, or ML filter may be introduced during the prospective window.**
 
 ## 3. Paper/shadow phase
@@ -47,6 +49,8 @@ Rules:
 The first phase is **paper/shadow**, not live capital deployment.
 
 The signal engine generates the same intended action as the frozen strategy. No capital is required for a signal to count as a prospective observation.
+
+The repository now provides `scripts/run_strategy_001i_paper_shadow.py`. It uses the existing Zerodha authentication/data layer, subscribes to GOLDBEES live ticks in full mode, builds completed 5-minute bars, logs point-in-time signals, and finalizes paper outcomes after the frozen exit bar completes. It never places orders.
 
 If actual Zerodha orders are later tested, actual orders must be separately identified from paper observations and governed by a separate controlled-live protocol.
 
@@ -77,19 +81,24 @@ intended_entry_price
 intended_exit_timestamp
 status
 capture_timestamp
+capture_wallclock
+signal_bid
+signal_ask
+signal_spread_bps
 ```
 
 The pre-outcome record is append-only. It must not be overwritten after the forward path is known.
 
 ## 5. Outcome record
 
-Only after the fixed exit timestamp has passed should outcome fields be appended:
+Only after the frozen exit candle has completed should outcome fields be appended:
 
 ```text
 observable_or_paper_entry_price
 observable_or_paper_exit_price
 gross_return
-observed_bid_ask_spread_bps
+observed_entry_spread_bps
+observed_exit_spread_bps
 estimated_slippage_bps
 brokerage_and_statutory_costs
 net_return
