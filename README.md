@@ -24,7 +24,7 @@ Strategy 001 began as a mean-reversion hypothesis and was rejected. The research
 | 001E execution audit | 🟡 Complete | Small gross edge is highly friction-sensitive |
 | 001F decomposition | 🟡 Complete | Edge not solely dependent on top tail winners |
 | 001G replay | 🟡 Complete | 310/310 trades reconciled; forward path and MFE/MAE recovered |
-| **001H robustness/chronological holdout** | **← CURRENT** | Predefined validation gate |
+| **001H robustness/chronological holdout** | **← CURRENT** | Predefined validation implementation complete; empirical run pending |
 
 ### Frozen 001D strategy
 
@@ -60,9 +60,13 @@ The 001G feature slices are descriptive only. Later-session buckets were stronge
 
 Detailed journal: `research/journal/001G_point_in_time_feature_replay_results.md`.
 
-### Important OOS qualification
+### 001H next gate
 
-The full January 2025–August 2026 historical sample has already been examined during Strategy 001 research. Therefore a split inside that sample cannot honestly be presented as pristine untouched OOS evidence. 001H will use 2025 as a development/reference period and 2026 as a chronological holdout/OOS-style check. Future paper/shadow trading will provide genuinely prospective out-of-sample evidence.
+001H keeps the 001D strategy frozen and tests temporal stability, a 2025 development/reference vs 2026 chronological holdout split, predefined round-trip friction of 0/2/4/6/8/10/14 bps, trading-frequency stability, and return-distribution stability. It also creates a daily completed-trade equity/drawdown diagnostic.
+
+The 2026 split is explicitly **OOS-style**, not pristine untouched OOS, because the full January 2025–August 2026 sample has already been examined during Strategy 001 research. Future paper/shadow execution will provide genuinely prospective OOS evidence.
+
+Implementation and run instructions are in `research/journal/001H_predefined_robustness_chronological_holdout.md`.
 
 ---
 
@@ -144,4 +148,11 @@ python scripts/run_strategy_001g_replay.py data/raw/NSE_GOLDBEES_5minute.csv
 python scripts/plot_strategy_001g_results.py data/reports/goldbees_strategy_001g_replay
 ```
 
-The local 001G run should reconcile the frozen 001D trades before any numerical interpretation is accepted.
+Run the Strategy 001H robustness gate:
+
+```powershell
+python scripts/run_strategy_001h_robustness.py data/raw/NSE_GOLDBEES_5minute.csv
+python scripts/plot_strategy_001h_results.py data/reports/goldbees_strategy_001h_robustness
+```
+
+The local 001G run must reconcile the frozen 001D trades before its numerical interpretation is accepted. The 001H numerical result must be recorded only after the local empirical run is completed.
