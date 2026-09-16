@@ -11,6 +11,8 @@ data/raw/*.csv
 data/raw/*.parquet
 data/processed/*.csv
 data/processed/*.parquet
+data/prospective/*
+!data/prospective/README.md
 .vscode/
 .idea/
 .DS_Store
