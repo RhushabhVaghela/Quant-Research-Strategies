@@ -8,8 +8,8 @@ def make_trades() -> pd.DataFrame:
     ts = pd.date_range("2025-01-01 09:20", periods=4, freq="30min", tz="Asia/Kolkata")
     return pd.DataFrame({
         "signal_timestamp": ts,
-        "entry_timestamp": ts + pd.Timedelta(minutes=5),
-        "exit_timestamp": ts + pd.Timedelta(minutes=30),
+        "entry_timestamp": ts + pd.to_timedelta(5, unit="min"),
+        "exit_timestamp": ts + pd.to_timedelta(30, unit="min"),
         "gross_return": [0.01, -0.005, 0.02, -0.002],
     })
 
