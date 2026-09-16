@@ -128,15 +128,19 @@ Detailed results: `journal/001H_predefined_robustness_chronological_holdout_resu
 
 ### 001I — prospective OOS / paper-shadow validation
 
-**Decision: 🟡 Protocol registered — prospective data collection is the next gate.**
+**Decision: 🟡 Protocol hardened — prospective data collection is the next gate.**
 
-Because the historical dataset has been examined through August 2026, we will **not** relabel August 2026 or any September data inspected before the prospective start as OOS. The first genuinely prospective OOS period begins after the freeze/protocol date, with signals recorded before their outcomes are known.
+Because the historical dataset has been examined through August 2026, we will **not** relabel August 2026 or any September data inspected before the prospective start as OOS. The first genuinely prospective OOS period begins after the immutable activation timestamp, with signals recorded before their outcomes are known.
 
-The frozen 001D strategy remains unchanged during this window. Each signal is logged point-in-time, then its realized outcome and execution friction are appended only after the fixed exit. No threshold, holding period, time-of-day filter, stop, target, or other strategy rule may be changed based on observed prospective outcomes.
+The frozen 001D strategy remains unchanged during this window. Each signal is logged point-in-time, then its outcome and execution-friction information are appended only after the fixed exit completes. No threshold, holding period, time-of-day filter, stop, target, or other strategy rule may be changed based on observed prospective outcomes.
 
-The first phase is paper/shadow rather than live capital. The main research question is whether the frozen signal continues to occur and whether observed execution economics are compatible with the small historical gross edge.
+The first phase is paper/shadow rather than live capital. The implementation now has an append-only prospective ledger, an immutable run manifest, a collector that can restart across sessions without moving the OOS boundary, and a dedicated integrity validator.
+
+Run validator: `scripts/validate_strategy_001i_run.py`.
 
 Protocol: `journal/001I_prospective_oos_paper_shadow_protocol.md`.
+
+Results journal: `journal/001I_prospective_oos_paper_shadow_results.md`.
 
 ## Strategy 001 promotion path
 
