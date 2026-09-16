@@ -10,7 +10,7 @@ The historical research sample has been examined through August 2026. Therefore 
 
 ## 1. OOS boundary
 
-**Prospective OOS start:** the first complete market session for which the capture process is operational before the relevant signal. The exact activation timestamp is recorded in `data/prospective/strategy_001i/run_manifest.json`.
+**Prospective OOS start:** the activation timestamp recorded in `data/prospective/strategy_001i/run_manifest.json`. A signal becomes eligible only when its event-bar completion/capture occurs at or after that boundary.
 
 The previously proposed September 16 date is not automatically used if the capture system was not operational then. No session is retroactively declared prospective.
 
@@ -21,6 +21,8 @@ Rules:
 3. Once a prospective signal is logged, its strategy parameters cannot be changed for that signal.
 4. No prospective outcome may be used to alter the frozen rules during the same validation window.
 5. If a strategy rule is later changed, the current 001I cohort is closed; the changed version receives a new version identifier and a new prospective OOS boundary.
+6. Restarting the collector against the same run directory must not move the activation boundary. To start a new cohort, use a new run directory and a new registered activation timestamp.
+7. If the collector starts after the session has begun, previously completed bars are not reconstructed as prospective observations. The first eligible completed bar is the first one actually captured after activation.
 
 ## 2. Frozen strategy
 
@@ -40,9 +42,11 @@ Rules:
 - one position at a time;
 - no leverage or optimized sizing.
 
-For the live collector, a candle timestamp is treated as the **start** of the 5-minute candle. Thus a signal on candle `t` is captured when that candle completes at `t+5`, the intended entry is the next candle open at `t+5`, and the frozen exit price is the close of the candle starting at `t+30`, which becomes known when that exit candle completes at `t+35`.
+For the live collector, a candle timestamp is treated as the start of the 5-minute candle. Thus a signal on candle `t` is captured when that candle completes at `t+5`, the intended entry is the next candle open at `t+5`, and the frozen exit price is the close of the candle starting at `t+30`, which becomes known when that exit candle completes at `t+35`.
 
 **No threshold, lookback, holding period, cooldown, time-of-day filter, stop, target, or ML filter may be introduced during the prospective window.**
+
+Because the baseline uses previous **same-session** bars, a run started after the session begins may have an initial warm-up period before 30 newly captured same-session bars are available. This is an operational consequence of the frozen feature definition, not a reason to backfill or relabel pre-activation bars as prospective observations.
 
 ## 3. Paper/shadow phase
 
@@ -50,7 +54,9 @@ The first phase is **paper/shadow**, not live capital deployment.
 
 The signal engine generates the same intended action as the frozen strategy. No capital is required for a signal to count as a prospective observation.
 
-The repository now provides `scripts/run_strategy_001i_paper_shadow.py`. It uses the existing Zerodha authentication/data layer, subscribes to GOLDBEES live ticks in full mode, builds completed 5-minute bars, logs point-in-time signals, and finalizes paper outcomes after the frozen exit bar completes. It never places orders.
+The repository provides `scripts/run_strategy_001i_paper_shadow.py`. It uses the existing Zerodha authentication/data layer, subscribes to GOLDBEES live ticks in full mode, builds completed 5-minute bars, logs point-in-time signals, and finalizes paper outcomes after the frozen exit bar completes. It never places orders.
+
+The collector should normally be started before the market session. Its activation boundary is immutable for a run. It can be restarted during the same run without changing that boundary.
 
 If actual Zerodha orders are later tested, actual orders must be separately identified from paper observations and governed by a separate controlled-live protocol.
 
@@ -110,6 +116,8 @@ operational_exception
 
 MFE/MAE remain diagnostics. If they are derived from OHLC ranges, they must not be interpreted as proof that intrabar highs/lows were executable.
 
+The implementation rejects outcome finalization before the frozen exit bar's completion boundary.
+
 ## 6. Execution-cost measurement
 
 001H used a simple round-trip friction grid. 001I should replace that assumption with observed execution information where available.
@@ -130,7 +138,7 @@ The purpose is to determine whether the small historical gross edge is compatibl
 
 ## 7. Operational controls
 
-Record explicit statuses such as:
+Record explicit statuses or exceptions such as:
 
 - `signal_observed`
 - `paper_trade_completed`
@@ -143,6 +151,8 @@ Operational failures must be distinguished from strategy failures.
 
 If a bar is missing or delayed, do not reconstruct a signal with later information and label it prospective.
 
+The repository also provides `scripts/validate_strategy_001i_run.py`, which checks the manifest, activation boundary, timestamp ordering, frozen entry/exit timing, duplicate identifiers, orphan outcomes, and outcome-finalization timing.
+
 ## 8. No-look-ahead controls
 
 During the prospective window:
@@ -154,6 +164,7 @@ During the prospective window:
 5. Do not select entry/exit prices after seeing intrabar movement.
 6. Do not train a new ML model on post-freeze outcomes unless a separately registered walk-forward experiment defines the training protocol before those outcomes are used.
 7. Preserve the original frozen signal record.
+8. Do not move an existing run's activation timestamp by restarting the collector.
 
 ## 9. Review checkpoints
 
@@ -233,6 +244,6 @@ No live order is implied by 001I. Any later live experiment must have its own ex
 
 ## 14. Current status
 
-**🟡 Protocol registered — prospective paper/shadow data collection is the next gate.**
+**🟡 Protocol hardened — prospective paper/shadow data collection is the next gate.**
 
 No Strategy 002 work begins before Strategy 001 receives a final decision.
