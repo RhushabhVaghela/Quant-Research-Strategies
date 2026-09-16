@@ -76,23 +76,7 @@ Detailed results are in `journal/001C_continuation_hypothesis_results.md`.
 
 **Decision: 🟡 Candidate — gross backtest positive; cost sensitivity unresolved.**
 
-The frozen implementation uses:
-
-- 5-minute bars;
-- previous 30 completed same-session closes;
-- sample standard deviation;
-- z-score ≥ +2.0;
-- prior six-bar return > 0;
-- long-only;
-- signal after event-bar close;
-- next-bar-open entry;
-- close-of-t+6 exit;
-- fixed 12-bar cooldown;
-- no overnight trades;
-- one position at a time;
-- constant-notional normalized accounting;
-- no leverage or optimized sizing;
-- no parameter optimization.
+The frozen implementation uses 5-minute bars, previous 30 completed same-session closes, sample standard deviation, z-score ≥ +2.0, prior six-bar return > 0, long-only, signal after event-bar close, next-bar-open entry, close-of-t+6 exit, fixed 12-bar cooldown, no overnight trades, one position at a time, constant-notional normalized accounting, no leverage/optimized sizing, and no parameter optimization.
 
 The completed baseline contains 310 trades. Gross performance was +15.85% cumulative with a +4.77 bps mean trade return, 55.81% win rate, and 2.269 profit factor. The predefined cost grid showed that modest friction can eliminate the gross edge, so this is not paper/live ready.
 
@@ -100,15 +84,7 @@ The completed baseline contains 310 trades. Gross performance was +15.85% cumula
 
 **Decision: 🟡 Complete — gross edge remains interesting, execution economics unresolved.**
 
-001E found:
-
-- median gross trade return: +2.41 bps;
-- mean gross trade return: +4.77 bps;
-- top 10% of winners contributed about 53.7% of positive profit;
-- gross performance remained positive in each chronological period examined;
-- mean trades per active day: about 1.30;
-- median holding duration: 25 minutes;
-- the predefined friction grid rapidly consumed the small per-trade edge.
+001E found a +2.41 bps median and +4.77 bps mean gross trade return; the top 10% of winners contributed about 53.7% of positive profit; gross performance remained positive in each chronological period examined; mean trades per active day were about 1.30; median holding duration was 25 minutes; and the predefined friction grid rapidly consumed the small per-trade edge.
 
 Detailed results are in `journal/001E_trade_distribution_execution_audit_results.md`.
 
@@ -116,21 +92,30 @@ Detailed results are in `journal/001E_trade_distribution_execution_audit_results
 
 **Decision: 🟡 Promising for further research — not paper/live ready.**
 
-001F removed the largest positive trades as a diagnostic. After removing the top 10% of winning trades, the remaining 292 trades still had a +1.41 bps mean gross return, +1.32 bps median, 53.08% win rate, and 1.354 profit factor. The result is therefore not solely produced by a few extreme winners, although tail winners remain important.
+After removing the top 10% of winning trades, the remaining 292 trades still had a +1.41 bps mean gross return, +1.32 bps median, 53.08% win rate, and 1.354 profit factor. Tail winners remain important, but the gross result is not solely produced by a few extremes. Later-session buckets were descriptively stronger, while z-score buckets showed no clean monotonic relationship. These are not selected filters.
 
-Later-session signal buckets were descriptively stronger, while z-score buckets showed no clean monotonic relationship. These observations are hypotheses for future validation, not selected filters.
-
-The compact 001D trade export did not contain all signal-time features or intermediate forward prices, so full feature decomposition and forward-path/MFE/MAE analysis could not be completed from that file alone.
+The compact 001D trade export lacked the complete signal-time feature set and intermediate forward prices, motivating 001G.
 
 Detailed results: `journal/001F_trade_edge_execution_decomposition_results.md`.
 
 ### 001G — point-in-time feature & forward-path replay
 
-**Decision: ⏳ Specification added — execution pending.**
+**Decision: 🟡 Implementation complete — empirical run pending.**
 
-001G will reconstruct the frozen 001D trades directly from the validated GOLDBEES OHLCV dataset, retain signal-time features without look-ahead, reconcile the replay against the 001D trade export, and measure the forward path at fixed horizons plus MFE/MAE where supported.
+001G reconstructs the frozen 001D trades directly from validated GOLDBEES OHLCV, retains signal-time features without look-ahead, reconciles the replay against the 001D trade export, and measures forward returns plus MFE/MAE. The implementation deliberately reuses the frozen 001D signal/execution logic rather than introducing a new rule.
 
-Specification: `journal/001G_point_in_time_feature_replay.md`.
+Implementation:
+
+```text
+src/research/strategy_001g_replay.py
+scripts/run_strategy_001g_replay.py
+scripts/plot_strategy_001g_results.py
+tests/test_strategy_001g_replay.py
+research/journal/001G_point_in_time_feature_replay.md
+research/journal/001G_point_in_time_feature_replay_results.md
+```
+
+Run locally against the validated dataset and frozen 001D trade export. Do not interpret 001G as a promotion gate until reconciliation and diagnostics are reviewed.
 
 ## Strategy 001 promotion path
 
