@@ -79,16 +79,57 @@ def _read_csv(path: Path, columns: Iterable[str]) -> pd.DataFrame:
     return pd.read_csv(path)
 
 
+def _read_manifest(root: Path) -> RunManifest | None:
+    path = root / "run_manifest.json"
+    if not path.exists():
+        return None
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    required = {
+        "activation_timestamp", "strategy_version", "protocol_version", "instrument",
+        "interval", "mode", "live_orders_enabled", "notes",
+    }
+    missing = required.difference(payload)
+    if missing:
+        raise ValueError(f"Prospective manifest is missing fields: {sorted(missing)}")
+    return RunManifest(**{key: payload[key] for key in required})
+
+
+def load_run_manifest(output_dir: str | Path) -> RunManifest:
+    """Load the immutable manifest for an existing prospective run."""
+    manifest = _read_manifest(Path(output_dir))
+    if manifest is None:
+        raise FileNotFoundError(f"No prospective run manifest found in {output_dir}")
+    return manifest
+
+
 def initialize_run(output_dir: str | Path, activation_timestamp: Any, notes: str = "") -> RunManifest:
-    """Create the append-only prospective run structure and manifest."""
+    """Create a run once, then preserve its activation boundary on restarts.
+
+    A prospective run is append-only. Re-running the collector against the same
+    directory cannot silently move the OOS boundary or replace its manifest.
+    """
     root = Path(output_dir)
     root.mkdir(parents=True, exist_ok=True)
-    activation = _as_ist_timestamp(activation_timestamp)
-    manifest = RunManifest(
-        activation_timestamp=activation.isoformat(),
-        notes=notes or RunManifest.__dataclass_fields__["notes"].default,
-    )
-    (root / "run_manifest.json").write_text(json.dumps(asdict(manifest), indent=2), encoding="utf-8")
+    requested = _as_ist_timestamp(activation_timestamp)
+    existing = _read_manifest(root)
+    if existing is not None:
+        if _as_ist_timestamp(existing.activation_timestamp) != requested:
+            raise ValueError(
+                "Existing prospective run has a different activation timestamp; "
+                "use a new run directory instead of moving the OOS boundary."
+            )
+        if existing.strategy_version != STRATEGY_VERSION or existing.protocol_version != PROTOCOL_VERSION:
+            raise ValueError("Existing prospective run uses an incompatible strategy/protocol version")
+        manifest = existing
+    else:
+        manifest = RunManifest(
+            activation_timestamp=requested.isoformat(),
+            notes=notes or RunManifest.__dataclass_fields__["notes"].default,
+        )
+        (root / "run_manifest.json").write_text(
+            json.dumps(asdict(manifest), indent=2), encoding="utf-8"
+        )
+
     for name, columns in (("signals.csv", SIGNAL_COLUMNS), ("outcomes.csv", OUTCOME_COLUMNS), ("bars.csv", BAR_COLUMNS)):
         path = root / name
         if not path.exists():
@@ -132,11 +173,15 @@ def evaluate_completed_bar(
     intended_entry_timestamp: Any,
     signal_bid: float | None = None,
     signal_ask: float | None = None,
+    activation_timestamp: Any | None = None,
 ) -> dict[str, Any] | None:
     """Evaluate exactly one newly completed event bar using only observed bars.
 
     ``history_bars`` must contain bars observed before ``completed_bar``. The
-    completed bar is appended only for evaluating its event condition.
+    completed bar is appended only for evaluating its event condition. If an
+    activation boundary is supplied, the signal is accepted only when the
+    completed event bar was captured prospectively (its capture time is at or
+    after activation).
     """
     prior = history_bars.copy()
     current = pd.DataFrame([completed_bar])
@@ -157,6 +202,9 @@ def evaluate_completed_bar(
     capture_ts = _as_ist_timestamp(capture_timestamp)
     if capture_ts > entry_ts:
         raise ValueError("Prospective signal was captured after the intended entry boundary")
+    if activation_timestamp is not None and capture_ts < _as_ist_timestamp(activation_timestamp):
+        raise ValueError("Prospective signal was captured before the activation boundary")
+
     bid = float(signal_bid) if signal_bid is not None and np.isfinite(signal_bid) else np.nan
     ask = float(signal_ask) if signal_ask is not None and np.isfinite(signal_ask) else np.nan
     spread_bps = np.nan
@@ -225,6 +273,12 @@ def finalize_paper_outcome(
     exit_bar_ts = _as_ist_timestamp(signal_row["intended_exit_timestamp"])
     if entry_ts not in frame.index or exit_bar_ts not in frame.index:
         raise ValueError("Required entry/exit completed bars are not available")
+
+    outcome_recorded_ts = _as_ist_timestamp(outcome_recorded_timestamp)
+    exit_completion_ts = exit_bar_ts + pd.Timedelta(minutes=BAR_MINUTES)
+    if outcome_recorded_ts < exit_completion_ts:
+        raise ValueError("Paper outcome was finalized before the frozen exit bar completed")
+
     entry = float(frame.loc[entry_ts, "open"])
     exit_price = float(frame.loc[exit_bar_ts, "close"])
     if entry <= 0 or exit_price <= 0:
@@ -267,7 +321,7 @@ def finalize_paper_outcome(
         "mae_return": mae_return,
         "mfe_timestamp": _as_ist_timestamp(mfe_ts).isoformat(),
         "mae_timestamp": _as_ist_timestamp(mae_ts).isoformat(),
-        "outcome_recorded_timestamp": _as_ist_timestamp(outcome_recorded_timestamp).isoformat(),
+        "outcome_recorded_timestamp": outcome_recorded_ts.isoformat(),
         "operational_exception": "",
     }
 
