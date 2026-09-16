@@ -16,9 +16,9 @@ def make_session_frame(days: int = 2, bars_per_day: int = 40) -> pd.DataFrame:
     rows = []
     start = pd.Timestamp("2026-01-05 09:15", tz="Asia/Kolkata")
     for d in range(days):
-        day = start + pd.Timedelta(days=d)
+        day = start + pd.to_timedelta(d, unit="D")
         for i in range(bars_per_day):
-            ts = day + pd.Timedelta(minutes=5 * i)
+            ts = day + pd.to_timedelta(5 * i, unit="min")
             close = 100.0 + d * 10 + i * 0.2 + (0.05 if i == 30 else 0)
             rows.append({
                 "timestamp": ts,
@@ -36,12 +36,9 @@ def test_signal_features_are_point_in_time_and_session_local() -> None:
     out = build_replay_features(df)
     first_day = out.iloc[:40]
     second_day = out.iloc[40:]
-    # The first bar of each session cannot have a prior 30-bar feature window.
     assert pd.isna(first_day.iloc[0]["prior_mean_30"])
     assert pd.isna(second_day.iloc[0]["prior_mean_30"])
-    # The second session must not inherit the first session's bars.
     assert pd.isna(second_day.iloc[0]["prior_std_30"])
-    # At local bar 30, the current event bar is excluded from the rolling window.
     expected = first_day.iloc[:30]["close"].mean()
     assert np.isclose(first_day.iloc[30]["prior_mean_30"], expected)
 
@@ -50,7 +47,6 @@ def test_forward_path_uses_signal_relative_horizons_and_next_open_entry() -> Non
     df = make_session_frame(days=1)
     signals = build_replay_features(df)
     selected = signals.index[30]
-    # Construct a minimal trade using the same timestamps as the frozen execution rule.
     trade = pd.DataFrame([{
         "trade_id": str(selected),
         "signal_timestamp": selected,
@@ -61,11 +57,11 @@ def test_forward_path_uses_signal_relative_horizons_and_next_open_entry() -> Non
     path = forward_path(signals, trade, horizons_minutes=(5, 30))
     h5 = path.loc[path["horizon_minutes"] == 5].iloc[0]
     h30 = path.loc[path["horizon_minutes"] == 30].iloc[0]
-    assert h5["target_timestamp"] == selected + pd.Timedelta(minutes=5)
-    assert h30["target_timestamp"] == selected + pd.Timedelta(minutes=30)
+    assert h5["target_timestamp"] == selected + pd.to_timedelta(5, unit="min")
+    assert h30["target_timestamp"] == selected + pd.to_timedelta(30, unit="min")
     assert np.isclose(
         h30["forward_return"],
-        signals.loc[selected + pd.Timedelta(minutes=30), "close"] / trade.loc[0, "entry_price_raw"] - 1,
+        signals.loc[selected + pd.to_timedelta(30, unit="min"), "close"] / trade.loc[0, "entry_price_raw"] - 1,
     )
 
 
@@ -93,8 +89,8 @@ def test_reconciliation_flags_matching_and_missing_trades() -> None:
     replayed = pd.DataFrame([{
         "trade_id": str(ts),
         "signal_timestamp": ts,
-        "entry_timestamp": ts + pd.Timedelta(minutes=5),
-        "exit_timestamp": ts + pd.Timedelta(minutes=30),
+        "entry_timestamp": ts + pd.to_timedelta(5, unit="min"),
+        "exit_timestamp": ts + pd.to_timedelta(30, unit="min"),
         "gross_return": 0.001,
     }])
     reference = pd.DataFrame([{
