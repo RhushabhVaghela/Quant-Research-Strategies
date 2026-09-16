@@ -8,6 +8,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from src.research.strategy_001h_robustness import add_period
+
 
 PERIOD_ORDER = ["2025_H1", "2025_H2", "2026_H1", "2026_H2"]
 
@@ -23,6 +25,10 @@ def main() -> None:
     activity = pd.read_csv(args.output_dir / "trading_activity.csv")
     trades = pd.read_csv(args.output_dir / "trades.csv")
     daily = pd.read_csv(args.output_dir / "daily_equity.csv")
+
+    # The trade export intentionally contains only frozen-trade fields, not the
+    # derived period label. Recreate that label from the original signal time.
+    trades = add_period(trades)
 
     # 1. Chronological gross performance.
     fig, ax = plt.subplots(figsize=(8, 5))
