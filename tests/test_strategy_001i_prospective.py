@@ -80,15 +80,15 @@ def test_signal_and_outcome_are_append_only(tmp_path):
 
 
 def test_finalize_paper_outcome_uses_next_open_and_frozen_exit():
-    bars = _bars(40)
-    # Use a signal at 12:30. Entry is 12:35 and frozen exit bar is 13:00.
+    bars = _bars(46)
+    # Signal at 12:30. Entry is 12:35 and frozen exit bar is 13:00.
     signal = {
         "signal_id": "001I-20260918-1230",
         "intended_entry_timestamp": "2026-09-18T12:35:00+05:30",
         "intended_exit_timestamp": "2026-09-18T13:00:00+05:30",
     }
     outcome = finalize_paper_outcome(
-        tmp_path if False else ".",
+        ".",
         signal,
         bars,
         "2026-09-18T13:05:00+05:30",
