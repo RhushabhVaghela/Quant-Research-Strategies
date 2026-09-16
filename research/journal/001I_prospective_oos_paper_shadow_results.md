@@ -2,7 +2,7 @@
 
 ## Status
 
-**🟡 Protocol registered — prospective data collection not yet completed.**
+**🟡 Protocol hardened — prospective data collection not yet completed.**
 
 This file is intentionally a results template. No prospective performance numbers are populated until the frozen Strategy 001D process has generated and recorded observations after the 001I activation boundary.
 
@@ -15,7 +15,7 @@ Historical data through August 2026 has already been examined during Strategy 00
 - September observations inspected before 001I activation = historical/research data;
 - first signals captured prospectively after activation = genuine prospective OOS observations.
 
-The activation timestamp must be recorded with the first prospective run.
+The activation timestamp must be recorded in `data/prospective/strategy_001i/run_manifest.json`. Restarting the same run does not move that boundary.
 
 ## Frozen strategy
 
@@ -87,6 +87,12 @@ To be populated only after prospective observations exist:
 - forward path at 5/10/15/20/25/30/45/60 minutes where session data permit.
 
 ## Operational integrity
+
+Before interpreting performance, run:
+
+```powershell
+python scripts/validate_strategy_001i_run.py data/prospective/strategy_001i
+```
 
 Record:
 
