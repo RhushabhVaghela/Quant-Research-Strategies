@@ -114,52 +114,50 @@ Detailed results: `journal/001G_point_in_time_feature_replay_results.md`.
 
 ### 001H — predefined robustness & chronological holdout
 
-**Decision: 🟡 Implementation complete — local empirical run pending.**
+**Decision: 🟡 Complete — historical robustness encouraging; execution economics still unresolved.**
 
-001H reuses the frozen 001D signal/execution implementation and adds fixed validation views for chronological periods, a 2025 development/reference vs 2026 chronological holdout comparison, a pre-registered round-trip friction ladder, trading-frequency stability, return-distribution stability, and a daily completed-trade equity/drawdown proxy.
+The frozen 001D strategy remained positive across all four chronological periods. 2025 contained 197 trades with +4.53 bps mean gross return, 57.87% win rate, 2.406 profit factor, and +9.31% cumulative gross return. The 2026 chronological holdout contained 113 trades with +5.18 bps mean gross return, 52.21% win rate, 2.105 profit factor, and +5.98% cumulative gross return.
 
-The historical split is explicitly labeled OOS-style rather than pristine OOS because the full 2025–2026 sample has already been examined during Strategy 001 research. No parameter, time-of-day filter, stop, target, or holding period is selected by 001H.
+The historical split provides evidence of persistence rather than a collapse in the later sample. However, it is explicitly **OOS-style**, not pristine untouched OOS, because the full January 2025–August 2026 sample has already been examined during research.
 
-Implementation:
+The cost ladder remains the central economic concern: 4 bps round-trip leaves +0.77 bps mean net trade return and +2.34% cumulative net return, while 6 bps round-trip produces -1.23 bps mean net return and -3.81% cumulative net return. At 14 bps round-trip, mean net return is -9.23 bps and cumulative net return is -24.95%. These are scenario assumptions, not observed live costs.
 
-```text
-src/research/strategy_001h_robustness.py
-scripts/run_strategy_001h_robustness.py
-scripts/plot_strategy_001h_results.py
-tests/test_strategy_001h_robustness.py
-research/journal/001H_predefined_robustness_chronological_holdout.md
-research/journal/001H_predefined_robustness_chronological_holdout_results.md
-```
+The local run completed successfully with 59 tests passing before the 001H robustness analysis. The plotting script initially exposed an implementation issue because the exported trade table does not carry the derived period label; that script has now been fixed to reconstruct the period from `signal_timestamp`.
 
-Run locally:
+Detailed results: `journal/001H_predefined_robustness_chronological_holdout_results.md`.
 
-```powershell
-python scripts/run_strategy_001h_robustness.py data/raw/NSE_GOLDBEES_5minute.csv
-python scripts/plot_strategy_001h_results.py data/reports/goldbees_strategy_001h_robustness
-```
+### 001I — prospective OOS / paper-shadow validation
 
-The numerical result is intentionally not populated until the local run is executed and reviewed.
+**Decision: 🟡 Protocol registered — prospective data collection is the next gate.**
+
+Because the historical dataset has been examined through August 2026, we will **not** relabel August 2026 or any September data inspected before the prospective start as OOS. The first genuinely prospective OOS period begins after the freeze/protocol date, with signals recorded before their outcomes are known.
+
+The frozen 001D strategy remains unchanged during this window. Each signal is logged point-in-time, then its realized outcome and execution friction are appended only after the fixed exit. No threshold, holding period, time-of-day filter, stop, target, or other strategy rule may be changed based on observed prospective outcomes.
+
+The first phase is paper/shadow rather than live capital. The main research question is whether the frozen signal continues to occur and whether observed execution economics are compatible with the small historical gross edge.
+
+Protocol: `journal/001I_prospective_oos_paper_shadow_protocol.md`.
 
 ## Strategy 001 promotion path
 
 ```text
-001C point-in-time validation              🟡 promising
+001C point-in-time validation                       🟡 promising
         ↓
-001D formal baseline backtest              🟡 gross positive / costs unresolved
+001D formal baseline backtest                       🟡 gross positive / costs unresolved
         ↓
-001E distribution + execution audit        🟡 complete
+001E distribution + execution audit                 🟡 complete
         ↓
-001F trade decomposition                   🟡 complete
+001F trade decomposition                            🟡 complete
         ↓
-001G PIT feature + forward-path replay     🟡 complete
+001G PIT feature + forward-path replay              🟡 complete
         ↓
-001H predefined robustness + chronological holdout   ← CURRENT
+001H predefined robustness + historical holdout     🟡 complete
         ↓
-Prospective paper / shadow validation
+001I prospective OOS / paper-shadow                 ← CURRENT
         ↓
 Execution validation
         ↓
-Controlled live validation
+Controlled live validation (only if justified)
         ↓
 Strategy 001 final decision
         ↓
