@@ -45,16 +45,20 @@ def _next_weekday(day: date) -> date:
     return candidate
 
 
-def _next_session_open(now: pd.Timestamp) -> pd.Timestamp:
+def _current_or_next_session_day(now: pd.Timestamp) -> date:
     day = now.date()
-    if now.time() >= MARKET_CLOSE or now.weekday() >= 5:
-        day = _next_weekday(day) if now.weekday() < 5 else day
+    if now.weekday() >= 5:
         while day.weekday() >= 5:
             day += timedelta(days=1)
-        return pd.Timestamp(datetime.combine(day, MARKET_OPEN), tz=IST)
-    if now.time() < MARKET_OPEN:
-        return pd.Timestamp(datetime.combine(day, MARKET_OPEN), tz=IST)
-    return now
+        return day
+    if now.time() >= MARKET_CLOSE:
+        return _next_weekday(day)
+    return day
+
+
+def _next_session_open(now: pd.Timestamp) -> pd.Timestamp:
+    day = _current_or_next_session_day(now)
+    return pd.Timestamp(datetime.combine(day, MARKET_OPEN), tz=IST)
 
 
 class TickBarBuffer:
@@ -173,7 +177,12 @@ def main() -> None:
         requested_activation = _as_activation(args.activation, now)
         manifest = initialize_run(root, requested_activation, notes="Prospective paper/shadow capture. Live orders disabled.")
     activation = pd.Timestamp(manifest.activation_timestamp).tz_convert(IST)
-    session_day = activation.date()
+
+    # The activation boundary belongs to the cohort, while each collector
+    # process handles the current/next market session. This allows a run to be
+    # restarted on later sessions without moving the original OOS boundary.
+    current_session_day = _current_or_next_session_day(now)
+    session_day = activation.date() if current_session_day < activation.date() else current_session_day
 
     client = KiteClient()
     instruments = pd.DataFrame(client.instruments(EXCHANGE))
@@ -183,6 +192,7 @@ def main() -> None:
     token = int(matches.iloc[0]["instrument_token"])
     print(f"Resolved {EXCHANGE}:{SYMBOL} instrument token {token}")
     print(f"Prospective activation boundary: {activation.isoformat()}")
+    print(f"Collector session: {session_day.isoformat()}")
 
     warmup_date = _previous_weekday(session_day)
     warmup = _warmup_history(client.kite, token, warmup_date)
