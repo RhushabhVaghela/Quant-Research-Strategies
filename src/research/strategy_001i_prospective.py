@@ -275,7 +275,7 @@ def finalize_paper_outcome(
         raise ValueError("Required entry/exit completed bars are not available")
 
     outcome_recorded_ts = _as_ist_timestamp(outcome_recorded_timestamp)
-    exit_completion_ts = exit_bar_ts + pd.Timedelta(minutes=BAR_MINUTES)
+    exit_completion_ts = exit_bar_ts + pd.to_timedelta(BAR_MINUTES, unit="min")
     if outcome_recorded_ts < exit_completion_ts:
         raise ValueError("Paper outcome was finalized before the frozen exit bar completed")
 

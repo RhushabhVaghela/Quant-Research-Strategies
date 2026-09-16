@@ -34,7 +34,7 @@ def validate_run(output_dir: str | Path) -> list[str]:
             errors.append("bars.csv contains duplicate timestamps")
         if not bar_ts.is_monotonic_increasing:
             errors.append("bars.csv is not monotonically ordered")
-        if ((bar_ts + pd.Timedelta(minutes=BAR_MINUTES)) < activation).any():
+        if ((bar_ts + pd.to_timedelta(BAR_MINUTES, unit="min")) < activation).any():
             errors.append("bars.csv contains a bar whose completion predates activation")
 
     if not signals.empty:
@@ -57,9 +57,9 @@ def validate_run(output_dir: str | Path) -> list[str]:
             errors.append("signals.csv contains a signal captured before activation")
         if (capture_ts > entry_ts).any():
             errors.append("signals.csv contains a signal captured after its entry boundary")
-        if ((entry_ts - signal_ts) != pd.Timedelta(minutes=BAR_MINUTES)).any():
+        if ((entry_ts - signal_ts) != pd.to_timedelta(BAR_MINUTES, unit="min")).any():
             errors.append("signals.csv contains a non-frozen next-bar entry timestamp")
-        if ((exit_ts - signal_ts) != pd.Timedelta(minutes=6 * BAR_MINUTES)).any():
+        if ((exit_ts - signal_ts) != pd.to_timedelta(6 * BAR_MINUTES, unit="min")).any():
             errors.append("signals.csv contains a non-frozen exit timestamp")
 
     if not outcomes.empty:
@@ -81,7 +81,7 @@ def validate_run(output_dir: str | Path) -> list[str]:
                 if sid not in signal_lookup.index:
                     continue
                 exit_ts = _ts(signal_lookup.loc[sid, "intended_exit_timestamp"])
-                if outcome_ts.iloc[idx] < exit_ts + pd.Timedelta(minutes=BAR_MINUTES):
+                if outcome_ts.iloc[idx] < exit_ts + pd.to_timedelta(BAR_MINUTES, unit="min"):
                     errors.append(f"outcome {sid} was recorded before the frozen exit bar completed")
                     break
 

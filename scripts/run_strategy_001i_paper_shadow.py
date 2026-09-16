@@ -153,7 +153,7 @@ def _warmup_history(kite, token: int, end_date: date) -> pd.DataFrame:
 def _session_boundaries(day: date) -> list[pd.Timestamp]:
     start = pd.Timestamp(datetime.combine(day, MARKET_OPEN), tz=IST)
     end = pd.Timestamp(datetime.combine(day, MARKET_CLOSE), tz=IST)
-    return list(pd.date_range(start + pd.Timedelta(minutes=BAR_MINUTES), end, freq=f"{BAR_MINUTES}min"))
+    return list(pd.date_range(start + pd.to_timedelta(BAR_MINUTES, unit="min"), end, freq=f"{BAR_MINUTES}min"))
 
 
 def main() -> None:
@@ -178,9 +178,6 @@ def main() -> None:
         manifest = initialize_run(root, requested_activation, notes="Prospective paper/shadow capture. Live orders disabled.")
     activation = pd.Timestamp(manifest.activation_timestamp).tz_convert(IST)
 
-    # The activation boundary belongs to the cohort, while each collector
-    # process handles the current/next market session. This allows a run to be
-    # restarted on later sessions without moving the original OOS boundary.
     current_session_day = _current_or_next_session_day(now)
     session_day = activation.date() if current_session_day < activation.date() else current_session_day
 
@@ -229,7 +226,7 @@ def main() -> None:
             continue
         while pd.Timestamp.now(tz=IST) < boundary:
             time.sleep(0.2)
-        completed_bucket = boundary - pd.Timedelta(minutes=BAR_MINUTES)
+        completed_bucket = boundary - pd.to_timedelta(BAR_MINUTES, unit="min")
         ticks = buffer.pop(completed_bucket)
         if not ticks:
             print(f"DATA_MISSING {completed_bucket}: no ticks captured; no retrospective reconstruction")
@@ -273,7 +270,7 @@ def main() -> None:
                 exit_ts = exit_ts.tz_localize(IST)
             else:
                 exit_ts = exit_ts.tz_convert(IST)
-            exit_completion = exit_ts + pd.Timedelta(minutes=BAR_MINUTES)
+            exit_completion = exit_ts + pd.to_timedelta(BAR_MINUTES, unit="min")
             if boundary < exit_completion:
                 continue
             try:
