@@ -11,12 +11,12 @@ from src.research.strategy_001i_prospective import (
     initialize_run,
     load_live_bars,
 )
+from src.research.strategy_001i_validation import validate_run
 
 
 def _bars(n: int = 40) -> pd.DataFrame:
     ts = pd.date_range("2026-09-18 09:15", periods=n, freq="5min", tz="Asia/Kolkata")
     close = [100.0 + i * 0.01 for i in range(n)]
-    # Make the final bar a clear positive continuation event.
     close[-1] = 103.0
     return pd.DataFrame({
         "timestamp": ts,
@@ -37,6 +37,14 @@ def test_initialize_run_creates_append_only_files(tmp_path):
     assert (tmp_path / "bars.csv").exists()
 
 
+def test_initialize_run_does_not_move_activation_boundary(tmp_path):
+    initialize_run(tmp_path, "2026-09-18T09:00:00+05:30")
+    resumed = initialize_run(tmp_path, "2026-09-18T09:00:00+05:30")
+    assert resumed.activation_timestamp == "2026-09-18T09:00:00+05:30"
+    with pytest.raises(ValueError, match="different activation timestamp"):
+        initialize_run(tmp_path, "2026-09-18T09:05:00+05:30")
+
+
 def test_evaluate_completed_bar_does_not_use_future_bars():
     bars = _bars()
     prior = bars.iloc[:-1].copy()
@@ -46,6 +54,7 @@ def test_evaluate_completed_bar_does_not_use_future_bars():
         current,
         capture_timestamp="2026-09-18T12:30:00+05:30",
         intended_entry_timestamp="2026-09-18T12:35:00+05:30",
+        activation_timestamp="2026-09-18T09:00:00+05:30",
     )
     assert row is not None
     assert row["status"] == "signal_observed"
@@ -60,6 +69,18 @@ def test_evaluate_completed_bar_rejects_capture_after_entry():
             bars.iloc[-1].to_dict(),
             capture_timestamp="2026-09-18T12:36:00+05:30",
             intended_entry_timestamp="2026-09-18T12:35:00+05:30",
+        )
+
+
+def test_evaluate_completed_bar_rejects_capture_before_activation():
+    bars = _bars()
+    with pytest.raises(ValueError, match="before the activation"):
+        evaluate_completed_bar(
+            bars.iloc[:-1],
+            bars.iloc[-1].to_dict(),
+            capture_timestamp="2026-09-18T12:30:00+05:30",
+            intended_entry_timestamp="2026-09-18T12:35:00+05:30",
+            activation_timestamp="2026-09-18T12:31:00+05:30",
         )
 
 
@@ -81,7 +102,6 @@ def test_signal_and_outcome_are_append_only(tmp_path):
 
 def test_finalize_paper_outcome_uses_next_open_and_frozen_exit():
     bars = _bars(46)
-    # Signal at 12:30. Entry is 12:35 and frozen exit bar is 13:00.
     signal = {
         "signal_id": "001I-20260918-1230",
         "intended_entry_timestamp": "2026-09-18T12:35:00+05:30",
@@ -100,6 +120,17 @@ def test_finalize_paper_outcome_uses_next_open_and_frozen_exit():
     )
 
 
+def test_finalize_paper_outcome_rejects_early_recording():
+    bars = _bars(46)
+    signal = {
+        "signal_id": "001I-20260918-1230",
+        "intended_entry_timestamp": "2026-09-18T12:35:00+05:30",
+        "intended_exit_timestamp": "2026-09-18T13:00:00+05:30",
+    }
+    with pytest.raises(ValueError, match="before the frozen exit bar completed"):
+        finalize_paper_outcome(".", signal, bars, "2026-09-18T13:04:59+05:30")
+
+
 def test_load_live_bars_deduplicates(tmp_path):
     initialize_run(tmp_path, "2026-09-18T09:00:00+05:30")
     pd.DataFrame([
@@ -109,3 +140,21 @@ def test_load_live_bars_deduplicates(tmp_path):
     loaded = load_live_bars(tmp_path / "bars.csv")
     assert len(loaded) == 1
     assert loaded.iloc[0]["close"] == 100.6
+
+
+def test_validate_run_accepts_clean_empty_run(tmp_path):
+    initialize_run(tmp_path, "2026-09-18T09:00:00+05:30")
+    assert validate_run(tmp_path) == []
+
+
+def test_validate_run_rejects_outcome_without_signal(tmp_path):
+    initialize_run(tmp_path, "2026-09-18T09:00:00+05:30")
+    pd.DataFrame([{
+        "signal_id": "001I-20260918-1230",
+        "observable_or_paper_entry_price": 100.0,
+        "observable_or_paper_exit_price": 100.1,
+        "gross_return": 0.001,
+        "outcome_recorded_timestamp": "2026-09-18T13:05:00+05:30",
+    }]).to_csv(tmp_path / "outcomes.csv", index=False)
+    errors = validate_run(tmp_path)
+    assert any("orphan signal_id" in error for error in errors)
