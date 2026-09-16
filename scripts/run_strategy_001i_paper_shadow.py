@@ -29,6 +29,7 @@ from src.research.strategy_001i_prospective import (
     finalize_paper_outcome,
     initialize_run,
     load_live_bars,
+    load_run_manifest,
 )
 
 MARKET_OPEN = dt_time(9, 15)
@@ -46,13 +47,14 @@ def _next_weekday(day: date) -> date:
 
 def _next_session_open(now: pd.Timestamp) -> pd.Timestamp:
     day = now.date()
-    if now.time() >= MARKET_CLOSE:
-        day = _next_weekday(day)
-    elif now.time() < MARKET_OPEN:
-        day = day
-    else:
-        return now
-    return pd.Timestamp(datetime.combine(day, MARKET_OPEN), tz=IST)
+    if now.time() >= MARKET_CLOSE or now.weekday() >= 5:
+        day = _next_weekday(day) if now.weekday() < 5 else day
+        while day.weekday() >= 5:
+            day += timedelta(days=1)
+        return pd.Timestamp(datetime.combine(day, MARKET_OPEN), tz=IST)
+    if now.time() < MARKET_OPEN:
+        return pd.Timestamp(datetime.combine(day, MARKET_OPEN), tz=IST)
+    return now
 
 
 class TickBarBuffer:
@@ -156,14 +158,20 @@ def main() -> None:
     parser.add_argument(
         "--activation",
         default=None,
-        help="Activation timestamp in IST. Defaults to the next/current session boundary when creating a new run.",
+        help="Activation timestamp in IST. Used only when creating a new run directory.",
     )
     args = parser.parse_args()
 
     root = Path(args.output)
     now = pd.Timestamp.now(tz=IST)
-    requested_activation = _as_activation(args.activation, now)
-    manifest = initialize_run(root, requested_activation, notes="Prospective paper/shadow capture. Live orders disabled.")
+    existing_manifest = load_run_manifest(root) if (root / "run_manifest.json").exists() else None
+    if existing_manifest is not None:
+        if args.activation is not None and _as_activation(args.activation, now) != pd.Timestamp(existing_manifest.activation_timestamp):
+            raise ValueError("Existing prospective run already has an immutable activation timestamp")
+        manifest = existing_manifest
+    else:
+        requested_activation = _as_activation(args.activation, now)
+        manifest = initialize_run(root, requested_activation, notes="Prospective paper/shadow capture. Live orders disabled.")
     activation = pd.Timestamp(manifest.activation_timestamp).tz_convert(IST)
     session_day = activation.date()
 
