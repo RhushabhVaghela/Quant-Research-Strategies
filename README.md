@@ -25,7 +25,7 @@ Strategy 001 began as a mean-reversion hypothesis and was rejected. The research
 | 001F decomposition | 🟡 Complete | Edge not solely dependent on top tail winners |
 | 001G replay | 🟡 Complete | 310/310 trades reconciled; forward path and MFE/MAE recovered |
 | **001H robustness/chronological holdout** | **🟡 Complete** | Positive gross performance across all examined periods; costs remain unresolved |
-| **001I prospective OOS / paper-shadow** | **← CURRENT** | Capture ledger and live paper-shadow collector registered; no live orders |
+| **001I prospective OOS / paper-shadow** | **← CURRENT** | Immutable activation boundary, append-only ledger, integrity validator; no live orders |
 
 ### Frozen 001D strategy
 
@@ -88,12 +88,26 @@ Because the historical sample has already been examined through August 2026, the
 
 The implementation now includes:
 
-- `src/research/strategy_001i_prospective.py` — append-only prospective ledger and frozen-rule outcome finalization;
+- `src/research/strategy_001i_prospective.py` — append-only prospective ledger, immutable run activation, and frozen-rule outcome finalization;
+- `src/research/strategy_001i_validation.py` — prospective-run integrity checks;
 - `scripts/run_strategy_001i_paper_shadow.py` — live GOLDBEES tick capture, 5-minute bar construction, signal capture, and paper outcome finalization; **no order placement**;
-- `tests/test_strategy_001i_prospective.py` — prospective ledger/no-look-ahead unit tests;
+- `scripts/validate_strategy_001i_run.py` — command-line integrity validator;
+- `tests/test_strategy_001i_prospective.py` — prospective ledger/no-look-ahead/activation tests;
 - `data/prospective/README.md` — local data handling rules.
 
-The collector uses the existing Zerodha authentication layer and KiteTicker full-mode market data. It must be started before the session and left running; no historical backfill is allowed to create prospective observations after the fact.
+The collector uses the existing Zerodha authentication layer and KiteTicker full-mode market data. It must be started before the session where possible. If it is restarted against the same run directory, the original activation boundary is preserved; moving the boundary requires a new run directory. Previously completed bars are never reconstructed as prospective observations after the fact.
+
+Start a new run explicitly when desired:
+
+```powershell
+python scripts/run_strategy_001i_paper_shadow.py --output data/prospective/strategy_001i
+```
+
+Validate the captured run after a session:
+
+```powershell
+python scripts/validate_strategy_001i_run.py data/prospective/strategy_001i
+```
 
 The central unresolved questions are:
 
@@ -200,6 +214,12 @@ Start the Strategy 001I prospective paper/shadow collector before a market sessi
 
 ```powershell
 python scripts/run_strategy_001i_paper_shadow.py
+```
+
+Validate a captured prospective run:
+
+```powershell
+python scripts/validate_strategy_001i_run.py data/prospective/strategy_001i
 ```
 
 The collector requires valid Zerodha credentials in the local environment, uses the existing authentication layer, and **does not place orders**. It writes prospective observations to `data/prospective/strategy_001i/`, which is ignored by Git except for the directory README.
