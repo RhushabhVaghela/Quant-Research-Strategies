@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from research.strategy_001e_audit import cost_grid, distribution_summary, run_audit
+from src.research.strategy_001e_audit import cost_grid, distribution_summary, run_audit
 
 
 def make_trades() -> pd.DataFrame:
