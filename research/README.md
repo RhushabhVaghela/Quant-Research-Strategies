@@ -74,7 +74,7 @@ Detailed results are in `journal/001C_continuation_hypothesis_results.md`.
 
 ### 001D — formal trading backtest
 
-**Decision: 🟡 Candidate — executable baseline implemented; historical result pending.**
+**Decision: 🟡 Candidate — gross backtest positive; cost sensitivity unresolved.**
 
 The frozen implementation uses:
 
@@ -94,25 +94,56 @@ The frozen implementation uses:
 - no leverage or optimized sizing;
 - no parameter optimization.
 
-The engine separately reports gross performance and explicit cost/slippage sensitivity.
+The completed baseline contains 310 trades. Gross performance was +15.85% cumulative with a +4.77 bps mean trade return, 55.81% win rate, and 2.269 profit factor. The predefined cost grid showed that modest friction can eliminate the gross edge, so this is not paper/live ready.
 
-Implementation:
+### 001E — trade distribution & execution audit
 
-```text
-research/journal/001D_formal_strategy_spec.md
-src/research/continuation_backtest.py
-tests/test_continuation_backtest.py
-scripts/run_strategy_001_backtest.py
-```
+**Decision: 🟡 Complete — gross edge remains interesting, execution economics unresolved.**
+
+001E found:
+
+- median gross trade return: +2.41 bps;
+- mean gross trade return: +4.77 bps;
+- top 10% of winners contributed about 53.7% of positive profit;
+- gross performance remained positive in each chronological period examined;
+- mean trades per active day: about 1.30;
+- median holding duration: 25 minutes;
+- the predefined friction grid rapidly consumed the small per-trade edge.
+
+Detailed results are in `journal/001E_trade_distribution_execution_audit_results.md`.
+
+### 001F — trade-level edge & execution decomposition
+
+**Decision: 🟡 Promising for further research — not paper/live ready.**
+
+001F removed the largest positive trades as a diagnostic. After removing the top 10% of winning trades, the remaining 292 trades still had a +1.41 bps mean gross return, +1.32 bps median, 53.08% win rate, and 1.354 profit factor. The result is therefore not solely produced by a few extreme winners, although tail winners remain important.
+
+Later-session signal buckets were descriptively stronger, while z-score buckets showed no clean monotonic relationship. These observations are hypotheses for future validation, not selected filters.
+
+The compact 001D trade export did not contain all signal-time features or intermediate forward prices, so full feature decomposition and forward-path/MFE/MAE analysis could not be completed from that file alone.
+
+Detailed results: `journal/001F_trade_edge_execution_decomposition_results.md`.
+
+### 001G — point-in-time feature & forward-path replay
+
+**Decision: ⏳ Specification added — execution pending.**
+
+001G will reconstruct the frozen 001D trades directly from the validated GOLDBEES OHLCV dataset, retain signal-time features without look-ahead, reconcile the replay against the 001D trade export, and measure the forward path at fixed horizons plus MFE/MAE where supported.
+
+Specification: `journal/001G_point_in_time_feature_replay.md`.
 
 ## Strategy 001 promotion path
 
 ```text
 001C point-in-time validation              🟡 promising
         ↓
-001D formal baseline backtest              ← CURRENT
+001D formal baseline backtest              🟡 gross positive / costs unresolved
         ↓
-Gross + cost/slippage analysis
+001E distribution + execution audit        🟡 complete
+        ↓
+001F trade decomposition                   🟡 complete
+        ↓
+001G PIT feature + forward-path replay     ← CURRENT
         ↓
 Predefined robustness tests
         ↓
