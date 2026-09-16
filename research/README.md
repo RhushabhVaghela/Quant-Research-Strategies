@@ -76,7 +76,7 @@ Detailed results are in `journal/001C_continuation_hypothesis_results.md`.
 
 **Decision: 🟡 Candidate — gross backtest positive; cost sensitivity unresolved.**
 
-The frozen implementation uses 5-minute bars, previous 30 completed same-session closes, sample standard deviation, z-score ≥ +2.0, prior six-bar return > 0, long-only, signal after event-bar close, next-bar-open entry, close-of-t+6 exit, fixed 12-bar cooldown, no overnight trades, one position at a time, constant-notional normalized accounting, no leverage/optimized sizing, and no parameter optimization.
+The frozen implementation uses 5-minute GOLDBEES data, previous 30 completed same-session closes, sample standard deviation, z-score ≥ +2.0, prior six-bar return > 0, long-only, next-bar-open entry, close-of-t+6 exit, fixed 12-bar cooldown, no overnight feature construction, one position at a time, and no leverage or optimized sizing.
 
 The completed baseline contains 310 trades. Gross performance was +15.85% cumulative with a +4.77 bps mean trade return, 55.81% win rate, and 2.269 profit factor. The predefined cost grid showed that modest friction can eliminate the gross edge, so this is not paper/live ready.
 
@@ -112,6 +112,34 @@ Descriptive signal-time slices showed stronger gross outcomes in the 13–15 ses
 
 Detailed results: `journal/001G_point_in_time_feature_replay_results.md`.
 
+### 001H — predefined robustness & chronological holdout
+
+**Decision: 🟡 Implementation complete — local empirical run pending.**
+
+001H reuses the frozen 001D signal/execution implementation and adds fixed validation views for chronological periods, a 2025 development/reference vs 2026 chronological holdout comparison, a pre-registered round-trip friction ladder, trading-frequency stability, return-distribution stability, and a daily completed-trade equity/drawdown proxy.
+
+The historical split is explicitly labeled OOS-style rather than pristine OOS because the full 2025–2026 sample has already been examined during Strategy 001 research. No parameter, time-of-day filter, stop, target, or holding period is selected by 001H.
+
+Implementation:
+
+```text
+src/research/strategy_001h_robustness.py
+scripts/run_strategy_001h_robustness.py
+scripts/plot_strategy_001h_results.py
+tests/test_strategy_001h_robustness.py
+research/journal/001H_predefined_robustness_chronological_holdout.md
+research/journal/001H_predefined_robustness_chronological_holdout_results.md
+```
+
+Run locally:
+
+```powershell
+python scripts/run_strategy_001h_robustness.py data/raw/NSE_GOLDBEES_5minute.csv
+python scripts/plot_strategy_001h_results.py data/reports/goldbees_strategy_001h_robustness
+```
+
+The numerical result is intentionally not populated until the local run is executed and reviewed.
+
 ## Strategy 001 promotion path
 
 ```text
@@ -137,14 +165,6 @@ Strategy 001 final decision
         ↓
 Only then: Strategy 002
 ```
-
-### 001H — predefined robustness & chronological holdout
-
-001H is a validation gate, not an optimization exercise. It will test the frozen 001D rules across chronological periods, a 2025 development/reference period versus a 2026 chronological holdout, predefined execution-cost scenarios, trade-frequency stability, and return-distribution stability.
-
-Because the full 2025–2026 historical sample has already been examined during Strategy 001 research, the 2026 split cannot honestly be called a pristine untouched OOS test. Future paper/shadow trading will provide the genuinely prospective OOS period.
-
-Specification: `journal/001H_predefined_robustness_chronological_holdout.md`.
 
 A failure at any gate is recorded rather than repaired by post-hoc parameter tuning.
 
