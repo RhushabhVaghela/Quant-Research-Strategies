@@ -1,4 +1,4 @@
-"""Run the frozen Strategy 001D prospectively in paper/shadow mode.
+"""Run frozen Strategy 001D prospectively in paper/shadow mode.
 
 The process uses KiteTicker only for live market data. It never places orders.
 Start it before the market session and leave it running through the session.
@@ -35,6 +35,24 @@ MARKET_OPEN = dt_time(9, 15)
 MARKET_CLOSE = dt_time(15, 30)
 SYMBOL = "GOLDBEES"
 EXCHANGE = "NSE"
+
+
+def _next_weekday(day: date) -> date:
+    candidate = day + timedelta(days=1)
+    while candidate.weekday() >= 5:
+        candidate += timedelta(days=1)
+    return candidate
+
+
+def _next_session_open(now: pd.Timestamp) -> pd.Timestamp:
+    day = now.date()
+    if now.time() >= MARKET_CLOSE:
+        day = _next_weekday(day)
+    elif now.time() < MARKET_OPEN:
+        day = day
+    else:
+        return now
+    return pd.Timestamp(datetime.combine(day, MARKET_OPEN), tz=IST)
 
 
 class TickBarBuffer:
@@ -122,7 +140,6 @@ def _warmup_history(kite, token: int, end_date: date) -> pd.DataFrame:
     else:
         frame["timestamp"] = frame["timestamp"].dt.tz_convert(IST)
     frame = frame.set_index("timestamp").sort_index()
-    # Only pre-activation sessions are allowed in the warm-up set.
     frame = frame[frame.index.date <= end_date]
     return frame[["open", "high", "low", "close", "volume"]]
 
@@ -136,15 +153,19 @@ def _session_boundaries(day: date) -> list[pd.Timestamp]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", default="data/prospective/strategy_001i", help="Prospective run directory")
+    parser.add_argument(
+        "--activation",
+        default=None,
+        help="Activation timestamp in IST. Defaults to the next/current session boundary when creating a new run.",
+    )
     args = parser.parse_args()
 
     root = Path(args.output)
     now = pd.Timestamp.now(tz=IST)
-    if now.time() >= MARKET_CLOSE:
-        activation = now.normalize() + pd.Timedelta(days=1) + pd.Timedelta(hours=9, minutes=15)
-    else:
-        activation = now
-    initialize_run(root, activation, notes="Prospective paper/shadow capture. Live orders disabled.")
+    requested_activation = _as_activation(args.activation, now)
+    manifest = initialize_run(root, requested_activation, notes="Prospective paper/shadow capture. Live orders disabled.")
+    activation = pd.Timestamp(manifest.activation_timestamp).tz_convert(IST)
+    session_day = activation.date()
 
     client = KiteClient()
     instruments = pd.DataFrame(client.instruments(EXCHANGE))
@@ -153,8 +174,9 @@ def main() -> None:
         raise RuntimeError(f"Could not resolve {EXCHANGE}:{SYMBOL} in current instrument master")
     token = int(matches.iloc[0]["instrument_token"])
     print(f"Resolved {EXCHANGE}:{SYMBOL} instrument token {token}")
+    print(f"Prospective activation boundary: {activation.isoformat()}")
 
-    warmup_date = (now - pd.Timedelta(days=1)).date()
+    warmup_date = _previous_weekday(session_day)
     warmup = _warmup_history(client.kite, token, warmup_date)
     live_bars = load_live_bars(root / "bars.csv")
     buffer = TickBarBuffer()
@@ -178,19 +200,21 @@ def main() -> None:
     ticker.on_close = on_close
     ticker.connect(threaded=True)
 
-    session_day = now.date()
-    if now.time() < MARKET_OPEN:
-        while pd.Timestamp.now(tz=IST).date() == session_day and pd.Timestamp.now(tz=IST).time() < MARKET_OPEN:
+    session_open = pd.Timestamp(datetime.combine(session_day, MARKET_OPEN), tz=IST)
+    if pd.Timestamp.now(tz=IST) < session_open:
+        while pd.Timestamp.now(tz=IST) < session_open:
             time.sleep(1.0)
 
     print("001I paper/shadow collector running. No orders will be placed.")
     for boundary in _session_boundaries(session_day):
+        if boundary < activation:
+            continue
         while pd.Timestamp.now(tz=IST) < boundary:
             time.sleep(0.2)
         completed_bucket = boundary - pd.Timedelta(minutes=BAR_MINUTES)
         ticks = buffer.pop(completed_bucket)
         if not ticks:
-            print(f"DATA_MISSING {completed_bucket}: no ticks captured")
+            print(f"DATA_MISSING {completed_bucket}: no ticks captured; no retrospective reconstruction")
             continue
 
         bar = _build_bar(completed_bucket, ticks)
@@ -198,7 +222,6 @@ def main() -> None:
         live_bars = load_live_bars(root / "bars.csv")
 
         prior_live = live_bars.iloc[:-1].copy()
-        prior_live = prior_live.rename(columns={"timestamp": "timestamp"})
         current = live_bars.iloc[-1].to_dict()
         current["timestamp"] = pd.Timestamp(current["timestamp"])
         history = warmup.reset_index().rename(columns={"index": "timestamp"})
@@ -212,6 +235,7 @@ def main() -> None:
                 intended_entry_timestamp=boundary,
                 signal_bid=bar.get("best_bid_last"),
                 signal_ask=bar.get("best_ask_last"),
+                activation_timestamp=activation,
             )
         except ValueError as exc:
             print(f"OPERATIONAL_ERROR {completed_bucket}: {exc}")
@@ -231,7 +255,8 @@ def main() -> None:
                 exit_ts = exit_ts.tz_localize(IST)
             else:
                 exit_ts = exit_ts.tz_convert(IST)
-            if exit_ts != completed_bucket:
+            exit_completion = exit_ts + pd.Timedelta(minutes=BAR_MINUTES)
+            if boundary < exit_completion:
                 continue
             try:
                 outcome = finalize_paper_outcome(
@@ -247,6 +272,24 @@ def main() -> None:
 
     ticker.close()
     print("001I session complete. Review signals.csv, outcomes.csv, bars.csv and run_manifest.json.")
+
+
+def _previous_weekday(day: date) -> date:
+    candidate = day - timedelta(days=1)
+    while candidate.weekday() >= 5:
+        candidate -= timedelta(days=1)
+    return candidate
+
+
+def _as_activation(raw: str | None, now: pd.Timestamp) -> pd.Timestamp:
+    if raw:
+        ts = pd.Timestamp(raw)
+        if ts.tzinfo is None:
+            ts = ts.tz_localize(IST)
+        else:
+            ts = ts.tz_convert(IST)
+        return ts
+    return _next_session_open(now)
 
 
 if __name__ == "__main__":
