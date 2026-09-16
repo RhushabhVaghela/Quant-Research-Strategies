@@ -25,7 +25,7 @@ Strategy 001 began as a mean-reversion hypothesis and was rejected. The research
 | 001F decomposition | 🟡 Complete | Edge not solely dependent on top tail winners |
 | 001G replay | 🟡 Complete | 310/310 trades reconciled; forward path and MFE/MAE recovered |
 | **001H robustness/chronological holdout** | **🟡 Complete** | Positive gross performance across all examined periods; costs remain unresolved |
-| **001I prospective OOS / paper-shadow** | **← CURRENT** | Protocol registered; genuine prospective observation begins after activation |
+| **001I prospective OOS / paper-shadow** | **← CURRENT** | Capture ledger and live paper-shadow collector registered; no live orders |
 
 ### Frozen 001D strategy
 
@@ -84,7 +84,16 @@ Detailed results: `research/journal/001H_predefined_robustness_chronological_hol
 
 Because the historical sample has already been examined through August 2026, the repository does **not** relabel August 2026 or previously inspected September observations as pristine OOS. The first genuine prospective OOS observations are captured only after the 001I activation boundary, before their future outcomes are known.
 
-001I keeps the 001D rules unchanged and records point-in-time signal information first. After the fixed exit, outcome and execution-cost information are appended. The first phase is paper/shadow, not live capital.
+001I keeps the 001D rules unchanged and records point-in-time signal information first. After the frozen exit candle has completed, paper outcome and execution-observation information are appended. The first phase is paper/shadow, not live capital.
+
+The implementation now includes:
+
+- `src/research/strategy_001i_prospective.py` — append-only prospective ledger and frozen-rule outcome finalization;
+- `scripts/run_strategy_001i_paper_shadow.py` — live GOLDBEES tick capture, 5-minute bar construction, signal capture, and paper outcome finalization; **no order placement**;
+- `tests/test_strategy_001i_prospective.py` — prospective ledger/no-look-ahead unit tests;
+- `data/prospective/README.md` — local data handling rules.
+
+The collector uses the existing Zerodha authentication layer and KiteTicker full-mode market data. It must be started before the session and left running; no historical backfill is allowed to create prospective observations after the fact.
 
 The central unresolved questions are:
 
@@ -96,7 +105,7 @@ The central unresolved questions are:
 Review checkpoints at 20, 50, and 100 completed trades, plus an approximately three-month time/regime review, are data-quality/research checkpoints rather than success thresholds.
 
 Protocol: `research/journal/001I_prospective_oos_paper_shadow_protocol.md`.
-Results template: `research/journal/001I_prospective_oos_paper_shadow_results.md`.
+Results journal: `research/journal/001I_prospective_oos_paper_shadow_results.md`.
 
 ---
 
@@ -187,6 +196,12 @@ python scripts/run_strategy_001h_robustness.py data/raw/NSE_GOLDBEES_5minute.csv
 python scripts/plot_strategy_001h_results.py data/reports/goldbees_strategy_001h_robustness
 ```
 
-The local 001G run must reconcile the frozen 001D trades before its numerical interpretation is accepted. The 001H numerical result must be recorded only after the local empirical run is completed.
+Start the Strategy 001I prospective paper/shadow collector before a market session:
 
-The 001I prospective protocol and result template are in `research/journal/001I_prospective_oos_paper_shadow_protocol.md` and `research/journal/001I_prospective_oos_paper_shadow_results.md`.
+```powershell
+python scripts/run_strategy_001i_paper_shadow.py
+```
+
+The collector requires valid Zerodha credentials in the local environment, uses the existing authentication layer, and **does not place orders**. It writes prospective observations to `data/prospective/strategy_001i/`, which is ignored by Git except for the directory README.
+
+The local 001G run must reconcile the frozen 001D trades before its numerical interpretation is accepted. The 001H numerical result must be recorded only after the local empirical run is completed. The 001I results journal must only be populated from genuinely prospective records.
