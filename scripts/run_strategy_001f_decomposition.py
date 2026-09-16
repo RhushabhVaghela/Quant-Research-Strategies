@@ -1,0 +1,31 @@
+"""Run the diagnostic Strategy 001F decomposition on frozen 001D trades."""
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import pandas as pd
+
+from src.research.strategy_001f_decomposition import run_decomposition
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("trade_csv", type=Path)
+    parser.add_argument("--output-dir", type=Path, default=Path("data/reports/goldbees_strategy_001f_decomposition"))
+    args = parser.parse_args()
+
+    trades = pd.read_csv(args.trade_csv, parse_dates=["signal_timestamp", "entry_timestamp", "exit_timestamp"])
+    report = run_decomposition(trades)
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    for name, frame in report.items():
+        frame.to_csv(args.output_dir / f"{name}.csv", index=False)
+    print(f"Decomposed {len(trades):,} frozen trades")
+    print(f"Wrote Strategy 001F outputs to {args.output_dir}")
+    for name, frame in report.items():
+        print(f"\n--- {name} ---")
+        print(frame.to_string(index=False))
+
+
+if __name__ == "__main__":
+    main()
