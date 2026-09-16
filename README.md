@@ -6,43 +6,7 @@ The main README is the interview-facing journal: what we thought, what we tested
 
 ---
 
-## Research lifecycle
-
-```text
-Economic hypothesis
-        ↓
-Prediction target
-        ↓
-Data validation
-        ↓
-Simple baseline
-        ↓
-Statistical experiment
-        ↓
-Reject / inconclusive / promising
-        ↓
-Refinement / attribution
-        ↓
-Freeze hypothesis
-        ↓
-Point-in-time validation
-        ↓
-Formal trading backtest
-        ↓
-Costs + slippage + execution analysis
-        ↓
-Out-of-sample / walk-forward validation
-        ↓
-Paper / shadow validation
-        ↓
-Controlled live validation
-```
-
-Failures are part of the portfolio. We do not delete unsuccessful hypotheses or optimize until a backtest looks attractive.
-
----
-
-# Current research status
+## Current research status
 
 | Stage | Status |
 |---|---|
@@ -53,7 +17,10 @@ Failures are part of the portfolio. We do not delete unsuccessful hypotheses or 
 | Strategy 001A — event structure diagnostics | ✅ Complete — continuation lead identified |
 | Strategy 001B — continuation attribution | 🟡 Promising research lead |
 | Strategy 001C — point-in-time validation | 🟡 Promising — lead survived PIT benchmark |
-| Strategy 001D — formal trading backtest | 🟡 Candidate — implementation complete, result pending |
+| Strategy 001D — formal trading backtest | 🟡 Gross positive / cost sensitivity unresolved |
+| Strategy 001E — trade distribution & execution audit | 🟡 Complete — execution economics unresolved |
+| Strategy 001F — trade-level decomposition | 🟡 Promising diagnostic — not paper/live ready |
+| Strategy 001G — PIT feature & forward-path replay | 🟡 Implementation complete — empirical run pending |
 | Robustness / OOS validation | ⏳ Not started |
 | Paper / shadow validation | ⏳ Not started |
 | Controlled live validation | ⛔ Not started |
@@ -69,7 +36,7 @@ Failures are part of the portfolio. We do not delete unsuccessful hypotheses or 
 
 ### Original hypothesis
 
-> When GOLDBEES closes unusually far from its recent intraday mean, the subsequent return should tend to have the opposite sign and move back toward the mean.
+When GOLDBEES closes unusually far from its recent intraday mean, the subsequent return should tend to have the opposite sign and move back toward the mean.
 
 The first experiment used 5-minute bars, a 30-bar prior lookback, an absolute z-score threshold of 2.0, and same-session forward horizons of 1, 3, 6, and 12 bars.
 
@@ -92,16 +59,7 @@ Positive deviations instead showed positive average forward returns. This was co
 
 ## Strategy 001A — Event Structure & Conditioning Diagnostics
 
-001A tested whether the continuation-like behavior survived dependence controls and whether it was concentrated in predefined conditions.
-
-### What we learned
-
-1. Raw events were highly clustered.
-2. Positive-deviation continuation survived fixed non-overlap filtering.
-3. Prior six-bar trend was the clearest conditioning variable.
-4. Negative deviations did not show a symmetric counterpart.
-5. Volume and volatility did not provide a simple primary explanation.
-6. Exploratory concentrations were not optimized.
+001A showed that positive-deviation continuation survived fixed non-overlap filtering, with prior six-bar trend the clearest conditioning variable. Negative deviations did not show a symmetric counterpart. No parameters were optimized.
 
 **Decision: continuation became a promising exploratory lead.**
 
@@ -109,9 +67,7 @@ Positive deviations instead showed positive average forward returns. This was co
 
 ## Strategy 001B — Continuation Attribution
 
-001B asked whether continuation after a large deviation contained information beyond ordinary intraday drift and the recent trend.
-
-The strongest subgroup was **positive deviation + prior uptrend**. In the fixed non-overlapping event set, event returns exceeded matched non-event baselines at every tested horizon:
+The strongest subgroup was **positive deviation + prior uptrend**. Event returns exceeded matched non-event baselines at the tested horizons.
 
 | Horizon | Event mean | Matched baseline | Incremental |
 |---|---:|---:|---:|
@@ -122,38 +78,21 @@ The strongest subgroup was **positive deviation + prior uptrend**. In the fixed 
 
 **Decision: 🟡 Promising research lead.**
 
-Detailed results: `research/journal/001B_continuation_attribution_results.md`.
-
 ---
 
 ## Strategy 001C — Point-in-Time Validation
 
-001C froze the continuation hypothesis and required benchmark outcomes to have fully completed before the event timestamp.
+001C froze the continuation hypothesis and required benchmark outcomes to have fully completed before the event timestamp. It produced **1,668 frozen events** and **401 selected non-overlapping events** under the fixed 12-bar cooldown.
 
-The implementation produced **1,668 frozen events** and **401 selected non-overlapping events** under the fixed 12-bar cooldown.
-
-For positive deviation + prior uptrend:
-
-| Horizon | Event return | PIT baseline | Incremental return |
-|---|---:|---:|---:|
-| 5 min | +0.0148% | +0.0032% | **+0.0115%** |
-| 15 min | +0.0205% | +0.0099% | **+0.0106%** |
-| 30 min | +0.0443% | +0.0194% | **+0.0249%** |
-| 60 min | +0.0527% | +0.0279% | **+0.0247%** |
-
-The pre-specified 30-minute primary horizon therefore showed approximately **+2.49 basis points of incremental gross return** relative to the point-in-time matched benchmark.
-
-This is encouraging but does not establish tradable alpha. Costs, slippage, drawdown, turnover, execution realism, and chronological OOS stability remain unresolved.
+At the pre-specified 30-minute primary horizon, positive deviation + prior uptrend had +0.0443% event return versus +0.0194% PIT baseline, or approximately **+2.49 bps incremental gross return**.
 
 **Decision: 🟡 Promising — promote to formal Strategy 001D backtest.**
-
-Detailed results: `research/journal/001C_continuation_hypothesis_results.md`.
 
 ---
 
 ## Strategy 001D — Formal Trading Backtest
 
-001D turns the frozen research hypothesis into an executable baseline **without changing the signal rule**.
+001D turns the frozen research hypothesis into an executable baseline without changing the signal rule.
 
 ### Frozen implementation
 
@@ -173,45 +112,78 @@ Detailed results: `research/journal/001C_continuation_hypothesis_results.md`.
 - no leverage or optimized sizing;
 - no parameter optimization.
 
-The engine separately reports gross performance and explicit cost/slippage sensitivity. OHLCV alone cannot reveal exact historical execution quality, so cost assumptions are reported as transparent scenarios rather than disguised as measured historical costs.
-
-### Implementation
-
-```text
-research/journal/001D_formal_strategy_spec.md
-src/research/continuation_backtest.py
-tests/test_continuation_backtest.py
-scripts/run_strategy_001_backtest.py
-```
-
-### Current decision
-
-**🟡 CANDIDATE — implementation complete; historical backtest result pending.**
-
-The first 001D run is an evidence gate, not a deployment decision.
+The completed baseline contains **310 trades**. Gross performance was **+15.85% cumulative**, with a **+4.77 bps mean trade return**, **55.81% win rate**, and **2.269 profit factor**. The predefined cost grid showed that modest friction can eliminate the gross edge, so this is not paper/live ready.
 
 ---
 
-# Why the project uses reference resources without blindly copying them
+## Strategy 001E — Trade Distribution & Execution Audit
 
-The repository contains the user's WorldQuant University material and code under `trading_resources/WQU_resources/`, alongside other strategy/reference material. These resources are used for learning, implementation patterns, candidate ideas, feature engineering, and later ML/model development.
+001E found a **+2.41 bps median** and **+4.77 bps mean** gross trade return. The top 10% of winners contributed about **53.7%** of positive profit. Gross performance remained positive in each chronological period examined, with about **1.30 trades per active day** and **25 minutes median holding duration**. The predefined friction grid rapidly consumed the small per-trade edge.
 
-A resource implementation is not automatically a validated strategy. When we use one, we still establish its hypothesis, define its data/execution assumptions, test for leakage, and validate it under this project's research gates.
+**Decision: 🟡 Complete — gross edge remains interesting, execution economics unresolved.**
 
-This keeps the portfolio from becoming a collection of copied backtests while still taking advantage of the substantial material already available.
+---
+
+## Strategy 001F — Trade-Level Edge & Execution Decomposition
+
+After removing the top 10% of winning trades, the remaining 292 trades still had a **+1.41 bps mean**, **+1.32 bps median**, **53.08% win rate**, and **1.354 profit factor**. Tail winners remain important, but the gross result is not solely produced by a few extremes. Later-session buckets were descriptively stronger, while z-score buckets showed no clean monotonic relationship. These are not selected filters.
+
+The compact 001D trade export lacked the complete signal-time feature set and intermediate forward prices, motivating 001G.
+
+**Decision: 🟡 Promising diagnostic — not paper/live ready.**
+
+---
+
+## Strategy 001G — Point-in-Time Feature & Forward-Path Replay
+
+001G reconstructs the frozen 001D trades directly from validated GOLDBEES OHLCV. It retains signal-time features without look-ahead, reconciles reconstructed trades against the 001D export, and measures forward returns plus MFE/MAE.
+
+The implementation deliberately reuses the frozen 001D signal/execution logic rather than introducing a new rule.
+
+### Delivered implementation
+
+```text
+src/research/strategy_001g_replay.py
+scripts/run_strategy_001g_replay.py
+scripts/plot_strategy_001g_results.py
+tests/test_strategy_001g_replay.py
+research/journal/001G_point_in_time_feature_replay.md
+research/journal/001G_point_in_time_feature_replay_results.md
+```
+
+### Horizon convention
+
+The signal occurs at the close of bar `t`, entry occurs at the open of `t+1`, and the frozen exit is the close of `t+6`. Therefore the frozen **30-minute signal horizon corresponds to approximately 25 minutes of entry-to-exit elapsed time** on regular 5-minute bars. 001G records this distinction explicitly.
+
+### Current decision
+
+**🟡 Implementation complete — empirical run pending.**
+
+Run locally:
+
+```powershell
+python scripts/run_strategy_001g_replay.py data/raw/NSE_GOLDBEES_5minute.csv
+python scripts/plot_strategy_001g_results.py data/reports/goldbees_strategy_001g_replay
+```
+
+The runner writes replayed trades, forward paths, a forward-path summary, MFE/MAE, and a reconciliation report. The plotting script creates forward-path and MFE/MAE charts.
+
+No 001G numerical result is treated as evidence until the run has been executed and reconciliation reviewed.
 
 ---
 
 # Strategy 001 promotion path
 
-Strategy 001 remains the **only active strategy** until it reaches a clear promotion or rejection decision.
-
 ```text
 001C point-in-time validation              🟡 promising
         ↓
-001D formal baseline backtest              ← CURRENT
+001D formal baseline backtest              🟡 gross positive / costs unresolved
         ↓
-Gross + cost/slippage analysis
+001E distribution + execution audit        🟡 complete
+        ↓
+001F trade decomposition                   🟡 complete
+        ↓
+001G PIT feature + forward-path replay     ← CURRENT
         ↓
 Predefined robustness tests
         ↓
@@ -232,27 +204,11 @@ A failure at any gate is recorded rather than repaired by post-hoc parameter tun
 
 ---
 
-# Project structure
+# Why the project uses reference resources without blindly copying them
 
-```text
-Quant-Research-Strategies/
-├── README.md                         # Interview-facing research journal
-├── research/
-│   ├── journal/                      # Chronological research decisions
-│   ├── phase_*.md                    # Research specifications
-│   └── universe_candidates.csv       # Predefined research universe
-├── src/
-│   ├── data/                         # Data and broker integration
-│   └── research/                     # Research and backtesting utilities
-├── scripts/                          # Reproducible experiments
-├── tests/                            # Automated checks
-├── data/
-│   ├── raw/                          # Local historical datasets
-│   └── reports/                      # Generated experiment outputs
-└── trading_resources/
-    ├── WQU_resources/                # WorldQuant University learning material
-    └── Concepts/                     # Reference strategy/concept material
-```
+The repository contains WorldQuant University material under `trading_resources/WQU_resources/`, alongside Quantra and other strategy/reference material. These resources are used for learning, implementation patterns, candidate ideas, feature engineering, and later ML/model development.
+
+A resource implementation is not automatically a validated strategy. When we use one, we still establish its hypothesis, define its data/execution assumptions, test for leakage, and validate it under this project's research gates.
 
 ---
 
@@ -289,7 +245,7 @@ Run tests:
 pytest
 ```
 
-Run the 001D Strategy 001 baseline backtest:
+Run the 001D baseline:
 
 ```powershell
 python scripts/run_strategy_001_backtest.py data/raw/NSE_GOLDBEES_5minute.csv
@@ -301,26 +257,13 @@ Run the 001C point-in-time audit:
 python scripts/run_point_in_time_baseline.py data/raw/NSE_GOLDBEES_5minute.csv
 ```
 
-Credentials and access tokens must remain local and must never be committed.
+Run the 001G replay:
 
----
-
-# Roadmap
-
-```text
-Research design / execution constraints             ✅
-Historical data validation                           ✅
-Strategy 001 mean reversion                          🔴 rejected
-001A event diagnostics                                ✅
-001B continuation attribution                         🟡 promising
-001C point-in-time validation                         🟡 promising
-001D formal trading backtest                          🟡 CURRENT
-Robustness + costs + slippage                         ⏳
-Chronological OOS / walk-forward                      ⏳
-Paper / shadow validation                             ⏳
-Controlled live validation                            ⏳
-Strategy 001 final decision                           ⏳
-Strategy 002                                           ⛔ deferred until 001 complete
+```powershell
+python scripts/run_strategy_001g_replay.py data/raw/NSE_GOLDBEES_5minute.csv
+python scripts/plot_strategy_001g_results.py data/reports/goldbees_strategy_001g_replay
 ```
+
+Credentials and access tokens must remain local and must never be committed.
 
 **The project is intentionally incomplete. The research journey is the deliverable.**
