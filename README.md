@@ -24,7 +24,8 @@ Strategy 001 began as a mean-reversion hypothesis and was rejected. The research
 | 001E execution audit | 🟡 Complete | Small gross edge is highly friction-sensitive |
 | 001F decomposition | 🟡 Complete | Edge not solely dependent on top tail winners |
 | 001G replay | 🟡 Complete | 310/310 trades reconciled; forward path and MFE/MAE recovered |
-| **001H robustness/chronological holdout** | **← CURRENT** | Predefined validation implementation complete; empirical run pending |
+| **001H robustness/chronological holdout** | **🟡 Complete** | Positive gross performance across all examined periods; costs remain unresolved |
+| **001I prospective OOS / paper-shadow** | **← CURRENT** | Protocol registered; genuine prospective observation begins after activation |
 
 ### Frozen 001D strategy
 
@@ -58,38 +59,67 @@ MFE averaged +15.35 bps with a +9.48 bps median; MAE averaged -9.63 bps with a -
 
 The 001G feature slices are descriptive only. Later-session buckets were stronger in this sample, while z-score, prior six-bar return, and volume-ratio relationships did not show a clean monotonic pattern. No new filter has been selected from these observations.
 
-Detailed journal: `research/journal/001G_point_in_time_feature_replay_results.md`.
+### 001H result
 
-### 001H next gate
+001H kept the 001D strategy frozen and tested four chronological periods, a 2025 development/reference vs 2026 historical holdout designation, trading-frequency stability, return-distribution stability, and a predefined round-trip friction ladder.
 
-001H keeps the 001D strategy frozen and tests temporal stability, a 2025 development/reference vs 2026 chronological holdout split, predefined round-trip friction of 0/2/4/6/8/10/14 bps, trading-frequency stability, and return-distribution stability. It also creates a daily completed-trade equity/drawdown diagnostic.
+The frozen gross edge remained positive in all four examined periods:
 
-The 2026 split is explicitly **OOS-style**, not pristine untouched OOS, because the full January 2025–August 2026 sample has already been examined during Strategy 001 research. Future paper/shadow execution will provide genuinely prospective OOS evidence.
+| Period | Trades | Mean gross | Median gross | Win rate | PF | Cumulative gross |
+|---|---:|---:|---:|---:|---:|---:|
+| 2025 H1 | 100 | +3.32 bps | +1.25 bps | 51.00% | 1.947 | +3.36% |
+| 2025 H2 | 97 | +5.79 bps | +3.30 bps | 64.95% | 2.971 | +5.76% |
+| 2026 H1 | 76 | +6.63 bps | +2.03 bps | 52.63% | 2.260 | +5.13% |
+| 2026 H2* | 37 | +2.19 bps | +0.79 bps | 51.35% | 1.627 | +0.81% |
 
-Implementation and run instructions are in `research/journal/001H_predefined_robustness_chronological_holdout.md`.
+\* Available portion of 2026 H2 in the historical dataset.
+
+The 2025 development/reference sample had +4.53 bps mean gross return and 2.406 PF. The 2026 chronological holdout had +5.18 bps mean gross return and 2.105 PF. This supports historical temporal persistence but is **not pristine OOS evidence**, because the full January 2025–August 2026 sample has already been examined.
+
+The cost grid remains the main unresolved economic issue. At 4 bps round-trip friction, mean net return was +0.77 bps and cumulative net return +2.34%. At 6 bps, mean net return was -1.23 bps and cumulative net return -3.81%. At 14 bps, mean net return was -9.23 bps and cumulative net return -24.95%. These are scenario assumptions, not observed live costs.
+
+Detailed results: `research/journal/001H_predefined_robustness_chronological_holdout_results.md`.
+
+### 001I prospective OOS / paper-shadow
+
+Because the historical sample has already been examined through August 2026, the repository does **not** relabel August 2026 or previously inspected September observations as pristine OOS. The first genuine prospective OOS observations are captured only after the 001I activation boundary, before their future outcomes are known.
+
+001I keeps the 001D rules unchanged and records point-in-time signal information first. After the fixed exit, outcome and execution-cost information are appended. The first phase is paper/shadow, not live capital.
+
+The central unresolved questions are:
+
+1. Does the frozen signal continue prospectively?
+2. Does its forward-path distribution remain compatible with the historical evidence?
+3. What spread/slippage/costs are actually observed?
+4. Does the gross edge remain economically plausible after those observed frictions?
+
+Review checkpoints at 20, 50, and 100 completed trades, plus an approximately three-month time/regime review, are data-quality/research checkpoints rather than success thresholds.
+
+Protocol: `research/journal/001I_prospective_oos_paper_shadow_protocol.md`.
+Results template: `research/journal/001I_prospective_oos_paper_shadow_results.md`.
 
 ---
 
 # Strategy 001 promotion path
 
 ```text
-001C point-in-time validation              🟡 promising
+001C point-in-time validation                       🟡 promising
         ↓
-001D formal baseline backtest              🟡 gross positive / costs unresolved
+001D formal baseline backtest                       🟡 gross positive / costs unresolved
         ↓
-001E distribution + execution audit        🟡 complete
+001E distribution + execution audit                 🟡 complete
         ↓
-001F trade decomposition                   🟡 complete
+001F trade decomposition                            🟡 complete
         ↓
-001G PIT feature + forward-path replay     🟡 complete
+001G PIT feature + forward-path replay              🟡 complete
         ↓
-001H predefined robustness + chronological holdout   ← CURRENT
+001H predefined robustness + historical holdout     🟡 complete
         ↓
-Prospective paper / shadow validation
+001I prospective OOS / paper-shadow                 ← CURRENT
         ↓
-Execution validation
+Execution-cost validation
         ↓
-Controlled live validation
+Separate controlled-live validation protocol
         ↓
 Strategy 001 final decision
         ↓
@@ -98,11 +128,13 @@ Only then: Strategy 002
 
 A failure at any gate is recorded rather than repaired by post-hoc parameter tuning.
 
+**No strategy is approved for live deployment.**
+
 ---
 
 # Why the project uses reference resources without blindly copying them
 
-The repository contains WorldQuant University material under `trading_resources/WQU_resources/`, alongside Quantra and other strategy/reference material. These resources are used for learning, implementation patterns, candidate ideas, feature engineering, and later ML/model development.
+The repository contains WorldQuant University learning material under `trading_resources/WQU_resources/`, alongside Quantra and other strategy/reference material. These resources are used for learning, implementation patterns, candidate ideas, feature engineering, and later ML/model development.
 
 A resource implementation is not automatically a validated strategy. When we use one, we still establish its hypothesis, define its data/execution assumptions, test for leakage, and validate it under this project's research gates.
 
@@ -120,7 +152,7 @@ A resource implementation is not automatically a validated strategy. When we use
 8. Test across time and market regimes.
 9. Include transaction costs and slippage before judging economic value.
 10. Treat backtests as evidence, not guarantees.
-11. Require chronological out-of-sample evidence before paper validation.
+11. Require genuine prospective evidence before controlled live validation.
 12. Never deploy simply because a backtest looks attractive.
 
 ---
@@ -156,3 +188,5 @@ python scripts/plot_strategy_001h_results.py data/reports/goldbees_strategy_001h
 ```
 
 The local 001G run must reconcile the frozen 001D trades before its numerical interpretation is accepted. The 001H numerical result must be recorded only after the local empirical run is completed.
+
+The 001I prospective protocol and result template are in `research/journal/001I_prospective_oos_paper_shadow_protocol.md` and `research/journal/001I_prospective_oos_paper_shadow_results.md`.
