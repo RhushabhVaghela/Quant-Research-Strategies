@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from research.strategy_001e_audit import run_audit
+from src.research.strategy_001e_audit import run_audit
 
 
 def main() -> None:
