@@ -71,7 +71,7 @@ def main() -> None:
             labels.append(period)
     fig, ax = plt.subplots(figsize=(8, 5))
     if groups:
-        ax.boxplot(groups, labels=labels, showfliers=False)
+        ax.boxplot(groups, tick_labels=labels, showfliers=False)
     ax.axhline(0, linewidth=1)
     ax.set_xlabel("Chronological period")
     ax.set_ylabel("Trade gross return (bps)")
