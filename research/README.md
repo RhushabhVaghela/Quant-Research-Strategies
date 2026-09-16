@@ -94,28 +94,23 @@ Detailed results are in `journal/001E_trade_distribution_execution_audit_results
 
 After removing the top 10% of winning trades, the remaining 292 trades still had a +1.41 bps mean gross return, +1.32 bps median, 53.08% win rate, and 1.354 profit factor. Tail winners remain important, but the gross result is not solely produced by a few extremes. Later-session buckets were descriptively stronger, while z-score buckets showed no clean monotonic relationship. These are not selected filters.
 
-The compact 001D trade export lacked the complete signal-time feature set and intermediate forward prices, motivating 001G.
+The compact 001D trade export lacked the complete signal-time feature set and intermediate forward returns, motivating 001G.
 
 Detailed results: `journal/001F_trade_edge_execution_decomposition_results.md`.
 
 ### 001G — point-in-time feature & forward-path replay
 
-**Decision: 🟡 Implementation complete — empirical run pending.**
+**Decision: 🟡 Complete — replay reconciled; forward-path diagnostics informative; not paper/live ready.**
 
-001G reconstructs the frozen 001D trades directly from validated GOLDBEES OHLCV, retains signal-time features without look-ahead, reconciles the replay against the 001D trade export, and measures forward returns plus MFE/MAE. The implementation deliberately reuses the frozen 001D signal/execution logic rather than introducing a new rule.
+The frozen 001D strategy was reconstructed directly from validated GOLDBEES OHLCV. All 310 replayed trades matched the 310-trade 001D reference within tolerance, with zero discrepancies.
 
-Implementation:
+The forward path was already positive before the frozen exit: mean return was +1.36 bps at 5 minutes, +2.44 bps at 10 minutes, +3.40 bps at 20 minutes, +4.51 bps at 25 minutes, and +4.77 bps at 30 minutes. Median return was +2.41 bps at 30 minutes. The 45- and 60-minute samples are smaller because paths cannot cross the session boundary.
 
-```text
-src/research/strategy_001g_replay.py
-scripts/run_strategy_001g_replay.py
-scripts/plot_strategy_001g_results.py
-tests/test_strategy_001g_replay.py
-research/journal/001G_point_in_time_feature_replay.md
-research/journal/001G_point_in_time_feature_replay_results.md
-```
+MFE averaged +15.35 bps with a +9.48 bps median, while MAE averaged -9.63 bps with a -6.88 bps median. These are path diagnostics, not proof that intrabar highs/lows could be captured in execution.
 
-Run locally against the validated dataset and frozen 001D trade export. Do not interpret 001G as a promotion gate until reconciliation and diagnostics are reviewed.
+Descriptive signal-time slices showed stronger gross outcomes in the 13–15 session buckets, but this is not being converted into an afternoon-only filter. Z-score buckets showed no clean monotonic relationship, and simple correlations of gross return with z-score, prior six-bar return, and volume ratio were small.
+
+Detailed results: `journal/001G_point_in_time_feature_replay_results.md`.
 
 ## Strategy 001 promotion path
 
@@ -128,13 +123,11 @@ Run locally against the validated dataset and frozen 001D trade export. Do not i
         ↓
 001F trade decomposition                   🟡 complete
         ↓
-001G PIT feature + forward-path replay     ← CURRENT
+001G PIT feature + forward-path replay     🟡 complete
         ↓
-Predefined robustness tests
+001H predefined robustness + chronological holdout   ← CURRENT
         ↓
-Chronological OOS / walk-forward
-        ↓
-Paper / shadow validation
+Prospective paper / shadow validation
         ↓
 Execution validation
         ↓
@@ -144,6 +137,14 @@ Strategy 001 final decision
         ↓
 Only then: Strategy 002
 ```
+
+### 001H — predefined robustness & chronological holdout
+
+001H is a validation gate, not an optimization exercise. It will test the frozen 001D rules across chronological periods, a 2025 development/reference period versus a 2026 chronological holdout, predefined execution-cost scenarios, trade-frequency stability, and return-distribution stability.
+
+Because the full 2025–2026 historical sample has already been examined during Strategy 001 research, the 2026 split cannot honestly be called a pristine untouched OOS test. Future paper/shadow trading will provide the genuinely prospective OOS period.
+
+Specification: `journal/001H_predefined_robustness_chronological_holdout.md`.
 
 A failure at any gate is recorded rather than repaired by post-hoc parameter tuning.
 
