@@ -1,125 +1,109 @@
 # Strategy 001J — Data Source Playbook
 
-**Status:** Locked acquisition plan; no historical membership or raw market data is embedded here.
+**Status:** Active broker-native acquisition path; PIT Nifty 100 deferred.
 
-## 1. PIT Nifty 100 membership
+## 1. Primary tactical source — Zerodha Kite Connect
 
-### Preferred route — official historical data
+The active September 2026 path uses the project's existing Zerodha Kite Connect authentication/client layer.
 
-Use NSE/NSE Indices historical constituent/reconstitution records when available. The official Nifty 100 page provides the current constituent list and index methodology, while the reconstitution calendar documents the regular March/September schedule and notes possible additional reviews.
+Relevant repository components:
 
-Official references:
+- `src/data/kite_auth.py`
+- `src/data/kite_client.py`
+- `src/data/historical.py`
+- `scripts/fetch_strategy_001j_kite_data.py`
+- `scripts/build_strategy_001j_broker_liquid_universe.py`
 
-- NSE Nifty 100: https://www.nseindia.com/static/products-services/indices-nifty100-index
-- NSE Indices reconstitution calendar: https://www.niftyindices.com/resources/index-rebalancing-schedule
-- NSE Indices equity-index methodology: https://www.niftyindices.com/Methodology/Method_NIFTY_Equity_Indices.pdf
+Kite's instrument dump supplies current tradable instruments and instrument tokens. The historical candle API supplies archived candles, including 5-minute OHLCV. Current instrument availability is not a historical membership database, so this tactical universe carries a documented survivorship/current-instrument limitation.
 
-### Licensed route
+Official Kite references:
 
-NSE Indices states that historical index constituent data is available through its data products/subscription service and lists quantitative research among the intended uses. A licensed provider may therefore be used if it supplies explicit historical effective dates and symbol identifiers.
+- https://kite.trade/docs/connect/v3/market-data-and-instruments/
+- https://kite.trade/docs/connect/v3/historical/
 
-Record the provider/product, license/usage restrictions, coverage, retrieval date, and transformation steps in `strategy_001j_u1_membership_metadata.json`.
+## 2. Broker-native U1 formation
 
-### Secondary reconstruction
+U1 is formed before any Strategy 001J performance is examined.
 
-Use only if the preferred routes cannot provide the required historical coverage. Reconstruct each interval from dated reconstitution evidence and retain a source ledger for every change. Secondary evidence may include dated index/fund portfolio documents, but it must be labeled secondary and cross-checked where possible.
+Fixed rule:
 
-Do **not** construct history by taking the current Nifty 100 list and assuming it was always the membership set.
+- universe source: current Kite NSE EQ instrument dump;
+- formation data: 5-minute OHLCV;
+- minimum formation days: 15;
+- liquidity metric: daily `sum(close * volume)`;
+- ranking statistic: median daily traded value across formation days;
+- selected count: top 50;
+- activation: immediately after formation window;
+- no strategy P&L, holdout results, or similarity results used for selection.
 
-## 2. Required coverage window
+This is outcome-independent but not PIT-clean.
 
-Before acquiring large volumes of 5-minute data, freeze the intended 001J development and holdout dates from the verified source coverage. Do not choose dates after inspecting strategy performance.
+## 3. Acquisition commands
 
-The minimum research period must provide enough history for:
+Formation candidates:
 
-- the 30-bar feature warm-up;
-- development analysis;
-- chronological holdout;
-- any separately planned prospective activation period.
+```powershell
+python scripts/fetch_strategy_001j_kite_data.py `
+  --start <FORMATION_START> `
+  --end <FORMATION_END> `
+  --all-nse-eq `
+  --output-dir data/raw/strategy_001j_candidates
+```
 
-Exact dates belong in the experiment record after source coverage is verified.
+Build U1:
 
-## 3. 5-minute equity data
+```powershell
+python scripts/build_strategy_001j_broker_liquid_universe.py `
+  --input-dir data/raw/strategy_001j_candidates `
+  --formation-start <FORMATION_START> `
+  --formation-end <FORMATION_END> `
+  --research-end <RESEARCH_END> `
+  --top-n 50 `
+  --min-days 15
+```
 
-The required dataset is NSE equity 5-minute OHLCV with timestamps that can be normalized to `Asia/Kolkata` and a documented raw-vs-adjusted price convention.
+Selected-symbol research data:
 
-Potential acquisition routes include:
+```powershell
+python scripts/fetch_strategy_001j_kite_data.py `
+  --start <FORMATION_START> `
+  --end <RESEARCH_END> `
+  --symbols-file data/universe/strategy_001j_u1_membership.csv `
+  --output-dir data/raw/strategy_001j_u1
+```
 
-1. an existing licensed historical NSE intraday dataset;
-2. an exchange/broker data service that explicitly permits the required historical depth and research use;
-3. another documented source only after verifying timestamps, corporate actions, symbol history, and completeness.
+## 4. Data contract
 
-The repository should not contain credentials or private API keys. Raw licensed data should not be committed unless its license permits redistribution.
-
-## 4. Required local ingestion contract
-
-Membership:
-
-`data/universe/strategy_001j_u1_membership.csv`
-
-Metadata:
-
-`data/universe/strategy_001j_u1_membership_metadata.json`
-
-Raw bars:
-
-`data/raw/strategy_001j_u1/<SYMBOL>.csv`
-
-Schema:
+Each raw file must contain:
 
 ```text
 timestamp,open,high,low,close,volume
 ```
 
-## 5. Validation sequence
+Normalize timestamps to `Asia/Kolkata`, reject duplicate timestamps, preserve chronological order, and retain the downloader manifest.
 
-After loading membership:
+Do not commit `.env`, API keys, access tokens, or other credentials.
+
+## 5. Validation sequence
 
 ```powershell
 python scripts/validate_strategy_001j_u1_membership.py
-```
-
-After loading raw bars:
-
-```powershell
 python scripts/audit_strategy_001j_u1_data.py
-```
-
-After the research window is frozen:
-
-```powershell
 python scripts/validate_strategy_001j_data_gate.py `
-  --start <YYYY-MM-DDTHH:MM:SS+05:30> `
-  --end <YYYY-MM-DDTHH:MM:SS+05:30>
+  --start <RESEARCH_START> `
+  --end <RESEARCH_END>
 ```
 
-Only after all three gates pass should the GOLDBEES similarity report and Strategy 001J baseline be run.
+Only after these pass should the similarity diagnostics and frozen 001D baseline run.
 
-## 6. Source ledger requirements
+## 6. Similarity diagnostics
 
-For every membership reconstruction or mapping change, preserve:
+Run the locked GOLDBEES behavior comparison only after U1 and its research-window data are fixed. It remains descriptive and cannot modify U1 after seeing strategy outcomes.
 
-- symbol as supplied by the source;
-- canonical repository symbol;
-- effective-from date/time;
-- effective-to date/time;
-- source document/URL/product;
-- source publication date;
-- retrieval date;
-- transformation applied;
-- confidence/cross-check note.
+## 7. Deferred PIT Nifty 100 route
 
-For raw bars, preserve:
+The original PIT Nifty 100 research remains valid and should be resumed if historical constituent data becomes available with defensible provenance. It must be recorded separately rather than silently replacing the tactical Kite-native result.
 
-- provider/source;
-- extraction date;
-- requested date range;
-- timezone convention;
-- adjusted/unadjusted status;
-- corporate-action treatment;
-- any missing sessions or symbols;
-- symbol renames/mergers/delistings affecting the sample.
+## 8. No-data stop condition
 
-## 7. No-data stop condition
-
-If the required historical PIT membership or 5-minute data cannot be obtained with defensible provenance, Strategy 001J remains blocked. Do not manufacture data, substitute today's universe for historical membership, or proceed directly to backtesting.
+Do not fabricate historical membership, infer historical index membership from today's list, or use strategy returns to manufacture a more attractive universe. If Kite lacks the required data for a symbol/window, record the failure and apply only the pre-registered data eligibility rules.
