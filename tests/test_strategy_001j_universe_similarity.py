@@ -25,7 +25,8 @@ def test_similarity_respects_end_boundary(tmp_path):
     _bars(candidate, [50, 50.5, 51, 51.5, 52, 52.5])
     report = analyze(ref, universe, "2026-01-01T09:35:00+05:30")
     assert list(report["symbol"]) == ["AAA"]
-    assert int(report.iloc[0]["observations_5m"]) == 5
+    # Five bars (09:15 through 09:35) produce four 5-minute returns.
+    assert int(report.iloc[0]["observations_5m"]) == 4
 
 
 def test_similarity_has_no_strategy_selection_flag(tmp_path):
