@@ -1,13 +1,13 @@
 # Strategy 001J — Cross-Sectional Equity Experiment Specification
 
 **Parent strategy:** 001 — intraday continuation  
-**Status:** Active research; specification locked before candidate selection  
-**Universe:** U1 — point-in-time Nifty 100 constituents  
+**Status:** Active research; tactical broker-native universe locked before outcome evaluation  
+**Universe:** U1 — Kite-native liquid NSE EQ universe  
 **Primary frequency:** 5-minute OHLCV
 
 ## 1. Research question
 
-Does the short-horizon continuation structure identified during Strategy 001 generalize from the single GOLDBEES instrument to a broader, point-in-time liquid Indian equity universe?
+Does the short-horizon continuation structure identified during Strategy 001 generalize from the single GOLDBEES instrument to a broader liquid Indian equity universe that can be researched and executed through the user's existing Zerodha/Kite infrastructure?
 
 This is a new experiment under Strategy 001. It is not a retuning of frozen 001D and it is not a continuation of the 001I prospective ledger.
 
@@ -26,17 +26,15 @@ The hypothesis is evaluated before deciding whether any parameter configuration 
 
 ## 4. Universe definition
 
-U1 is the point-in-time Nifty 100 constituent universe. Historical membership must be represented by effective dates and must not be replaced by the current constituent list.
+U1 is the broker-native tactical universe defined in `001J_universe_u1_spec.md`.
 
-NSE describes Nifty 100 as a diversified 100-stock large-cap index composed of Nifty 50 and Nifty Next 50. The official index-rebalancing calendar lists Nifty 100 as semi-annually reconstituted on the last working day of March and September. Historical membership files used by this research must preserve source and retrieval metadata.
+It is formed from the current Kite NSE EQ instrument dump using a pre-strategy formation window and median daily traded value. The formation rule is independent of Strategy 001J outcomes.
 
-Reference sources:
-- NSE Nifty 100 index page: https://www.nseindia.com/static/products-services/indices-nifty100-index
-- NSE Indices reconstitution calendar: https://www.niftyindices.com/resources/index-rebalancing-schedule
+This is a deliberate tactical compromise: it makes the research executable with the existing broker data immediately, but it carries current-instrument/survivorship bias because Kite's current instrument dump does not reconstruct historical index membership or delisted securities. The original PIT Nifty 100 universe remains deferred and must not be conflated with this result.
 
 ### 4.1 Similarity / behavior discovery layer
 
-U1 remains the primary universe regardless of Strategy 001J performance. Separately, the research records whether U1 securities are descriptively similar to GOLDBEES.
+Separately, the research records whether U1 securities are descriptively similar to GOLDBEES.
 
 The locked descriptors are:
 
@@ -49,9 +47,7 @@ The locked descriptors are:
 - positive-tail frequency relative to a fixed GOLDBEES reference threshold;
 - observation and overlap counts.
 
-A descriptive distance/rank is reported for interpretation. It is **not** a universe-selection flag. The analysis requires an explicit observation end boundary and cannot use Strategy 001J P&L, holdout results, or prospective results to choose symbols or a correlation cutoff.
-
-Detailed protocol: `research/journal/001J_universe_discovery_protocol.md`.
+A descriptive distance/rank is reported for interpretation. It is **not** a universe-selection flag. It cannot use Strategy 001J P&L, holdout results, or prospective results to choose symbols.
 
 ## 5. Baseline — frozen 001D parameters applied cross-sectionally
 
@@ -70,9 +66,17 @@ The first run must use the exact 001D parameters without optimization:
 
 The purpose of this baseline is transferability, not parameter selection.
 
-## 6. Development experiment
+## 6. Tactical development window
 
-Only after the baseline is recorded, run the following pre-registered grid on the development sample:
+For the accelerated broker-native experiment, use a frozen approximately 90-day Kite 5-minute availability window when the actual download is performed:
+
+- formation: first ~20 trading days;
+- development: following ~50 trading days;
+- chronological holdout: final ~20 trading days.
+
+The exact dates must be recorded before examining Strategy 001J results.
+
+After the baseline is recorded, run the pre-registered 162-configuration grid on development only:
 
 - lookback: 20, 30, 40;
 - z threshold: 1.5, 2.0, 2.5;
@@ -80,23 +84,19 @@ Only after the baseline is recorded, run the following pre-registered grid on th
 - holding period: 3, 6, 9;
 - cooldown: 6, 12.
 
-Total configurations: 162.
-
-Every configuration and its complete result must be retained. The search must not inspect the chronological holdout or prospective sample.
-
 ## 7. Selection discipline
 
-The candidate must not be selected solely by highest cumulative return. The research record must compare:
+The candidate must not be selected solely by highest cumulative return. Compare:
 
-- number of selected trades and distinct symbols;
+- number of trades and distinct symbols;
 - mean and median gross return;
 - return dispersion and tail dependence;
 - win rate and profit factor;
 - drawdown;
 - turnover and holding time;
-- cost-adjusted return under predefined friction scenarios;
+- predefined cost-adjusted scenarios;
 - simultaneous signal concentration;
-- sector and symbol concentration;
+- sector and symbol concentration where sector mapping is available;
 - time-of-day concentration;
 - stability across development sub-periods;
 - stability across neighboring parameter combinations.
@@ -105,38 +105,31 @@ Cross-sectional observations generated by the same market event are potentially 
 
 ## 8. Holdout
 
-A chronological holdout period must be selected and frozen before examining its candidate results. Once a candidate is frozen from development data, no holdout result may be used to retune it. If a holdout failure requires research changes, create a new experiment/version and document the change.
+The chronological holdout is frozen before examining candidate holdout results. Once a candidate is frozen from development data, no holdout result may be used to retune it.
 
-The exact dates are to be determined from the verified data-coverage boundary, not selected after observing performance.
+The current-instrument survivorship limitation must be reported alongside all holdout results.
 
 ## 9. Prospective phase
 
-After holdout validation, the selected configuration is frozen and a separate prospective paper/shadow collector is created with an immutable activation boundary. It must:
-
-- use only information available at the signal timestamp;
-- enter at the next observable bar open;
-- record the full forward path;
-- prevent duplicate/overlapping trades according to the frozen rule;
-- record MFE/MAE;
-- never place live orders during paper/shadow collection.
+After holdout validation, the selected configuration is frozen and a separate prospective paper/shadow collector is created with an immutable activation boundary. It must use only information available at the signal timestamp, enter at the next observable bar open, record the full forward path and MFE/MAE, and never place live orders during paper/shadow collection.
 
 ## 10. Costs and execution
 
-Historical and prospective results must distinguish gross signal return from executable net return. Cost analysis should include brokerage/fees/taxes as applicable, spread, slippage, and adverse execution sensitivity. Observable live-market friction should be measured where available rather than assumed away.
+Historical and prospective results must distinguish gross signal return from executable net return. Cost analysis should include brokerage/fees/taxes as applicable, spread, slippage, and adverse execution sensitivity. Observable live-market friction should be measured where available.
 
 ## 11. Promotion gates
 
-001J may proceed to controlled live validation only if all applicable gates pass:
+001J may proceed to controlled live validation only if applicable gates pass:
 
-1. point-in-time universe integrity;
-2. reproducible data coverage;
-3. no lookahead or symbol-selection leakage;
-4. candidate frozen before holdout;
-5. acceptable chronological holdout evidence;
-6. economically meaningful performance after predefined costs;
-7. sufficient breadth across symbols and sessions;
-8. execution feasibility and capacity for the user's available capital;
-9. explicit risk and position limits;
-10. prospective paper/shadow behavior consistent with the frozen research record.
+1. reproducible broker data;
+2. no lookahead or outcome-based universe selection;
+3. candidate frozen before holdout;
+4. acceptable chronological holdout evidence;
+5. economically meaningful performance after predefined costs;
+6. sufficient breadth across symbols and sessions;
+7. execution feasibility and capacity;
+8. explicit risk and position limits;
+9. prospective paper/shadow behavior consistent with the frozen research record;
+10. explicit acknowledgement that the tactical U1 is not PIT-clean.
 
-Failure of a gate is a research result. The calendar must not force live deployment.
+The PIT Nifty 100 path remains the cleaner future validation route. Failure of a gate is a research result.
