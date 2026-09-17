@@ -80,9 +80,18 @@ def _distance_and_rank(report: pd.DataFrame) -> pd.DataFrame:
     z = pd.DataFrame(index=report.index)
     for col in DISTANCE_FEATURES:
         x = pd.to_numeric(report[col], errors="coerce")
-        median = x.median()
-        mad = (x - median).abs().median()
-        scale = 1.4826 * mad if np.isfinite(mad) and mad > 0 else x.std(ddof=1)
+        valid = x.dropna()
+        if len(valid) == 0:
+            z[col] = np.nan
+            continue
+        median = valid.median()
+        mad = (valid - median).abs().median()
+        if np.isfinite(mad) and mad > 0:
+            scale = 1.4826 * mad
+        elif len(valid) >= 2:
+            scale = valid.std(ddof=1)
+        else:
+            scale = np.nan
         z[col] = (x - median) / scale if np.isfinite(scale) and scale > 0 else 0.0
     # Correlation is a direct similarity measure; convert it to distance from 1.
     for col in ("corr_5m", "corr_daily"):
