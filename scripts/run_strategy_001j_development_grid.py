@@ -9,6 +9,7 @@ reproducibility. It does not select or freeze a production candidate.
 from __future__ import annotations
 
 import argparse
+from datetime import timedelta
 from pathlib import Path
 
 import numpy as np
@@ -35,7 +36,7 @@ GRID = {
 def _window_timestamp(value: str, end_of_day: bool = False) -> pd.Timestamp:
     ts = pd.Timestamp(value).tz_localize("Asia/Kolkata")
     if end_of_day:
-        ts += pd.Timedelta(days=1)
+        ts += timedelta(days=1)
     return ts
 
 
