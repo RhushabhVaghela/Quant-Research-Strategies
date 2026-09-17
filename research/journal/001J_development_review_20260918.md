@@ -43,7 +43,7 @@ The cost diagnostic therefore materially changes the interpretation of the devel
 
 ## 4. Broker-cost context
 
-Current Zerodha published charges for NSE equity intraday include brokerage of 0.03% or ₹20 per executed order, whichever is lower; equity intraday STT of 0.025% on the sell side; NSE equity transaction charges of 0.00307%; GST on applicable brokerage/SEBI/transaction charges; SEBI charges; and buy-side stamp duty. citeturn1search0turn1search1turn1search2
+Current Zerodha published charges for NSE equity intraday include brokerage of 0.03% or ₹20 per executed order, whichever is lower; equity intraday STT of 0.025% on the sell side; NSE equity transaction charges of 0.00307%; GST on applicable brokerage/SEBI/transaction charges; SEBI charges; and buy-side stamp duty.
 
 Therefore, a 5 bps round-trip sensitivity case should not be interpreted as an aggressive upper bound. Actual all-in cost depends on trade notional, brokerage cap, statutory charges, spread, slippage, and execution quality. For this reason, the development result should not be promoted based on gross returns alone.
 
