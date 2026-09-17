@@ -77,6 +77,14 @@ The first experiment excludes:
 
 GOLDBEES remains the frozen 001D instrument and is kept separate from U1.
 
+## Similarity analysis is diagnostic, not universe selection
+
+The experiment includes a separate GOLDBEES behavior-similarity report. It may use return correlation, volatility, autocorrelation, return-distribution descriptors, and overlap diagnostics to understand transferability.
+
+This report does **not** replace U1. In particular, a symbol is not admitted to or removed from U1 because it has a favorable correlation, descriptive distance, or later Strategy 001J return. Any similarity-selected universe used for a future trading experiment must be registered as a separate experiment/version with its selection rule frozen before performance evaluation.
+
+See `research/journal/001J_universe_discovery_protocol.md` and `scripts/analyze_strategy_001j_universe_similarity.py`.
+
 ## Expansion policy
 
 If U1 produces insufficient observations after the pipeline is validated, a broader universe such as Nifty 200 may be evaluated as a **new universe experiment under Strategy 001**, with its own identifier and pre-registered rules. The universe must never be broadened retrospectively only because a preferred parameter configuration needs more trades.
