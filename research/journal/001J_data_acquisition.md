@@ -17,22 +17,22 @@ This path is explicitly marked as having current-instrument/survivorship bias an
 
 ## Kite data capabilities relevant to 001J
 
-Kite Connect provides an instrument master containing current tradable instruments and instrument tokens. Its historical candle API supports 5-minute candles, and historical requests can be split into date chunks. The repository already contains `src/data/kite_client.py` and `src/data/historical.py`; the new CLI wrapper is `scripts/fetch_strategy_001j_kite_data.py`.
+Kite Connect provides an instrument master containing current tradable instruments and instrument tokens. Its historical candle API supports 5-minute candles. Current published Kite guidance indicates that a 5-minute request is limited to roughly 90 calendar days per request, but complete available history can be retrieved through multiple requests within the API rate limits. The repository downloader therefore chunks requests conservatively.
 
-The historical API is rate-limited, so the downloader uses conservative pauses and chunking rather than firing uncontrolled requests. The project must preserve the raw downloaded data locally and record the requested range and instrument token in a manifest.
+The repository already contains `src/data/kite_client.py` and `src/data/historical.py`; the CLI wrapper is `scripts/fetch_strategy_001j_kite_data.py`.
 
 ## Tactical research-window design
 
-Use a maximum practical 90-day 5-minute history window from Kite for the accelerated experiment. The exact dates must be frozen before inspecting Strategy 001J returns.
+Use approximately **one year of 5-minute history** for the selected U1 symbols if Kite returns adequate coverage. This is materially preferable to restricting the experiment to only the most recent 90 days; 90 days is a per-request constraint, not a reason to throw away older available history.
 
-Recommended structure:
+For the September 2026 sprint, the intended structure is:
 
-1. **Formation window:** first 20 trading days (or at least 15 valid days) — liquidity only.
-2. **Development window:** following ~50 trading days.
-3. **Chronological holdout:** final ~20 trading days.
+1. **Formation window:** first ~20 trading days — liquidity only.
+2. **Development window:** the long middle portion of the one-year sample.
+3. **Chronological holdout:** a substantial final portion, preferably ~3 months when the actual data coverage permits.
 4. **Prospective phase:** begins only after candidate freeze and holdout review.
 
-The exact calendar dates are determined from the actual Kite data returned and recorded in the experiment log. The formation window must end before the first development observation.
+The exact calendar dates must be frozen from the actual downloaded coverage before inspecting Strategy 001J results.
 
 ## Step 1 — Fetch broker-native formation data
 
@@ -78,7 +78,7 @@ The ranking must be preserved as research evidence. No symbol may be removed bec
 
 ## Step 3 — Fetch full research-window data for selected U1
 
-After U1 is generated, fetch the full research period for exactly those symbols:
+After U1 is generated, fetch the full research period for exactly those symbols. The downloader automatically splits long ranges into Kite-compatible chunks:
 
 ```powershell
 python scripts/fetch_strategy_001j_kite_data.py `
