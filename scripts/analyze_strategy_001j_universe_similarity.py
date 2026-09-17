@@ -89,7 +89,13 @@ def _distance_and_rank(report: pd.DataFrame) -> pd.DataFrame:
         if col in report.columns:
             z[col] = 1.0 - pd.to_numeric(report[col], errors="coerce")
     report = report.copy()
-    report["descriptive_distance"] = np.sqrt(z.pow(2).mean(axis=1, skipna=True))
+    # Avoid numpy's "Mean of empty slice" warning when a diagnostic has no
+    # finite features (e.g. deliberately tiny unit-test fixtures). Such a
+    # symbol remains unrated rather than being assigned an artificial distance.
+    finite_counts = z.notna().sum(axis=1)
+    squared = z.pow(2).where(z.notna())
+    mean_squared = squared.sum(axis=1, min_count=1) / finite_counts.replace(0, np.nan)
+    report["descriptive_distance"] = np.sqrt(mean_squared)
     report["descriptive_rank"] = report["descriptive_distance"].rank(method="min", ascending=True).astype("Int64")
     return report
 
