@@ -2,24 +2,21 @@
 
 ## Status
 
-**🟡 Protocol hardened — prospective data collection not yet completed.**
+**🔵 Closed for capital-pursuit priority — insufficient frequency; not statistically rejected.**
 
-This file is intentionally a results template. No prospective performance numbers are populated until the frozen Strategy 001D process has generated and recorded observations after the 001I activation boundary.
+Strategy 001I was created to observe the frozen 001D GOLDBEES strategy prospectively without changing its parameters. The collector operated on 2026-09-17 and recorded two genuine prospective trades after the immutable activation boundary.
+
+The experiment is now **closed as the primary capital-deployment track** because the frozen single-instrument implementation generated only two selected trades in the observed session. This frequency is incompatible with the September 2026 accelerated research/deployment objective.
+
+Closing the track does **not** mean that two trades statistically disprove the 001D hypothesis. The sample is far too small for that conclusion.
+
+The frozen 001D rule must not be changed using these two outcomes. Any reuse of the continuation hypothesis on another universe or with different parameters receives a new strategy/experiment identifier.
 
 ## OOS qualification
 
-Historical data through August 2026 has already been examined during Strategy 001 research. Therefore:
+Historical data through August 2026 had already been examined during Strategy 001 research. The 2026-09-17 observations below were captured prospectively after activation and therefore form genuine prospective observations for the frozen 001D rule.
 
-- 2025 = development/reference;
-- 2026 through the examined historical period = chronological holdout / OOS-style;
-- September observations inspected before 001I activation = historical/research data;
-- first signals captured prospectively after activation = genuine prospective OOS observations.
-
-The activation timestamp must be recorded in `data/prospective/strategy_001i/run_manifest.json`. Restarting the same run does not move that boundary.
-
-## Frozen strategy
-
-The 001D rules are unchanged:
+## Frozen strategy observed
 
 - GOLDBEES 5-minute OHLCV;
 - previous 30 completed same-session closes;
@@ -35,85 +32,59 @@ The 001D rules are unchanged:
 - one position at a time;
 - no leverage or optimized sizing.
 
-## Prospective review checkpoints
+## 2026-09-17 prospective observations
 
-These are review checkpoints, not success thresholds:
+| Signal | z-score | Paper entry | Paper exit | Gross/net return | MFE | MAE |
+|---|---:|---:|---:|---:|---:|---:|
+| 12:00 | 2.2675 | 124.31 | 124.21 | -8.04 bps | +0.80 bps | -16.89 bps |
+| 13:05 | 2.5350 | 124.87 | 124.71 | -12.81 bps | +5.61 bps | -22.42 bps |
 
-| Checkpoint | Purpose | Result |
-|---|---|---|
-| 20 completed trades | Operational/data-quality review | Pending |
-| 50 completed trades | First statistical review | Pending |
-| 100 completed trades | Stronger stability review | Pending |
-| ~3 months | Time/regime review | Pending |
+Simple sum of the two trade returns was approximately -20.86 bps; compounded return was approximately -20.85 bps. No statistical inference is made from this sample.
 
-## Signal/trade summary
-
-| Metric | Prospective result | Historical reference |
-|---|---:|---:|
-| Signals/trades | Pending | 310 frozen trades |
-| Mean gross return | Pending | +4.77 bps |
-| Median gross return | Pending | +2.41 bps |
-| Win rate | Pending | 55.81% |
-| Profit factor | Pending | 2.269 |
-| Cumulative gross return | Pending | +15.85% |
-| Max drawdown | Pending | -0.90% |
-| Daily Sharpe diagnostic | Pending | 2.710 |
-
-Historical reference values are provided only for comparison; they are not prospective targets.
-
-## Execution economics
-
-| Metric | Prospective result |
-|---|---:|
-| Mean observed spread | Pending |
-| Median observed spread | Pending |
-| Mean slippage | Pending |
-| Brokerage/statutory costs | Pending |
-| Mean net return | Pending |
-| Median net return | Pending |
-| Net cumulative return | Pending |
-| Net max drawdown | Pending |
-
-Observed execution costs must be measured separately where possible rather than inferred from the historical cost grid.
-
-## Distribution comparison
-
-To be populated only after prospective observations exist:
-
-- P10/P25/P50/P75/P90;
-- largest winner/loser;
-- top-10%-winner profit share;
-- MFE/MAE;
-- forward path at 5/10/15/20/25/30/45/60 minutes where session data permit.
+The signal ledger recorded quoted signal spreads of approximately 2.41 bps and 0.80 bps respectively. The current paper outcomes do not contain realized broker execution costs; estimated slippage and brokerage fields were zero in the captured paper records. These are therefore raw paper outcomes rather than evidence of executable net profitability.
 
 ## Operational integrity
 
-Before interpreting performance, run:
+The run was validated with:
 
 ```powershell
 python scripts/validate_strategy_001i_run.py data/prospective/strategy_001i
 ```
 
-Record:
+Validation result:
 
-- number of expected vs captured bars;
-- missing/delayed data;
-- signal logging failures;
-- duplicate records;
-- outcome finalization failures;
-- any manual intervention;
-- any deviation from the frozen strategy.
+`Strategy 001I validation PASSED: no prospective-ledger integrity errors found.`
 
-A capture-system failure must not be misclassified as a strategy failure.
+The collector remained paper/shadow only and placed no orders.
 
-## Decision
+## Research interpretation
 
-**Pending prospective evidence.**
+### What the evidence supports
 
-The eventual decision will be one of:
+1. The frozen strategy can operate prospectively with the implemented collector.
+2. The prospective ledger and timing controls passed validation for this run.
+3. The observed single-instrument frequency is low: two selected trades in the captured session.
+4. The first two prospective paper outcomes were negative.
+5. Actual execution economics remain unresolved.
 
-- **🟢 Proceed to separate controlled-live validation protocol**;
-- **🟡 Extend paper/shadow validation**;
-- **🔴 Reject/freeze Strategy 001**.
+### What the evidence does not support
 
-No strategy parameters will be changed to improve this prospective cohort after outcomes are observed.
+1. It does not statistically reject the underlying continuation hypothesis.
+2. It does not establish that the strategy will remain profitable or unprofitable in the future.
+3. It does not justify changing 001D parameters.
+4. It does not justify live deployment of 001D.
+
+## Final status of Strategy 001
+
+**001I is closed as a capital-pursuit experiment because its frozen GOLDBEES implementation is too low-frequency for the current project deadline.**
+
+The broader continuation hypothesis is not discarded. It may be tested in a new experiment across a predefined multi-asset universe. Such work is Strategy 002 research and must not overwrite or contaminate the frozen 001D/001I record.
+
+## Next research track
+
+See:
+
+- `research/journal/002_strategy_roadmap.md`
+- `research/journal/002_universe_u1_spec.md`
+
+No 001D parameter changes are permitted.
