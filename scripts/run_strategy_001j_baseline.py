@@ -8,6 +8,7 @@ history in the local U1 files.
 from __future__ import annotations
 
 import argparse
+from datetime import timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -38,7 +39,7 @@ def _window_timestamp(value: str, end_of_day: bool = False) -> pd.Timestamp:
     else:
         ts = ts.tz_convert("Asia/Kolkata")
     if end_of_day and len(value) == 10:
-        ts = ts + pd.Timedelta(days=1)
+        ts = ts + timedelta(days=1)
     return ts
 
 
@@ -124,7 +125,7 @@ def main() -> None:
     trades.to_csv(output_dir / "trades.csv", index=False)
     summary.to_csv(output_dir / "summary.csv", index=False)
     print("Strategy 001J frozen-001D baseline complete.")
-    print(f"Frozen experiment window: {start.date()} through {(end_exclusive - pd.Timedelta(days=1)).date()}")
+    print(f"Frozen experiment window: {start.date()} through {(end_exclusive - timedelta(days=1)).date()}")
     print(summary.to_string(index=False))
 
 
