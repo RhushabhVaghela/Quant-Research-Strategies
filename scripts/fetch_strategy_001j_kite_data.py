@@ -7,6 +7,9 @@ historical-data API and saved locally for research.
 
 Use a symbols file for the pre-selected universe. Without one, --all-nse-eq
 fetches every currently tradable NSE EQ instrument and is intentionally expensive.
+
+For repairing an existing dataset, use --merge. This fetches only the requested
+range and merges it with the existing CSV instead of replacing the full history.
 """
 
 from __future__ import annotations
@@ -37,6 +40,27 @@ def _nse_equity_instruments(kite: KiteClient) -> dict[str, dict]:
     }
 
 
+def _merge_with_existing(output: Path, fetched: pd.DataFrame) -> pd.DataFrame:
+    """Merge fetched candles into an existing CSV without losing history."""
+    incoming = fetched.reset_index()[["timestamp", "open", "high", "low", "close", "volume"]]
+    incoming["timestamp"] = pd.to_datetime(incoming["timestamp"], errors="raise")
+
+    if output.exists():
+        existing = pd.read_csv(output)
+        required = {"timestamp", "open", "high", "low", "close", "volume"}
+        missing = required - set(existing.columns)
+        if missing:
+            raise ValueError(f"{output}: existing file missing columns {sorted(missing)}")
+        existing = existing[["timestamp", "open", "high", "low", "close", "volume"]].copy()
+        existing["timestamp"] = pd.to_datetime(existing["timestamp"], errors="raise")
+        merged = pd.concat([existing, incoming], ignore_index=True)
+    else:
+        merged = incoming
+
+    merged = merged.sort_values("timestamp").drop_duplicates("timestamp", keep="last").reset_index(drop=True)
+    return merged
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--start", required=True, help="YYYY-MM-DD")
@@ -47,9 +71,13 @@ def main() -> None:
     parser.add_argument("--chunk-days", type=int, default=80)
     parser.add_argument("--pause-seconds", type=float, default=0.35)
     parser.add_argument("--max-symbols", type=int, default=None)
-    parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--overwrite", action="store_true", help="Replace existing symbol files with the fetched range")
+    parser.add_argument("--merge", action="store_true", help="Merge the fetched range into existing symbol files")
     parser.add_argument("--manifest", type=Path, default=Path("data/reports/strategy_001j_kite_download_manifest.csv"))
     args = parser.parse_args()
+
+    if args.overwrite and args.merge:
+        raise SystemExit("Use at most one of --overwrite or --merge")
 
     start = date.fromisoformat(args.start)
     end = date.fromisoformat(args.end)
@@ -75,7 +103,7 @@ def main() -> None:
             manifest.append({"symbol": symbol, "status": "missing_current_kite_instrument"})
             continue
         output = args.output_dir / f"{symbol}.csv"
-        if output.exists() and not args.overwrite:
+        if output.exists() and not args.overwrite and not args.merge:
             manifest.append({"symbol": symbol, "status": "exists_skipped", "path": str(output)})
             continue
         try:
@@ -91,18 +119,24 @@ def main() -> None:
             if frame.empty:
                 manifest.append({"symbol": symbol, "status": "empty", "rows": 0})
                 continue
-            out = frame.reset_index()[["timestamp", "open", "high", "low", "close", "volume"]]
+
+            if args.merge:
+                out = _merge_with_existing(output, frame)
+            else:
+                out = frame.reset_index()[["timestamp", "open", "high", "low", "close", "volume"]]
+
             save_candles(out.set_index("timestamp"), output)
             manifest.append({
                 "symbol": symbol,
-                "status": "downloaded",
+                "status": "merged" if args.merge else "downloaded",
                 "rows": len(out),
                 "first_timestamp": str(out["timestamp"].min()),
                 "last_timestamp": str(out["timestamp"].max()),
                 "instrument_token": int(row["instrument_token"]),
                 "path": str(output),
             })
-            print(f"[{i}/{len(symbols)}] {symbol}: {len(out)} rows")
+            action = "merged" if args.merge else "downloaded"
+            print(f"[{i}/{len(symbols)}] {symbol}: {action}, {len(out)} rows")
         except Exception as exc:
             manifest.append({"symbol": symbol, "status": f"error: {exc}"})
             print(f"[{i}/{len(symbols)}] {symbol}: ERROR: {exc}")
@@ -119,6 +153,7 @@ def main() -> None:
         "requested_start": args.start,
         "requested_end": args.end,
         "symbol_count_requested": len(symbols),
+        "mode": "merge" if args.merge else "overwrite" if args.overwrite else "skip-existing",
         "note": "Current Kite instrument dump is used for token mapping. It does not provide historical index membership.",
     }, indent=2), encoding="utf-8")
     print(f"Wrote download manifest: {manifest_path}")
