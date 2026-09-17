@@ -16,9 +16,9 @@ import pandas as pd
 
 UTC = "UTC"
 
-FEATURE_COLUMNS = [
-    "corr_5m",
-    "corr_daily",
+# Correlation is a direct similarity measure. The remaining descriptors are
+# compared with the reference value using robust cross-sectional scaling.
+DISTANCE_FEATURES = [
     "daily_vol_annualized",
     "autocorr_5m_lag1",
     "mean_abs_5m_return",
@@ -35,7 +35,8 @@ def _load_bars(path: Path, end: pd.Timestamp) -> pd.DataFrame:
         raise ValueError(f"{path}: missing columns {sorted(missing)}")
     ts = pd.to_datetime(df["timestamp"], errors="raise", utc=True)
     df = df.assign(timestamp=ts).set_index("timestamp").sort_index()
-    df = df.loc[~df.index.duplicated(keep="first")]
+    if df.index.has_duplicates:
+        raise ValueError("duplicate timestamps")
     df = df.loc[df.index <= end]
     df["close"] = pd.to_numeric(df["close"], errors="coerce")
     return df.loc[df["close"].gt(0)]
@@ -50,62 +51,82 @@ def _five_minute_returns(df: pd.DataFrame) -> pd.Series:
     return df["close"].pct_change().replace([np.inf, -np.inf], np.nan).dropna()
 
 
-def _aligned_corr(left: pd.Series, right: pd.Series) -> float:
+def _aligned_corr(left: pd.Series, right: pd.Series) -> tuple[float, int]:
     joined = pd.concat([left.rename("left"), right.rename("right")], axis=1, join="inner").dropna()
     if len(joined) < 3 or joined["left"].std(ddof=1) == 0 or joined["right"].std(ddof=1) == 0:
-        return np.nan
-    return float(joined["left"].corr(joined["right"]))
+        return np.nan, int(len(joined))
+    return float(joined["left"].corr(joined["right"])), int(len(joined))
 
 
-def _descriptors(reference: pd.DataFrame, candidate: pd.DataFrame) -> dict[str, float]:
+def _behavior_descriptors(reference: pd.DataFrame, candidate: pd.DataFrame) -> tuple[dict[str, float], dict[str, float]]:
     ref_5m = _five_minute_returns(reference)
     cand_5m = _five_minute_returns(candidate)
     ref_daily = _daily_returns(reference)
     cand_daily = _daily_returns(candidate)
 
-    # Use the reference distribution only to define a fixed descriptive tail threshold.
-    # This is not a strategy threshold and is not fitted to candidate performance.
-    tail_threshold = float(ref_5m.quantile(0.95)) if len(ref_5m) >= 20 else np.nan
-    upper_tail = (
-        float((cand_5m > tail_threshold).mean())
-        if np.isfinite(tail_threshold) and len(cand_5m)
-        else np.nan
-    )
+    corr_5m, overlap_5m = _aligned_corr(ref_5m, cand_5m)
+    corr_daily, overlap_daily = _aligned_corr(ref_daily, cand_daily)
 
-    return {
-        "corr_5m": _aligned_corr(ref_5m, cand_5m),
-        "corr_daily": _aligned_corr(ref_daily, cand_daily),
+    # The reference's 95th-percentile positive return defines a fixed,
+    # descriptive tail threshold. It is not a Strategy 001 signal threshold.
+    tail_threshold = float(ref_5m.quantile(0.95)) if len(ref_5m) >= 20 else np.nan
+    candidate = {
+        "corr_5m": corr_5m,
+        "corr_daily": corr_daily,
         "daily_vol_annualized": float(cand_daily.std(ddof=1) * np.sqrt(252)) if len(cand_daily) >= 2 else np.nan,
         "autocorr_5m_lag1": float(cand_5m.autocorr(lag=1)) if len(cand_5m) >= 3 else np.nan,
         "mean_abs_5m_return": float(cand_5m.abs().mean()) if len(cand_5m) else np.nan,
         "positive_fraction_5m": float((cand_5m > 0).mean()) if len(cand_5m) else np.nan,
-        "upper_tail_frequency_5m": upper_tail,
+        "upper_tail_frequency_5m": float((cand_5m > tail_threshold).mean()) if np.isfinite(tail_threshold) and len(cand_5m) else np.nan,
         "observations_5m": int(len(cand_5m)),
         "observations_daily": int(len(cand_daily)),
-        "overlap_5m": int(pd.concat([ref_5m.rename("r"), cand_5m.rename("c")], axis=1, join="inner").dropna().shape[0]),
-        "overlap_daily": int(pd.concat([ref_daily.rename("r"), cand_daily.rename("c")], axis=1, join="inner").dropna().shape[0]),
+        "overlap_5m": overlap_5m,
+        "overlap_daily": overlap_daily,
     }
+    reference_values = {
+        "daily_vol_annualized": float(ref_daily.std(ddof=1) * np.sqrt(252)) if len(ref_daily) >= 2 else np.nan,
+        "autocorr_5m_lag1": float(ref_5m.autocorr(lag=1)) if len(ref_5m) >= 3 else np.nan,
+        "mean_abs_5m_return": float(ref_5m.abs().mean()) if len(ref_5m) else np.nan,
+        "positive_fraction_5m": float((ref_5m > 0).mean()) if len(ref_5m) else np.nan,
+        "upper_tail_frequency_5m": float((ref_5m > tail_threshold).mean()) if np.isfinite(tail_threshold) and len(ref_5m) else np.nan,
+    }
+    return candidate, reference_values
 
 
-def _distance_and_rank(report: pd.DataFrame) -> pd.DataFrame:
-    """Create a descriptive standardized distance; never creates a selection flag."""
-    available = [c for c in FEATURE_COLUMNS if c in report.columns]
-    z = pd.DataFrame(index=report.index)
-    for col in available:
-        x = pd.to_numeric(report[col], errors="coerce")
-        median = x.median()
-        mad = (x - median).abs().median()
-        scale = 1.4826 * mad if np.isfinite(mad) and mad > 0 else x.std(ddof=1)
-        z[col] = (x - median) / scale if np.isfinite(scale) and scale > 0 else 0.0
+def _robust_scale(values: pd.Series) -> float:
+    values = pd.to_numeric(values, errors="coerce").dropna()
+    if len(values) < 2:
+        return np.nan
+    mad = (values - values.median()).abs().median()
+    if np.isfinite(mad) and mad > 0:
+        return float(1.4826 * mad)
+    std = values.std(ddof=1)
+    return float(std) if np.isfinite(std) and std > 0 else np.nan
 
-    # Correlations are converted to distance from the reference behavior (1 = identical).
-    if "corr_5m" in z:
-        z["corr_5m"] = 1.0 - report["corr_5m"]
-    if "corr_daily" in z:
-        z["corr_daily"] = 1.0 - report["corr_daily"]
 
+def _distance_and_rank(report: pd.DataFrame, reference_values: dict[str, float]) -> pd.DataFrame:
+    """Rank descriptive similarity only; never create a trading-universe flag."""
     report = report.copy()
-    report["descriptive_distance"] = np.sqrt(z.pow(2).mean(axis=1, skipna=True))
+    distances: list[pd.Series] = []
+
+    # Higher correlation means smaller distance from the reference.
+    for corr_col in ("corr_5m", "corr_daily"):
+        if corr_col in report:
+            distances.append(1.0 - pd.to_numeric(report[corr_col], errors="coerce"))
+
+    for col in DISTANCE_FEATURES:
+        if col not in report or not np.isfinite(reference_values.get(col, np.nan)):
+            continue
+        scale = _robust_scale(report[col])
+        if not np.isfinite(scale):
+            continue
+        distances.append((pd.to_numeric(report[col], errors="coerce") - reference_values[col]) / scale)
+
+    if distances:
+        distance_frame = pd.concat(distances, axis=1)
+        report["descriptive_distance"] = np.sqrt((distance_frame ** 2).mean(axis=1, skipna=True))
+    else:
+        report["descriptive_distance"] = np.nan
     report["descriptive_rank"] = report["descriptive_distance"].rank(method="min", ascending=True).astype("Int64")
     return report
 
@@ -122,22 +143,21 @@ def analyze(reference_path: Path, universe_dir: Path, end: str) -> pd.DataFrame:
         raise ValueError("Reference GOLDBEES data is empty before the --end boundary")
 
     rows: list[dict] = []
+    reference_values: dict[str, float] | None = None
     for path in sorted(universe_dir.glob("*.csv")):
         if path.name.lower() == reference_path.name.lower():
             continue
-        try:
-            candidate = _load_bars(path, end_ts)
-            if candidate.empty:
-                continue
-            row = {"symbol": path.stem, **_descriptors(reference, candidate)}
-            rows.append(row)
-        except (ValueError, pd.errors.ParserError) as exc:
-            raise ValueError(f"Failed to analyze {path}: {exc}") from exc
+        candidate = _load_bars(path, end_ts)
+        if candidate.empty:
+            continue
+        descriptors, reference_values = _behavior_descriptors(reference, candidate)
+        rows.append({"symbol": path.stem, **descriptors})
 
     report = pd.DataFrame(rows)
     if report.empty:
         return report
-    return _distance_and_rank(report.sort_values("symbol").reset_index(drop=True))
+    assert reference_values is not None
+    return _distance_and_rank(report.sort_values("symbol").reset_index(drop=True), reference_values)
 
 
 def main() -> None:
