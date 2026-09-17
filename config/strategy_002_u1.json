@@ -1,0 +1,14 @@
+{
+  "universe_id": "U1",
+  "name": "Nifty 100 point-in-time research universe",
+  "status": "definition_locked_membership_data_pending",
+  "market": "NSE",
+  "asset_class": "Indian equities",
+  "bar_interval": "5minute",
+  "membership_source": "NSE Indices Nifty 100 historical constituent/reconstitution records",
+  "membership_rule": "A symbol is eligible only between its recorded effective_from and effective_to dates.",
+  "survivorship_bias_policy": "Current constituents must not be applied to the full historical sample.",
+  "liquidity_policy": "Eligibility requires sufficient 5-minute coverage, plausible prices/volume, adequate recent activity, and valid broker mapping. Exact thresholds must be frozen before final backtest.",
+  "symbols": [],
+  "next_action": "Acquire and commit the point-in-time membership table before selecting any Strategy 002 winner."
+}
