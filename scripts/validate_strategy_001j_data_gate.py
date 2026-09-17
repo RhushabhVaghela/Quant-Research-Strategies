@@ -25,9 +25,10 @@ import pandas as pd
 
 REQUIRED_MEMBERSHIP = {"symbol", "effective_from", "effective_to"}
 REQUIRED_BARS = {"timestamp", "open", "high", "low", "close", "volume"}
-SESSION_OPEN = pd.Timedelta(hours=9, minutes=15)
-SESSION_LAST_BAR = pd.Timedelta(hours=15, minutes=25)
-BAR_INTERVAL = pd.Timedelta(minutes=5)
+SESSION_OPEN = pd.Timedelta("9h15min")
+SESSION_LAST_BAR = pd.Timedelta("15h25min")
+BAR_INTERVAL = pd.Timedelta("5min")
+ONE_DAY = pd.Timedelta("1D")
 MIN_BARS_FOR_BASELINE_TRADE = 37
 
 
@@ -45,6 +46,12 @@ def _parse_window(start: str, end: str) -> tuple[pd.Timestamp, pd.Timestamp]:
     if right < left:
         raise SystemExit("Research end must be on or after research start.")
     return left, right
+
+
+def _localize_timestamp(value: pd.Timestamp) -> pd.Timestamp:
+    if value.tzinfo is None:
+        return value.tz_localize("Asia/Kolkata")
+    return value.tz_convert("Asia/Kolkata")
 
 
 def _load_membership(path: Path) -> pd.DataFrame:
@@ -93,16 +100,8 @@ def _apply_membership(symbol: str, frame: pd.DataFrame, membership: pd.DataFrame
         raise ValueError(f"No membership interval found for {symbol}")
     keep = pd.Series(False, index=frame.index)
     for row in intervals.itertuples(index=False):
-        start = row.effective_from
-        end = row.effective_to
-        if start.tzinfo is None:
-            start = start.tz_localize("Asia/Kolkata")
-        else:
-            start = start.tz_convert("Asia/Kolkata")
-        if end.tzinfo is None:
-            end = end.tz_localize("Asia/Kolkata")
-        else:
-            end = end.tz_convert("Asia/Kolkata")
+        start = _localize_timestamp(row.effective_from)
+        end = _localize_timestamp(row.effective_to)
         keep |= (frame.index >= start) & (frame.index < end)
     return frame.loc[keep]
 
@@ -149,10 +148,9 @@ def _session_diagnostics(frame: pd.DataFrame) -> dict:
 def validate(membership_path: Path, data_dir: Path, start: str, end: str) -> pd.DataFrame:
     window_start, window_end = _parse_window(start, end)
     membership = _load_membership(membership_path)
-    active = membership[
-        (pd.to_datetime(membership["effective_from"]).apply(lambda x: x.tz_localize("Asia/Kolkata") if x.tzinfo is None else x.tz_convert("Asia/Kolkata")) < window_end + pd.Timedelta(days=1))
-        & (pd.to_datetime(membership["effective_to"]).apply(lambda x: x.tz_localize("Asia/Kolkata") if x.tzinfo is None else x.tz_convert("Asia/Kolkata")) > window_start)
-    ]
+    membership_start = pd.to_datetime(membership["effective_from"]).map(_localize_timestamp)
+    membership_end = pd.to_datetime(membership["effective_to"]).map(_localize_timestamp)
+    active = membership[(membership_start < window_end + ONE_DAY) & (membership_end > window_start)]
     required_symbols = sorted(active["symbol"].unique())
     if not required_symbols:
         raise SystemExit("No U1 symbols are active in the requested research window.")
@@ -166,7 +164,7 @@ def validate(membership_path: Path, data_dir: Path, start: str, end: str) -> pd.
             continue
         try:
             frame = _load_bars(path)
-            frame = frame.loc[(frame.index >= window_start) & (frame.index < window_end + pd.Timedelta(days=1))]
+            frame = frame.loc[(frame.index >= window_start) & (frame.index < window_end + ONE_DAY)]
             frame = _apply_membership(symbol, frame, membership)
             if frame.empty:
                 rows.append({"symbol": symbol, "status": "no_data_in_window"})
@@ -219,7 +217,11 @@ def validate(membership_path: Path, data_dir: Path, start: str, end: str) -> pd.
     report = pd.DataFrame(rows).sort_values("symbol").reset_index(drop=True)
     failed = report[report["status"] != "ok"]
     if not failed.empty:
-        raise SystemExit(f"001J data gate FAILED for {len(failed)} of {len(report)} required symbols.")
+        counts = failed["status"].value_counts().to_dict()
+        raise SystemExit(
+            f"001J data gate FAILED for {len(failed)} of {len(report)} required symbols: {counts}. "
+            "Repair the underlying data; do not relax the gate to force a pass."
+        )
     print(
         f"001J data gate PASSED: {len(report)} U1 symbols cover "
         f"{window_start.date()} through {window_end.date()} with session-level integrity."
