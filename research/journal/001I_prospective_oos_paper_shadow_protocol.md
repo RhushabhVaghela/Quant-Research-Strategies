@@ -2,31 +2,29 @@
 
 ## Purpose
 
-001I is the first genuinely prospective out-of-sample gate for Strategy 001.
+001I was the first genuinely prospective out-of-sample gate for Strategy 001.
 
-The historical research sample has been examined through August 2026. Therefore August 2026, and any September 2026 observations already downloaded or inspected before the prospective process is operational, are **not** treated as pristine OOS evidence.
+The historical research sample had been examined through August 2026. 001I observed the already-frozen 001D strategy prospectively, with each signal recorded before its future outcome was known.
 
-001I observes the already-frozen 001D strategy prospectively, with each signal recorded before its future outcome is known.
+The 001I cohort is now **closed for capital-pursuit priority** because the frozen single-instrument GOLDBEES implementation is too low-frequency for the September 2026 accelerated research/deployment objective. This closure is a research-priority decision, not a statistical rejection based on the two observed trades.
 
-## 1. OOS boundary
+## 1. OOS boundary and closure
 
-**Prospective OOS start:** the activation timestamp recorded in `data/prospective/strategy_001i/run_manifest.json`. A signal becomes eligible only when its event-bar completion/capture occurs at or after that boundary.
+The original prospective OOS boundary was the activation timestamp recorded in `data/prospective/strategy_001i/run_manifest.json`.
 
-The previously proposed September 16 date is not automatically used if the capture system was not operational then. No session is retroactively declared prospective.
+Rules for the completed cohort:
 
-Rules:
+1. Data observed before activation remained historical/research data.
+2. Signals were captured at the event-bar boundary before their fixed future outcomes were known.
+3. The 001D parameters were not changed during the cohort.
+4. The prospective outcomes were not used to retune 001D.
+5. The captured 001I ledger is preserved as an immutable research record.
+6. No new 001I collection is required for the current capital-pursuit sprint.
+7. Any reuse of the continuation hypothesis on another universe or with different parameters receives a new strategy/experiment identifier and a new prospective boundary.
 
-1. Data observed before activation remains historical/research data.
-2. A signal must be captured at the event-bar boundary, before the fixed future exit is known.
-3. Once a prospective signal is logged, its strategy parameters cannot be changed for that signal.
-4. No prospective outcome may be used to alter the frozen rules during the same validation window.
-5. If a strategy rule is later changed, the current 001I cohort is closed; the changed version receives a new version identifier and a new prospective OOS boundary.
-6. Restarting the collector against the same run directory must not move the activation boundary. To start a new cohort, use a new run directory and a new registered activation timestamp.
-7. If the collector starts after the session has begun, previously completed bars are not reconstructed as prospective observations. The first eligible completed bar is the first one actually captured after activation.
+## 2. Frozen strategy that was tested
 
-## 2. Frozen strategy
-
-001I uses Strategy 001D exactly as frozen:
+001I observed Strategy 001D exactly as frozen:
 
 - GOLDBEES 5-minute OHLCV;
 - previous 30 completed same-session closes;
@@ -42,208 +40,54 @@ Rules:
 - one position at a time;
 - no leverage or optimized sizing.
 
-For the live collector, a candle timestamp is treated as the start of the 5-minute candle. Thus a signal on candle `t` is captured when that candle completes at `t+5`, the intended entry is the next candle open at `t+5`, and the frozen exit price is the close of the candle starting at `t+30`, which becomes known when that exit candle completes at `t+35`.
+No threshold, lookback, holding period, cooldown, time-of-day filter, stop, target, or ML filter was introduced into 001I.
 
-**No threshold, lookback, holding period, cooldown, time-of-day filter, stop, target, or ML filter may be introduced during the prospective window.**
+## 3. Paper/shadow implementation
 
-Because the baseline uses previous **same-session** bars, a run started after the session begins may have an initial warm-up period before 30 newly captured same-session bars are available. This is an operational consequence of the frozen feature definition, not a reason to backfill or relabel pre-activation bars as prospective observations.
+The collector used Zerodha/KiteTicker live data, built completed 5-minute GOLDBEES bars, logged point-in-time signals, and finalized paper outcomes after the frozen exit candle completed. It never placed orders.
 
-## 3. Paper/shadow phase
+The captured run passed the repository's prospective-ledger integrity validator.
 
-The first phase is **paper/shadow**, not live capital deployment.
+## 4. Why the cohort is closed
 
-The signal engine generates the same intended action as the frozen strategy. No capital is required for a signal to count as a prospective observation.
+The observed 2026-09-17 session produced only two selected trades. That is too little evidence for statistical rejection, but it demonstrates that the frozen **single-instrument** implementation is not an efficient primary vehicle for the current deadline.
 
-The repository provides `scripts/run_strategy_001i_paper_shadow.py`. It uses the existing Zerodha authentication/data layer, subscribes to GOLDBEES live ticks in full mode, builds completed 5-minute bars, logs point-in-time signals, and finalizes paper outcomes after the frozen exit bar completes. It never places orders.
+Therefore:
 
-The collector should normally be started before the market session. Its activation boundary is immutable for a run. It can be restarted during the same run without changing that boundary.
+> **Do not wait for 001I to accumulate 20/50/100 trades. Do not optimize 001D from this prospective sample. Close the cohort and move the research effort to a broader universe/new experiment.**
 
-If actual Zerodha orders are later tested, actual orders must be separately identified from paper observations and governed by a separate controlled-live protocol.
+The underlying continuation hypothesis may be reused in Strategy 002, but only as a newly specified experiment.
 
-## 4. Point-in-time signal record
+## 5. Execution-cost measurement retained
 
-Every qualifying signal must be appended before its fixed future outcome is known.
+The original protocol required separate recording of quoted spread, intended/observable prices, slippage, and brokerage/statutory costs. The 2026-09-17 paper records did not contain realized broker execution costs; those fields remained zero/blank under paper assumptions. This limitation is retained in the results record and must be addressed by any future controlled-live protocol.
 
-Minimum fields:
+## 6. No-look-ahead controls retained
 
-```text
-signal_id
-strategy_version
-protocol_version
-signal_timestamp
-session_date
-time_of_day
-time_of_day_bucket
-signal_close
-prior_mean_30
-prior_std_30
-z_score
-prior_return_6bar
-volume
-prior_volume_mean_30
-volume_ratio_30
-intended_entry_timestamp
-intended_entry_price
-intended_exit_timestamp
-status
-capture_timestamp
-capture_wallclock
-signal_bid
-signal_ask
-signal_spread_bps
-```
+The following controls remain part of the research standard:
 
-The pre-outcome record is append-only. It must not be overwritten after the forward path is known.
+1. Future bars cannot enter signal construction.
+2. Outcomes cannot be used to retune an already frozen cohort.
+3. Losing observations cannot be removed manually.
+4. MFE/MAE cannot be used retrospectively to create stops/targets.
+5. Entry/exit prices cannot be selected after seeing the forward path.
+6. A changed rule receives a new experiment identifier.
 
-## 5. Outcome record
+## 7. Relationship to Strategy 002
 
-Only after the frozen exit candle has completed should outcome fields be appended:
+Strategy 002 is independent of the 001I cohort. It may investigate whether the continuation structure generalizes across a predefined liquid equity universe, and it may perform a separately registered parameter-selection experiment on development data.
 
-```text
-observable_or_paper_entry_price
-observable_or_paper_exit_price
-gross_return
-observed_entry_spread_bps
-observed_exit_spread_bps
-estimated_slippage_bps
-brokerage_and_statutory_costs
-net_return
-MFE
-MAE
-outcome_recorded_timestamp
-operational_exception
-```
+See:
 
-MFE/MAE remain diagnostics. If they are derived from OHLC ranges, they must not be interpreted as proof that intrabar highs/lows were executable.
+- `research/journal/002_strategy_roadmap.md`
+- `research/journal/002_universe_u1_spec.md`
 
-The implementation rejects outcome finalization before the frozen exit bar's completion boundary.
+The 001I ledger and conclusions must not be overwritten to make Strategy 002 appear to be a continuation of the same OOS experiment.
 
-## 6. Execution-cost measurement
+## 8. Final status
 
-001H used a simple round-trip friction grid. 001I should replace that assumption with observed execution information where available.
+**🔵 001I closed for capital-pursuit priority.**
 
-Record separately:
+The frozen 001D GOLDBEES strategy remains a completed research artifact with historical evidence and a small genuine prospective sample. It is not approved for live deployment.
 
-- quoted bid/ask spread at or near signal/entry where observable;
-- intended next-bar-open price;
-- observable next-bar-open price;
-- paper-fill assumption;
-- realized slippage if an actual order is eventually tested;
-- brokerage and statutory charges when applicable;
-- other explicitly modeled friction.
-
-Do not collapse these into one unexplained cost number.
-
-The purpose is to determine whether the small historical gross edge is compatible with actual execution economics.
-
-## 7. Operational controls
-
-Record explicit statuses or exceptions such as:
-
-- `signal_observed`
-- `paper_trade_completed`
-- `data_missing`
-- `session_boundary`
-- `execution_observation_missing`
-- `operational_error`
-
-Operational failures must be distinguished from strategy failures.
-
-If a bar is missing or delayed, do not reconstruct a signal with later information and label it prospective.
-
-The repository also provides `scripts/validate_strategy_001i_run.py`, which checks the manifest, activation boundary, timestamp ordering, frozen entry/exit timing, duplicate identifiers, orphan outcomes, and outcome-finalization timing.
-
-## 8. No-look-ahead controls
-
-During the prospective window:
-
-1. Do not inspect future bars before signal generation.
-2. Do not retune z-score, lookback, holding period, cooldown, or filters.
-3. Do not remove losing observations manually.
-4. Do not add stops/targets based on observed MFE/MAE.
-5. Do not select entry/exit prices after seeing intrabar movement.
-6. Do not train a new ML model on post-freeze outcomes unless a separately registered walk-forward experiment defines the training protocol before those outcomes are used.
-7. Preserve the original frozen signal record.
-8. Do not move an existing run's activation timestamp by restarting the collector.
-
-## 9. Review checkpoints
-
-The following are **review checkpoints, not success thresholds**:
-
-- **20 completed trades:** operational/data-quality review;
-- **50 completed trades:** first prospective statistical review;
-- **100 completed trades:** stronger stability review;
-- **approximately 3 months of prospective sessions:** time/regime review.
-
-A checkpoint cannot be used to stop early because the result is good or bad. The purpose is to inspect data integrity and predefined diagnostics.
-
-## 10. Primary prospective metrics
-
-Track:
-
-- completed signals and trades;
-- gross mean/median return;
-- net mean/median return;
-- win rate;
-- profit factor;
-- cumulative return;
-- drawdown;
-- daily return series;
-- daily Sharpe diagnostic;
-- MFE/MAE;
-- realized spread/slippage;
-- total costs;
-- turnover/trading frequency;
-- execution exceptions;
-- cost-adjusted expectancy.
-
-Compare prospective distributions against the historical 001G/001H distributions without changing the frozen strategy to match them.
-
-## 11. Promotion decision
-
-001I may support progression toward controlled live validation only if:
-
-- the signal engine operates reproducibly;
-- prospective records are complete and point-in-time safe;
-- realized execution costs are measured;
-- net performance is economically plausible under observed friction;
-- the result is not dependent on a small number of unrepresentative observations;
-- no material operational or data-quality failure is found.
-
-Possible outcomes:
-
-- **🟢 Proceed to a separate controlled-live validation protocol**;
-- **🟡 Extend paper/shadow validation** because evidence or execution information remains limited/mixed;
-- **🔴 Reject/freeze Strategy 001** if prospective evidence materially contradicts the historical research or the economics are not viable.
-
-These are research-gate states, not guarantees of future performance.
-
-## 12. Relationship to 001H
-
-001H established historical robustness across the examined January 2025–August 2026 sample and showed that the simple friction grid becomes negative between 4 and 6 bps round-trip.
-
-However, the historical sample has already been examined, so its 2026 holdout is **OOS-style rather than pristine OOS**.
-
-001I addresses the unresolved question:
-
-```text
-Does the frozen signal continue when future outcomes are unknown?
-                ↓
-What forward path is actually observed?
-                ↓
-What execution friction is actually observed?
-                ↓
-Does the signal remain economically plausible after that friction?
-```
-
-## 13. Capital control
-
-The existence of approximately ₹30,000 in the brokerage account is not treated as evidence that the strategy should receive capital.
-
-No live order is implied by 001I. Any later live experiment must have its own explicit capital limit, position sizing, risk limits, order controls, and operational rollback procedure.
-
-## 14. Current status
-
-**🟡 Protocol hardened — prospective paper/shadow data collection is the next gate.**
-
-No Strategy 002 work begins before Strategy 001 receives a final decision.
+The next active research program is Strategy 002.
