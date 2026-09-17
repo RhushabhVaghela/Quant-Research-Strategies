@@ -1,6 +1,6 @@
 # Strategy 001J — U1 Data Acquisition Gate
 
-**Status:** Broker-native acquisition path ready; PIT Nifty 100 is deferred rather than fabricated.
+**Status:** Broker-native acquisition path ready; 90-session experiment window frozen; PIT Nifty 100 is deferred rather than fabricated.
 
 ## Decision
 
@@ -15,115 +15,74 @@ The active tactical path therefore uses the existing Zerodha Kite Connect infras
 
 This path is explicitly marked as having current-instrument/survivorship bias and is not silently presented as PIT Nifty 100.
 
+## Frozen experiment window
+
+The research window is now immutable for this sprint:
+
+- **formation:** 2026-05-12 through 2026-06-09 — 20 sessions;
+- **development:** 2026-06-10 through 2026-08-19 — 50 sessions;
+- **holdout:** 2026-08-20 through 2026-09-17 — 20 sessions.
+
+See `research/journal/001J_experiment_window.md` for the full lock. The window is 90 market sessions rather than 90 calendar days because the preregistered split is session-based. Kite's request-size limitation is handled by chunking and does not redefine the research window.
+
 ## Kite data capabilities relevant to 001J
 
-Kite Connect provides an instrument master containing current tradable instruments and instrument tokens. Its historical candle API supports 5-minute candles. Current published Kite guidance indicates that a 5-minute request is limited to roughly 90 calendar days per request, but complete available history can be retrieved through multiple requests within the API rate limits. The repository downloader therefore chunks requests conservatively.
+Kite Connect provides an instrument master containing current tradable instruments and instrument tokens. Its historical candle API supports 5-minute candles. The repository downloader chunks requests conservatively.
 
 The repository already contains `src/data/kite_client.py` and `src/data/historical.py`; the CLI wrapper is `scripts/fetch_strategy_001j_kite_data.py`.
 
-## Tactical research-window design
+## Step 1 — U1 formation data
 
-Use approximately **one year of 5-minute history** for the selected U1 symbols if Kite returns adequate coverage. This is materially preferable to restricting the experiment to only the most recent 90 days; 90 days is a per-request constraint, not a reason to throw away older available history.
+The U1 liquidity formation window that produced the locked membership file is separate from the experiment formation phase above. U1 selection remains based only on median daily traded value and minimum formation-day coverage.
 
-For the September 2026 sprint, the intended structure is:
+## Step 2 — Validate membership
 
-1. **Formation window:** first ~20 trading days — liquidity only.
-2. **Development window:** the long middle portion of the one-year sample.
-3. **Chronological holdout:** a substantial final portion, preferably ~3 months when the actual data coverage permits.
-4. **Prospective phase:** begins only after candidate freeze and holdout review.
-
-The exact calendar dates must be frozen from the actual downloaded coverage before inspecting Strategy 001J results.
-
-## Step 1 — Fetch broker-native formation data
-
-Fetch current NSE EQ candidates into:
-
-`data/raw/strategy_001j_candidates/`
-
-Example:
-
-```powershell
-python scripts/fetch_strategy_001j_kite_data.py `
-  --start <FORMATION_START> `
-  --end <FORMATION_END> `
-  --all-nse-eq `
-  --output-dir data/raw/strategy_001j_candidates
-```
-
-For a small smoke test, `--max-symbols 10` can be used. Do not use that reduced set for research.
-
-The script uses the existing local Zerodha authentication layer. No credentials or access tokens belong in Git.
-
-## Step 2 — Form U1 before strategy outcomes
-
-Build the tactical U1 from the formation data:
-
-```powershell
-python scripts/build_strategy_001j_broker_liquid_universe.py `
-  --input-dir data/raw/strategy_001j_candidates `
-  --formation-start <FORMATION_START> `
-  --formation-end <FORMATION_END> `
-  --research-end <RESEARCH_END> `
-  --top-n 50 `
-  --min-days 15
-```
-
-Outputs:
-
-- `data/reports/strategy_001j_broker_universe_ranking.csv`
-- `data/universe/strategy_001j_u1_membership.csv`
-- `data/universe/strategy_001j_u1_membership_metadata.json`
-
-The ranking must be preserved as research evidence. No symbol may be removed because it later performs poorly, and no symbol may be added because it later performs well.
-
-## Step 3 — Fetch full research-window data for selected U1
-
-After U1 is generated, fetch the full research period for exactly those symbols. The downloader automatically splits long ranges into Kite-compatible chunks:
-
-```powershell
-python scripts/fetch_strategy_001j_kite_data.py `
-  --start <FORMATION_START> `
-  --end <RESEARCH_END> `
-  --symbols-file data/universe/strategy_001j_u1_membership.csv `
-  --output-dir data/raw/strategy_001j_u1
-```
-
-The downloader maps the membership CSV's `symbol` column to current Kite NSE EQ instruments.
-
-## Step 4 — Validate membership and data
-
-```powershell
+```cmd
 python scripts/validate_strategy_001j_u1_membership.py
-python scripts/audit_strategy_001j_u1_data.py
-python scripts/validate_strategy_001j_data_gate.py `
-  --start <RESEARCH_START> `
-  --end <RESEARCH_END>
 ```
 
-Do not run the baseline if any gate fails.
+## Step 3 — Validate the frozen experiment data window
 
-## Step 5 — Similarity diagnostics
+The gate is now session-aware and should be run against the frozen window:
 
-Once the selected symbols and full bars exist, run the outcome-independent GOLDBEES comparison:
-
-```powershell
-python scripts/analyze_strategy_001j_universe_similarity.py `
-  --reference <path-to-goldbees-5m.csv> `
-  --universe-dir data/raw/strategy_001j_u1 `
-  --end <FROZEN_DIAGNOSTIC_END>
+```cmd
+python scripts/audit_strategy_001j_u1_data.py --input-dir data/raw/strategy_001j_u1
+python scripts/validate_strategy_001j_data_gate.py --start 2026-05-12 --end 2026-09-17
 ```
 
-The similarity report is descriptive only. It cannot change U1 after seeing Strategy 001J outcomes.
+The gate checks each selected symbol for:
 
-## Step 6 — Frozen 001D transfer baseline
+- data in the frozen window;
+- 09:15 IST first bar on each observed session;
+- exact 5-minute increments with no interior gaps;
+- positive OHLC and non-negative volume;
+- at least 37 bars per session for one complete frozen-baseline trade path;
+- no missing observed sessions across the locked U1;
+- no timestamps beyond the normal 15:25 final 5-minute bar.
+
+A terminal session ending at 15:10 is allowed if it is contiguous. A 72-bar session is therefore not automatically rejected merely because it does not contain the 15:15, 15:20, and 15:25 bars. An interior gap is rejected.
+
+## Step 4 — Frozen 001D transfer baseline
 
 Only after all data gates pass:
 
-```powershell
-python scripts/run_strategy_001j_baseline.py
+```cmd
+python scripts/run_strategy_001j_baseline.py --start 2026-05-12 --end 2026-09-17
 ```
 
-This baseline uses the exact frozen 001D parameters and is recorded before the 162-configuration development grid.
+The runner now requires/uses the frozen experiment window rather than silently consuming all available U1 history. It uses the exact frozen 001D parameters and is recorded before the 162-configuration development grid.
+
+## Step 5 — Development grid
+
+After the transfer baseline is recorded, the preregistered 162-configuration grid may be evaluated on **development only** (2026-06-10 through 2026-08-19). The candidate is frozen before holdout.
+
+## Step 6 — Holdout
+
+Holdout covers 2026-08-20 through 2026-09-17. No holdout result may be used to retune the candidate.
+
+## Step 7 — Similarity diagnostics
+
+The outcome-independent GOLDBEES comparison remains descriptive only. It cannot change U1 after seeing Strategy 001J outcomes.
 
 ## PIT Nifty 100 remains deferred
 
@@ -131,4 +90,4 @@ The original Nifty 100 acquisition path is not deleted. If historical constituen
 
 ## Stop conditions
 
-Do not fabricate historical membership, use Strategy 001J returns to construct U1, or silently substitute current constituents for historical index membership. If the Kite data itself lacks sufficient coverage or instrument mapping for the frozen research window, stop and record the failure rather than weakening the methodology.
+Do not fabricate historical membership, use Strategy 001J returns to construct U1, weaken the frozen experiment window after inspecting results, or silently substitute current constituents for historical index membership. If the Kite data lacks sufficient session-level coverage or integrity for the frozen research window, stop and record the failure rather than weakening the methodology.

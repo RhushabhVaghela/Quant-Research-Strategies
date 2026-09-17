@@ -4,7 +4,7 @@
   "experiment": "cross_sectional_equity_u1",
   "universe_id": "U1",
   "name": "Kite-native liquid NSE EQ cross-sectional continuation experiment",
-  "status": "broker_data_acquisition_ready",
+  "status": "experiment_window_frozen",
   "market": "NSE",
   "asset_class": "Indian equities",
   "bar_interval": "5minute",
@@ -15,6 +15,20 @@
   "minimum_formation_days": 15,
   "survivorship_bias_policy": "Current Kite instrument availability does not reconstruct historical delistings or historical index membership. This tactical universe is therefore not PIT-clean and is not eligible for final promotion without explicit treatment of that limitation.",
   "deferred_clean_universe": "PIT Nifty 100 remains a separate deferred acquisition path if historical membership data becomes available.",
+  "experiment_window": {
+    "timezone": "Asia/Kolkata",
+    "session_count": 90,
+    "start_date": "2026-05-12",
+    "formation_end_date": "2026-06-09",
+    "development_start_date": "2026-06-10",
+    "development_end_date": "2026-08-19",
+    "holdout_start_date": "2026-08-20",
+    "end_date": "2026-09-17",
+    "formation_sessions": 20,
+    "development_sessions": 50,
+    "holdout_sessions": 20,
+    "boundary_rule": "Inclusive calendar dates; session membership is determined from observed NSE 5-minute data. NSE holidays are not counted as sessions."
+  },
   "baseline_parameters": {
     "lookback_bars": 30,
     "z_threshold": 2.0,
@@ -37,7 +51,8 @@
   "kite_download_script": "scripts/fetch_strategy_001j_kite_data.py",
   "universe_builder": "scripts/build_strategy_001j_broker_liquid_universe.py",
   "data_audit_script": "scripts/audit_strategy_001j_u1_data.py",
+  "data_gate_script": "scripts/validate_strategy_001j_data_gate.py",
   "baseline_runner": "scripts/run_strategy_001j_baseline.py",
   "similarity_script": "scripts/analyze_strategy_001j_universe_similarity.py",
-  "next_action": "Fetch the broker-native formation window, build the registered U1 universe, fetch full research-window data for selected symbols, then run the data gates and frozen-001D baseline."
+  "next_action": "Run the frozen-window data gate. Only after it passes should the frozen-001D transfer baseline be run."
 }

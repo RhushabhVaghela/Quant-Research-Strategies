@@ -1,7 +1,7 @@
 # Strategy 001J — Cross-Sectional Equity Experiment Specification
 
 **Parent strategy:** 001 — intraday continuation  
-**Status:** Active research; tactical broker-native universe locked before outcome evaluation  
+**Status:** Active research; U1 locked; September 2026 experiment window frozen  
 **Universe:** U1 — Kite-native liquid NSE EQ universe  
 **Primary frequency:** 5-minute OHLCV
 
@@ -66,25 +66,29 @@ The first run must use the exact 001D parameters without optimization:
 
 The purpose of this baseline is transferability, not parameter selection.
 
-## 6. Tactical development window
+## 6. Frozen accelerated experiment window
 
-For the accelerated broker-native experiment, use a frozen approximately 90-day Kite 5-minute availability window when the actual download is performed:
+The September 2026 sprint now uses a frozen **90-session** experiment window, recorded in `research/journal/001J_experiment_window.md` and `config/strategy_001j_u1.json`:
 
-- formation: first ~20 trading days;
-- development: following ~50 trading days;
-- chronological holdout: final ~20 trading days.
+- **formation:** 20 sessions, 2026-05-12 through 2026-06-09;
+- **development:** 50 sessions, 2026-06-10 through 2026-08-19;
+- **chronological holdout:** 20 sessions, 2026-08-20 through 2026-09-17.
 
-The exact dates must be recorded before examining Strategy 001J results.
+The dates are calendar boundaries; NSE holidays are not counted as sessions. The split is frozen before examining Strategy 001J performance.
 
-After the baseline is recorded, run the pre-registered 162-configuration grid on development only:
+The choice is session-based rather than literal 90 calendar days because the preregistered split is 20 + 50 + 20 market sessions. Kite request-size limits remain an acquisition-chunking constraint and do not redefine the research sample.
+
+The earlier U1 liquidity formation window that created membership is separate from this experiment formation phase.
+
+## 7. Selection discipline
+
+The candidate search is performed on development data only using the pre-registered 162-configuration grid:
 
 - lookback: 20, 30, 40;
 - z threshold: 1.5, 2.0, 2.5;
 - prior-trend window: 3, 6, 9;
 - holding period: 3, 6, 9;
 - cooldown: 6, 12.
-
-## 7. Selection discipline
 
 The candidate must not be selected solely by highest cumulative return. Compare:
 
@@ -113,11 +117,17 @@ The current-instrument survivorship limitation must be reported alongside all ho
 
 After holdout validation, the selected configuration is frozen and a separate prospective paper/shadow collector is created with an immutable activation boundary. It must use only information available at the signal timestamp, enter at the next observable bar open, record the full forward path and MFE/MAE, and never place live orders during paper/shadow collection.
 
-## 10. Costs and execution
+## 10. Data-integrity gate
+
+The pre-backtest gate is session-aware. It evaluates the exact structure required by the engine rather than requiring every file to begin at midnight or end at 15:30.
+
+For each observed session, the gate requires a 09:15 first bar, regular 5-minute increments with no interior gaps, valid OHLC/volume, and at least 37 bars for one complete frozen-baseline trade path. A session may terminate before 15:25 if the observed bars remain contiguous; this is recorded as terminal truncation. Missing interior bars, missing sessions, invalid session boundaries, and short sessions fail the gate.
+
+## 11. Costs and execution
 
 Historical and prospective results must distinguish gross signal return from executable net return. Cost analysis should include brokerage/fees/taxes as applicable, spread, slippage, and adverse execution sensitivity. Observable live-market friction should be measured where available.
 
-## 11. Promotion gates
+## 12. Promotion gates
 
 001J may proceed to controlled live validation only if applicable gates pass:
 
