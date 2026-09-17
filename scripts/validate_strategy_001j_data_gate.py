@@ -19,16 +19,17 @@ terminal truncation from missing interior data.
 from __future__ import annotations
 
 import argparse
+from datetime import timedelta
 from pathlib import Path
 
 import pandas as pd
 
 REQUIRED_MEMBERSHIP = {"symbol", "effective_from", "effective_to"}
 REQUIRED_BARS = {"timestamp", "open", "high", "low", "close", "volume"}
-SESSION_OPEN = pd.Timedelta("9h15min")
-SESSION_LAST_BAR = pd.Timedelta("15h25min")
-BAR_INTERVAL = pd.Timedelta("5min")
-ONE_DAY = pd.Timedelta("1D")
+SESSION_OPEN = timedelta(hours=9, minutes=15)
+SESSION_LAST_BAR = timedelta(hours=15, minutes=25)
+BAR_INTERVAL = timedelta(minutes=5)
+ONE_DAY = timedelta(days=1)
 MIN_BARS_FOR_BASELINE_TRADE = 37
 
 
