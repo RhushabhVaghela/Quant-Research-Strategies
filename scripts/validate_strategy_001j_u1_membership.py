@@ -1,9 +1,4 @@
-"""Validate Strategy 001J U1 point-in-time membership data.
-
-The validator intentionally fails while the repository still contains only the
-empty template. This prevents a current-only constituent list from silently
-entering historical research.
-"""
+"""Validate Strategy 001J U1 membership intervals."""
 
 from __future__ import annotations
 
@@ -24,10 +19,7 @@ def validate(path: Path) -> None:
     if missing:
         raise SystemExit(f"Missing required columns: {missing}")
     if df.empty:
-        raise SystemExit(
-            "U1 membership is empty. Load point-in-time historical Nifty 100 "
-            "membership before running Strategy 001J research."
-        )
+        raise SystemExit("U1 membership is empty. Build/load the registered U1 membership before running Strategy 001J research.")
 
     df["symbol"] = df["symbol"].astype(str).str.strip().str.upper()
     if (df["symbol"] == "").any():
@@ -41,7 +33,6 @@ def validate(path: Path) -> None:
         raise SystemExit("Every effective_to must be later than effective_from.")
 
     # Treat intervals as half-open: [effective_from, effective_to).
-    # This permits adjacent reconstitution periods without overlap.
     for symbol, group in df.assign(_start=start, _end=end).groupby("symbol"):
         g = group.sort_values("_start")
         if g["_start"].duplicated().any():
@@ -54,10 +45,6 @@ def validate(path: Path) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "path",
-        nargs="?",
-        default="data/universe/strategy_001j_u1_membership.csv",
-    )
+    parser.add_argument("path", nargs="?", default="data/universe/strategy_001j_u1_membership.csv")
     args = parser.parse_args()
     validate(Path(args.path))
