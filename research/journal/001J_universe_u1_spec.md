@@ -1,82 +1,74 @@
 # Strategy 001J — Universe U1 Specification
 
-**Status:** Definition locked; point-in-time membership acquisition is the next data gate.
+**Status:** Tactical broker-native U1 locked for the September 2026 sprint; PIT Nifty 100 remains a deferred clean-universe path.
 
-## Primary universe
+## Primary universe — U1
 
-U1 is the **point-in-time Nifty 100 constituent universe** for the Strategy 001J cross-sectional equity experiment.
+U1 is a **Kite-native liquid NSE equity universe** formed before any Strategy 001J outcome is evaluated.
 
-NSE describes Nifty 100 as a diversified 100-stock large-cap index representing major sectors and tracking the combined portfolio of Nifty 50 and Nifty Next 50. NSE Indices' reconstitution calendar lists Nifty 100 as semi-annually reconstituted on the last working day of March and September.
+The current Kite instrument dump provides the live tradable NSE EQ instrument set and instrument tokens. Kite's historical API then supplies 5-minute OHLCV for those instruments. The repository's existing authentication and historical-data layers are used; credentials remain local.
 
-Sources:
-- NSE Nifty 100: https://www.nseindia.com/static/products-services/indices-nifty100-index
-- NSE Indices reconstitution calendar: https://www.niftyindices.com/resources/index-rebalancing-schedule
+The U1 formation rule is fixed:
 
-## Point-in-time membership
+1. download current NSE EQ instruments from Kite;
+2. fetch 5-minute OHLCV over a pre-declared formation window;
+3. calculate daily traded value as `sum(close * volume)` across 5-minute bars;
+4. require at least 15 formation days;
+5. rank by median daily traded value;
+6. select the top 50 symbols;
+7. activate membership only after the formation window;
+8. never use Strategy 001J P&L, win rate, drawdown, holdout results, or similarity rank to choose the universe.
 
-The canonical membership table is:
+The selection is therefore outcome-independent, but it is **not fully point-in-time clean** because Kite's current instrument dump does not reconstruct historical delistings or historical index membership. This limitation must remain visible in every 001J report and prevents treating this tactical universe as equivalent to PIT Nifty 100.
+
+## Deferred clean universe
+
+The original PIT Nifty 100 U1 remains a valid research path when historical constituent data is obtained. It is not being manufactured from today's list. This tactical U1 exists solely to make the same Strategy 001 hypothesis testable with the broker data already available to the project.
+
+## Membership contract
+
+The generated membership file remains:
 
 ```text
 symbol,effective_from,effective_to
 ```
 
-A security is eligible only when its observation date falls inside its membership interval. Historical research must not apply the September 2026 constituent list to earlier dates.
+Intervals are half-open: `[effective_from, effective_to)`.
 
-Additional index changes caused by corporate actions, suspension, delisting, or other ad-hoc events must be represented when applicable. The methodology documentation notes that additional index review can occur for such events.
-
-## Data-source policy
-
-The preferred source for index composition is NSE/NSE Indices or a licensed historical constituent dataset that preserves effective dates. The repository should store a compact normalized membership table plus a metadata record containing:
-
-- source name;
-- source URL or document identifier;
-- retrieval date;
-- source publication/effective date where available;
-- transformation steps;
-- symbol-mapping notes.
-
-Do not silently substitute an unofficial current constituent list for historical membership.
+For the tactical U1, each selected symbol receives one membership interval beginning immediately after the formation window and ending at the frozen research-window boundary.
 
 ## Bar data
 
 Primary research data:
 
 - NSE equity;
-- 5-minute OHLCV;
+- 5-minute OHLCV from Zerodha Kite Connect;
 - exchange-local timestamps normalized to `Asia/Kolkata`;
-- symbol-local session boundaries;
 - duplicate timestamps rejected;
-- missing-bar diagnostics retained.
+- chronological order verified;
+- missing-bar diagnostics retained;
+- positive OHLC prices;
+- non-negative volume.
 
-Corporate-action adjustments and raw-vs-adjusted price conventions must be documented before the final backtest.
+Kite's historical API supports 5-minute candles and current instrument-token mapping. Historical intraday request limits require date-range chunking; the acquisition script uses conservative chunks and the API rate limit rather than assuming one request can cover an arbitrary period.
 
 ## Liquidity/data eligibility
 
-The final eligibility rules must be frozen before candidate selection. Required checks include:
-
-1. sufficient feature history;
-2. sufficient 5-minute coverage;
-3. no material missing-bar problem;
-4. valid positive OHLC prices;
-5. plausible volume;
-6. broker/instrument mapping where execution is contemplated;
-7. no unresolved corporate-action or symbol-mapping issue.
-
-Liquidity thresholds are not to be selected by maximizing backtest performance.
+The liquidity rule is frozen before Strategy 001J performance evaluation. The formation window determines the U1 membership. The backtest must not alter U1 because a symbol produces more attractive strategy results.
 
 ## Exclusions
 
-The first experiment excludes:
+U1 excludes:
 
 - ETFs, including GOLDBEES;
 - futures and options;
 - leveraged/inverse products;
-- securities outside U1;
-- securities whose historical identity cannot be mapped reliably;
-- securities lacking adequate data for the relevant feature window.
+- non-NSE-EQ instruments;
+- instruments without sufficient formation-window data;
+- instruments with unresolved data-integrity problems.
 
-GOLDBEES remains the frozen 001D instrument and is kept separate from U1.
+GOLDBEES remains the frozen 001D reference and is not eligible for U1.
 
-## Expansion policy
+## Promotion caveat
 
-If U1 produces insufficient observations after the pipeline is validated, a broader universe such as Nifty 200 may be evaluated as a **new universe experiment under Strategy 001**, with its own identifier and pre-registered rules. The universe must never be broadened retrospectively only because a preferred parameter configuration needs more trades.
+Because U1 is based on the current broker instrument universe, the experiment has a survivorship/current-instrument limitation. A positive result can support further research and prospective testing, but it cannot by itself establish the same level of historical-universe validity as a true PIT constituent study.
