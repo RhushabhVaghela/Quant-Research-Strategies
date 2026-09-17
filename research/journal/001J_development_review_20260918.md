@@ -55,7 +55,13 @@ The reason is methodological rather than a statistical claim that the continuati
 
 The holdout remains **unopened for candidate selection purposes**. We will not inspect the holdout and then choose a configuration because the development result is inconvenient.
 
-## 6. Next experiment under Strategy 001
+## 6. Warning remediation
+
+The development stability script previously emitted a NumPy deprecation warning from generic timedelta arithmetic when constructing the inclusive metadata end date. The implementation has been changed to use an explicit frozen `DEVELOPMENT_END` date (`2026-08-19`) alongside the exclusive boundary (`2026-08-20`). This removes the unnecessary timedelta conversion from metadata generation without changing the development windows, trade filtering, ranking logic, or numerical methodology.
+
+A regression test was also added to pin the three development boundary dates and ensure the inclusive/exclusive relationship remains explicit.
+
+## 7. Next experiment under Strategy 001
 
 The next step is a new, explicitly preregistered development experiment under the same Strategy 001 economic hypothesis. It must be designed around the observed bottleneck — low per-trade expectancy relative to execution costs — without changing rules after inspecting holdout results.
 
@@ -70,8 +76,8 @@ The follow-up experiment must:
 7. Keep the holdout untouched until a candidate passes the development freeze record.
 8. If no candidate survives conservative costs, reject this implementation and move to a different Strategy 001 experiment rather than forcing a holdout result.
 
-## 7. Reproducibility record
+## 8. Reproducibility record
 
-The development diagnostics were run from the locked development trade ledger. The user's local run reported 95 tests passing before the remaining warning fix. The stability analysis completed and explicitly reported that no holdout data was loaded. The only reported warning was the NumPy timedelta deprecation in `analyze_strategy_001j_development_stability.py`; that line has now been corrected in the repository.
+The user's local run reported **95 tests passing**. The stability analysis completed and explicitly reported that no holdout data was loaded. The cost-sensitivity analysis also completed without loading holdout data. The remaining stability-script warning has now been addressed in the repository.
 
-After pulling the warning-fix commit, rerun the test suite and both development diagnostics locally. The expected state is zero warnings and no change to the development methodology or generated numerical results.
+The warning fix is a code-quality change only: it does not alter the frozen 001D strategy, U1 membership, development dates, candidate grid, stability calculations, or cost-sensitivity methodology. After pulling the latest commits, rerun the test suite and both development diagnostics locally and confirm that the warning is absent and the generated numerical outputs are unchanged.
