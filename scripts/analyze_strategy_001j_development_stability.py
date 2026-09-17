@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 
 DEVELOPMENT_START = pd.Timestamp("2026-06-10", tz="Asia/Kolkata")
+DEVELOPMENT_END = pd.Timestamp("2026-08-19", tz="Asia/Kolkata")
 DEVELOPMENT_END_EXCLUSIVE = pd.Timestamp("2026-08-20", tz="Asia/Kolkata")
 PERIODS = {
     "dev_early": (DEVELOPMENT_START, pd.Timestamp("2026-07-06", tz="Asia/Kolkata")),
@@ -137,7 +138,7 @@ def main() -> None:
     pd.DataFrame([{
         "phase": "development_diagnostics",
         "start": DEVELOPMENT_START.date().isoformat(),
-        "end": (DEVELOPMENT_END_EXCLUSIVE - pd.Timedelta(days=1)).date().isoformat(),
+        "end": DEVELOPMENT_END.date().isoformat(),
         "periods": ";".join(PERIODS),
         "candidate_selection": "manual review required; this report is diagnostic and does not freeze a candidate",
         "holdout_access": "none",
