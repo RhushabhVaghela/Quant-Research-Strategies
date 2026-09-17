@@ -62,6 +62,8 @@ The gate checks each selected symbol for:
 
 A terminal session ending at 15:10 is allowed if it is contiguous. A 72-bar session is therefore not automatically rejected merely because it does not contain the 15:15, 15:20, and 15:25 bars. An interior gap is rejected.
 
+The gate now uses Python's explicit `datetime.timedelta` values for fixed session offsets, avoiding the NumPy generic-timedelta deprecation warnings seen during the first repaired run. This is a code-quality fix only; the validation contract is unchanged.
+
 ### Repairing an incomplete final session
 
 The original full-history download may end before the final frozen session for some symbols. Do **not** use `--overwrite` to repair this: `--overwrite` intentionally replaces a symbol file with only the requested range.
@@ -89,19 +91,51 @@ Only after all data gates pass:
 python scripts/run_strategy_001j_baseline.py --start 2026-05-12 --end 2026-09-17
 ```
 
-The runner now requires/uses the frozen experiment window rather than silently consuming all available U1 history. It uses the exact frozen 001D parameters and is recorded before the 162-configuration development grid.
+The runner uses the exact frozen 001D parameters and is recorded before the 162-configuration development grid. It is a transferability baseline, not an optimizer.
 
 ## Step 5 — Development grid
 
-After the transfer baseline is recorded, the preregistered 162-configuration grid may be evaluated on **development only** (2026-06-10 through 2026-08-19). The candidate is frozen before holdout.
+The preregistered grid is exactly 162 configurations:
+
+- lookback: 20, 30, 40 bars;
+- z threshold: 1.5, 2.0, 2.5;
+- trend: 3, 6, 9 bars;
+- holding: 3, 6, 9 bars;
+- cooldown: 6, 12 bars.
+
+The development runner is deliberately hard-coded to **2026-06-10 through 2026-08-19** and cannot evaluate the chronological holdout. Run:
+
+```cmd
+python scripts/run_strategy_001j_development_grid.py
+```
+
+Outputs are written under `data/reports/strategy_001j_development_grid/`:
+
+- `development_grid.csv` — one row per configuration;
+- `development_trades.csv` — reproducible trade ledger for development;
+- `run_metadata.csv` — frozen phase and selection-discipline metadata.
+
+The grid runner does **not** automatically declare the highest-returning configuration the winner. Candidate review must consider breadth, central tendency, tails, costs, drawdown, concentration, chronological subperiod stability, and neighboring-parameter stability. Record the chosen configuration in `research/journal/001J_candidate_freeze_template.md` before opening the holdout.
 
 ## Step 6 — Holdout
 
-Holdout covers 2026-08-20 through 2026-09-17. No holdout result may be used to retune the candidate.
+Holdout covers **2026-08-20 through 2026-09-17**. Only one already-frozen candidate may be evaluated. The holdout runner requires the five parameter values explicitly and contains no grid search:
+
+```cmd
+python scripts/run_strategy_001j_holdout.py --lookback <FROZEN_LOOKBACK> --z <FROZEN_Z> --trend <FROZEN_TREND> --holding <FROZEN_HOLDING> --cooldown <FROZEN_COOLDOWN>
+```
+
+Outputs are written under `data/reports/strategy_001j_holdout/`.
+
+Do not modify the candidate after seeing holdout results. If the holdout is weak or unstable, record that outcome rather than retuning against it.
 
 ## Step 7 — Similarity diagnostics
 
 The outcome-independent GOLDBEES comparison remains descriptive only. It cannot change U1 after seeing Strategy 001J outcomes.
+
+## Step 8 — Prospective paper/shadow
+
+After holdout review and candidate freeze, a surviving configuration can enter a prospective broker-data paper/shadow phase. The live collector must use only signal-time information, next-bar execution assumptions, forward path/MFE/MAE capture, and explicit gross-versus-executable cost accounting. No live orders are implied by this phase.
 
 ## PIT Nifty 100 remains deferred
 
