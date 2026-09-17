@@ -1,0 +1,13 @@
+{
+  "universe_id": "U1",
+  "strategy_id": "001J",
+  "index": "Nifty 100",
+  "source_policy": "NSE / NSE Indices historical constituent and reconstitution records",
+  "source_url": "https://www.nseindia.com/static/products-services/indices-nifty100-index",
+  "reconstitution_calendar_url": "https://www.niftyindices.com/resources/index-rebalancing-schedule",
+  "retrieval_date": null,
+  "coverage_start": null,
+  "coverage_end": null,
+  "status": "template_only_membership_not_loaded",
+  "notes": "Do not populate from the current constituent list alone. Historical membership must be represented by effective dates and source metadata."
+}
