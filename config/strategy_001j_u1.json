@@ -1,0 +1,32 @@
+{
+  "strategy_id": "001J",
+  "parent_strategy": "001",
+  "experiment": "cross_sectional_equity_u1",
+  "universe_id": "U1",
+  "name": "Point-in-time Nifty 100 cross-sectional continuation experiment",
+  "status": "definition_locked_membership_data_pending",
+  "market": "NSE",
+  "asset_class": "Indian equities",
+  "bar_interval": "5minute",
+  "membership_source": "NSE / NSE Indices historical Nifty 100 constituent and reconstitution records",
+  "membership_rule": "A symbol is eligible only between its recorded effective_from and effective_to dates.",
+  "survivorship_bias_policy": "Current constituents must not be applied to the full historical sample.",
+  "baseline_parameters": {
+    "lookback_bars": 30,
+    "z_threshold": 2.0,
+    "trend_bars": 6,
+    "holding_bars": 6,
+    "cooldown_bars": 12
+  },
+  "parameter_grid": {
+    "lookback_bars": [20, 30, 40],
+    "z_threshold": [1.5, 2.0, 2.5],
+    "trend_bars": [3, 6, 9],
+    "holding_bars": [3, 6, 9],
+    "cooldown_bars": [6, 12]
+  },
+  "selection_rule": "Development data only; candidate frozen before chronological holdout and prospective testing.",
+  "liquidity_policy": "Eligibility requires sufficient 5-minute coverage, plausible prices/volume, adequate recent activity, valid instrument mapping, and no unresolved data issue. Exact thresholds must be frozen before final backtest.",
+  "symbols": [],
+  "next_action": "Acquire and validate point-in-time U1 membership and 5-minute coverage before evaluating candidate performance."
+}
