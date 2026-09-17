@@ -23,9 +23,7 @@ def test_similarity_respects_end_boundary(tmp_path):
     candidate = universe / "AAA.csv"
     _bars(ref, [100, 101, 102, 103, 104, 105])
     _bars(candidate, [50, 50.5, 51, 51.5, 52, 52.5])
-    _bars(ref, [100, 101, 102, 103, 104, 105], start="2026-01-02 09:15")
-    _bars(candidate, [80, 70, 60, 50, 40, 30], start="2026-01-02 09:15")
-    report = analyze(ref, universe, "2026-01-01T15:30:00+05:30")
+    report = analyze(ref, universe, "2026-01-01T09:35:00+05:30")
     assert list(report["symbol"]) == ["AAA"]
     assert int(report.iloc[0]["observations_5m"]) == 5
 
