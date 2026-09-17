@@ -24,8 +24,8 @@ Strategy 001 began as a mean-reversion hypothesis and was rejected. The research
 | 001E execution audit | 🟡 Complete | Small gross edge is highly friction-sensitive |
 | 001F decomposition | 🟡 Complete | Edge not solely dependent on top tail winners |
 | 001G replay | 🟡 Complete | 310/310 trades reconciled; forward path and MFE/MAE recovered |
-| **001H robustness/chronological holdout** | **🟡 Complete** | Positive gross performance across all examined periods; costs remain unresolved |
-| **001I prospective OOS / paper-shadow** | **← CURRENT** | Immutable activation boundary, append-only ledger, integrity validator; no live orders |
+| 001H robustness/chronological holdout | 🟡 Complete | Positive gross performance across all examined periods; costs remain unresolved |
+| 001I prospective OOS / paper-shadow | 🔵 Closed | Two genuine prospective trades on 2026-09-17; too low-frequency for current capital-pursuit sprint; not statistically rejected |
 
 ### Frozen 001D strategy
 
@@ -44,122 +44,87 @@ Strategy 001 began as a mean-reversion hypothesis and was rejected. The research
 - no leverage or optimized sizing;
 - no parameter optimization in the baseline.
 
-### 001G result
-
-The frozen strategy was reconstructed directly from validated GOLDBEES OHLCV and reconciled against the 001D gross trade export:
-
-- 310 replayed trades;
-- 310 reference trades;
-- 310 exact reconciliations within tolerance;
-- 0 discrepancies.
-
-The forward path was positive before the frozen exit: mean forward return was +1.36 bps at 5 minutes, +2.44 bps at 10 minutes, +3.40 bps at 20 minutes, +4.51 bps at 25 minutes, and +4.77 bps at 30 minutes. Median return at 30 minutes was +2.41 bps.
-
-MFE averaged +15.35 bps with a +9.48 bps median; MAE averaged -9.63 bps with a -6.88 bps median. These are OHLC-range diagnostics and do not imply that intrabar highs/lows were executable.
-
-The 001G feature slices are descriptive only. Later-session buckets were stronger in this sample, while z-score, prior six-bar return, and volume-ratio relationships did not show a clean monotonic pattern. No new filter has been selected from these observations.
-
 ### 001H result
 
-001H kept the 001D strategy frozen and tested four chronological periods, a 2025 development/reference vs 2026 historical holdout designation, trading-frequency stability, return-distribution stability, and a predefined round-trip friction ladder.
+001H kept the 001D strategy frozen and tested chronological periods, trading-frequency stability, return-distribution stability, and a predefined round-trip friction ladder. The frozen gross edge remained positive in all examined periods, but the historical cost grid showed that the small gross edge is highly friction-sensitive.
 
-The frozen gross edge remained positive in all four examined periods:
+### 001I prospective OOS / paper-shadow — CLOSED
 
-| Period | Trades | Mean gross | Median gross | Win rate | PF | Cumulative gross |
-|---|---:|---:|---:|---:|---:|---:|
-| 2025 H1 | 100 | +3.32 bps | +1.25 bps | 51.00% | 1.947 | +3.36% |
-| 2025 H2 | 97 | +5.79 bps | +3.30 bps | 64.95% | 2.971 | +5.76% |
-| 2026 H1 | 76 | +6.63 bps | +2.03 bps | 52.63% | 2.260 | +5.13% |
-| 2026 H2* | 37 | +2.19 bps | +0.79 bps | 51.35% | 1.627 | +0.81% |
+The 001I collector was deliberately kept unchanged while the prospective cohort was captured. On 2026-09-17 it generated two selected trades:
 
-\* Available portion of 2026 H2 in the historical dataset.
+| Signal | z-score | Paper entry | Paper exit | Gross/net paper return |
+|---|---:|---:|---:|---:|
+| 12:00 | 2.2675 | 124.31 | 124.21 | -8.04 bps |
+| 13:05 | 2.5350 | 124.87 | 124.71 | -12.81 bps |
 
-The 2025 development/reference sample had +4.53 bps mean gross return and 2.406 PF. The 2026 chronological holdout had +5.18 bps mean gross return and 2.105 PF. This supports historical temporal persistence but is **not pristine OOS evidence**, because the full January 2025–August 2026 sample has already been examined.
+The prospective ledger passed the repository validator. No live orders were placed. The sample is too small to statistically reject 001D, but the observed single-instrument frequency is too low for the September 2026 accelerated research/deployment objective.
 
-The cost grid remains the main unresolved economic issue. At 4 bps round-trip friction, mean net return was +0.77 bps and cumulative net return +2.34%. At 6 bps, mean net return was -1.23 bps and cumulative net return -3.81%. At 14 bps, mean net return was -9.23 bps and cumulative net return -24.95%. These are scenario assumptions, not observed live costs.
+001I is therefore **closed for capital-pursuit priority**. The frozen 001D rule will not be retuned from these observations. The broader continuation hypothesis may be investigated as a new experiment under Strategy 002.
 
-Detailed results: `research/journal/001H_predefined_robustness_chronological_holdout_results.md`.
+See:
 
-### 001I prospective OOS / paper-shadow
-
-Because the historical sample has already been examined through August 2026, the repository does **not** relabel August 2026 or previously inspected September observations as pristine OOS. The first genuine prospective OOS observations are captured only after the 001I activation boundary, before their future outcomes are known.
-
-001I keeps the 001D rules unchanged and records point-in-time signal information first. After the frozen exit candle has completed, paper outcome and execution-observation information are appended. The first phase is paper/shadow, not live capital.
-
-The implementation now includes:
-
-- `src/research/strategy_001i_prospective.py` — append-only prospective ledger, immutable run activation, and frozen-rule outcome finalization;
-- `src/research/strategy_001i_validation.py` — prospective-run integrity checks;
-- `scripts/run_strategy_001i_paper_shadow.py` — live GOLDBEES tick capture, 5-minute bar construction, signal capture, and paper outcome finalization; **no order placement**;
-- `scripts/validate_strategy_001i_run.py` — command-line integrity validator;
-- `tests/test_strategy_001i_prospective.py` — prospective ledger/no-look-ahead/activation tests;
-- `data/prospective/README.md` — local data handling rules.
-
-The collector uses the existing Zerodha authentication layer and KiteTicker full-mode market data. It must be started before the session where possible. If it is restarted against the same run directory, the original activation boundary is preserved; moving the boundary requires a new run directory. Previously completed bars are never reconstructed as prospective observations after the fact.
-
-Start a new run explicitly when desired:
-
-```powershell
-python scripts/run_strategy_001i_paper_shadow.py --output data/prospective/strategy_001i
-```
-
-Validate the captured run after a session:
-
-```powershell
-python scripts/validate_strategy_001i_run.py data/prospective/strategy_001i
-```
-
-The central unresolved questions are:
-
-1. Does the frozen signal continue prospectively?
-2. Does its forward-path distribution remain compatible with the historical evidence?
-3. What spread/slippage/costs are actually observed?
-4. Does the gross edge remain economically plausible after those observed frictions?
-
-Review checkpoints at 20, 50, and 100 completed trades, plus an approximately three-month time/regime review, are data-quality/research checkpoints rather than success thresholds.
-
-Protocol: `research/journal/001I_prospective_oos_paper_shadow_protocol.md`.
-Results journal: `research/journal/001I_prospective_oos_paper_shadow_results.md`.
+- `research/journal/001I_prospective_oos_paper_shadow_protocol.md`
+- `research/journal/001I_prospective_oos_paper_shadow_results.md`
 
 ---
 
-# Strategy 001 promotion path
+# Strategy 002 — Accelerated multi-asset research
+
+Strategy 002 is now the active research program. It is designed to avoid the single-instrument frequency bottleneck while preserving the project's research discipline.
+
+The first experiment will test whether the intraday continuation structure from Strategy 001 generalizes to a **predefined, point-in-time liquid Indian equity universe**.
+
+### First universe: U1
+
+U1 is specified as a point-in-time Nifty 100 constituent universe, subject to explicit data-coverage and liquidity eligibility rules. The current constituent list must not be applied blindly to the entire historical sample; historical membership must be represented by effective dates.
+
+See `research/journal/002_universe_u1_spec.md`.
+
+### First hypothesis
+
+Reuse the economic hypothesis, not the frozen parameters:
+
+> After an unusually strong positive intraday move, conditioned on recent positive direction, a short-horizon continuation may persist across liquid equities.
+
+The first baseline will use the exact 001D parameters only as a **cross-sectional baseline**. It is not assumed to be optimal for U1.
+
+A separate, narrow, pre-registered parameter-selection experiment may then be run on development data only. The selected configuration will be frozen before chronological holdout and prospective testing.
+
+### Frequency objective
+
+The objective is to obtain enough observations for rapid research decisions across the universe. An initial engineering target is roughly 20–50 candidate/selected opportunities per session across U1. Trade count is not a performance target, and parameters must not be weakened merely to manufacture 100+ trades/day.
+
+### Research roadmap
 
 ```text
-001C point-in-time validation                       🟡 promising
+U1 point-in-time universe
         ↓
-001D formal baseline backtest                       🟡 gross positive / costs unresolved
+data/coverage/liquidity audit
         ↓
-001E distribution + execution audit                 🟡 complete
+001D-parameter cross-sectional baseline
         ↓
-001F trade decomposition                            🟡 complete
+continuation event study
         ↓
-001G PIT feature + forward-path replay              🟡 complete
+pre-registered parameter experiment on development data
         ↓
-001H predefined robustness + historical holdout     🟡 complete
+frozen Strategy 002 candidate
         ↓
-001I prospective OOS / paper-shadow                 ← CURRENT
+chronological holdout
         ↓
-Execution-cost validation
+one-session multi-symbol paper/shadow validation
         ↓
-Separate controlled-live validation protocol
+execution-cost audit
         ↓
-Strategy 001 final decision
-        ↓
-Only then: Strategy 002
+controlled-live validation if all gates pass
 ```
 
-A failure at any gate is recorded rather than repaired by post-hoc parameter tuning.
-
-**No strategy is approved for live deployment.**
+Detailed schedule and gates: `research/journal/002_strategy_roadmap.md`.
 
 ---
 
-# Why the project uses reference resources without blindly copying them
+# Strategy promotion principle
 
-The repository contains WorldQuant University learning material under `trading_resources/WQU_resources/`, alongside Quantra and other strategy/reference material. These resources are used for learning, implementation patterns, candidate ideas, feature engineering, and later ML/model development.
-
-A resource implementation is not automatically a validated strategy. When we use one, we still establish its hypothesis, define its data/execution assumptions, test for leakage, and validate it under this project's research gates.
+A strategy is not approved merely because a backtest is profitable or because it produces many trades. Promotion requires reproducibility, point-in-time correctness, chronological validation, realistic costs, adequate breadth of evidence, execution feasibility, and explicit risk controls.
 
 ---
 
@@ -177,6 +142,9 @@ A resource implementation is not automatically a validated strategy. When we use
 10. Treat backtests as evidence, not guarantees.
 11. Require genuine prospective evidence before controlled live validation.
 12. Never deploy simply because a backtest looks attractive.
+13. Define universe membership before evaluating strategy performance.
+14. Preserve every parameter-search result and never select holdout winners retrospectively.
+15. Treat cross-sectional observations as potentially correlated rather than assuming every trade is independent.
 
 ---
 
@@ -196,32 +164,6 @@ Run the complete test suite:
 pytest
 ```
 
-Run the Strategy 001G replay:
+Strategy 001 historical scripts remain available for reproducibility. Strategy 001I is closed for capital-pursuit priority and should not be restarted as a new prospective cohort unless a separate research decision explicitly creates a new experiment.
 
-```powershell
-python scripts/run_strategy_001g_replay.py data/raw/NSE_GOLDBEES_5minute.csv
-python scripts/plot_strategy_001g_results.py data/reports/goldbees_strategy_001g_replay
-```
-
-Run the Strategy 001H robustness gate:
-
-```powershell
-python scripts/run_strategy_001h_robustness.py data/raw/NSE_GOLDBEES_5minute.csv
-python scripts/plot_strategy_001h_results.py data/reports/goldbees_strategy_001h_robustness
-```
-
-Start the Strategy 001I prospective paper/shadow collector before a market session:
-
-```powershell
-python scripts/run_strategy_001i_paper_shadow.py
-```
-
-Validate a captured prospective run:
-
-```powershell
-python scripts/validate_strategy_001i_run.py data/prospective/strategy_001i
-```
-
-The collector requires valid Zerodha credentials in the local environment, uses the existing authentication layer, and **does not place orders**. It writes prospective observations to `data/prospective/strategy_001i/`, which is ignored by Git except for the directory README.
-
-The local 001G run must reconcile the frozen 001D trades before its numerical interpretation is accepted. The 001H numerical result must be recorded only after the local empirical run is completed. The 001I results journal must only be populated from genuinely prospective records.
+Strategy 002 development begins with the U1 specification and reusable multi-symbol data/signal architecture.
