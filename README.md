@@ -26,7 +26,7 @@ Strategy 001 began as a GOLDBEES mean-reversion hypothesis. The mean-reversion h
 | 001G replay | 🟡 Complete | 310/310 trades reconciled; forward path and MFE/MAE recovered |
 | 001H robustness/chronological holdout | 🟡 Complete | Positive gross performance across examined periods; costs remain unresolved |
 | 001I prospective OOS / paper-shadow | 🔵 Closed | Two genuine prospective trades on 2026-09-17; too low-frequency for current capital-pursuit sprint; not statistically rejected |
-| **001J cross-sectional equity experiment** | **🟡 Active** | Same economic hypothesis tested across a point-in-time Nifty 100 universe with a separately registered parameter process |
+| **001J cross-sectional equity experiment** | **🟡 Active** | Same economic hypothesis tested cross-sectionally using a broker-native liquid NSE EQ universe; PIT Nifty 100 remains deferred |
 
 ### Frozen 001D strategy
 
@@ -54,9 +54,11 @@ Strategy 001 began as a GOLDBEES mean-reversion hypothesis. The mean-reversion h
 
 001J keeps the **Strategy 001 economic hypothesis** but changes the experimental universe and parameter-selection stage. This is not a modification of 001D.
 
-**U1:** point-in-time Nifty 100 constituents, with historical membership represented by effective dates and explicit data/liquidity eligibility rules.
+**U1:** top 50 currently tradable NSE EQ instruments ranked by median daily traded value during a pre-strategy formation window, using 5-minute OHLCV acquired through the existing Zerodha Kite Connect infrastructure.
 
-A separate, outcome-independent GOLDBEES behavior report measures return correlation and other descriptive properties. It is diagnostic only and does not replace U1 or select symbols using Strategy 001J P&L. The first baseline then applies the exact 001D parameters cross-sectionally. Only after that baseline is recorded may the pre-registered 162-configuration development grid be evaluated. A candidate must be frozen before chronological holdout and prospective paper/shadow testing.
+The tactical U1 is outcome-independent but carries current-instrument/survivorship bias because the broker's current instrument dump does not reconstruct historical index membership or delistings. The original PIT Nifty 100 U1 remains deferred and is not silently substituted.
+
+A separate, outcome-independent GOLDBEES behavior report measures return correlation and other descriptive properties. It is diagnostic only and does not select symbols using Strategy 001J P&L. The first baseline then applies the exact 001D parameters cross-sectionally. Only after that baseline is recorded may the pre-registered 162-configuration development grid be evaluated.
 
 See:
 
@@ -64,8 +66,11 @@ See:
 - `research/journal/001J_universe_u1_spec.md`
 - `research/journal/001J_universe_discovery_protocol.md`
 - `research/journal/001J_data_acquisition.md`
+- `research/journal/001J_data_source_playbook.md`
 - `config/strategy_001j_u1.json`
 - `src/research/strategy_001j_cross_sectional.py`
+- `scripts/fetch_strategy_001j_kite_data.py`
+- `scripts/build_strategy_001j_broker_liquid_universe.py`
 - `scripts/analyze_strategy_001j_universe_similarity.py`
 - `scripts/validate_strategy_001j_data_gate.py`
 
@@ -103,6 +108,7 @@ See `research/journal/strategy_registry.md` for the current strategy map and exp
 16. Do not manufacture trade frequency by weakening thresholds solely to meet a target count.
 17. Preserve strategy/experiment lineage so historical evidence cannot be rewritten by later research.
 18. Keep descriptive universe discovery separate from strategy-outcome-based universe selection.
+19. When a tactical non-PIT universe is used for schedule pressure, disclose the limitation explicitly rather than presenting it as PIT evidence.
 
 ---
 
@@ -122,4 +128,4 @@ Run the complete test suite:
 pytest
 ```
 
-The immediate active work is the 001J external data gate: acquire defensible PIT Nifty 100 membership and 5-minute equity data, audit coverage, then run the similarity diagnostics and frozen 001D-parameter cross-sectional baseline.
+The immediate active work is the 001J Kite data gate: fetch the pre-strategy formation window, build the broker-native U1, fetch the selected-symbol research window, audit coverage, then run similarity diagnostics and the frozen 001D-parameter cross-sectional baseline.
