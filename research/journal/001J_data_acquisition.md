@@ -43,7 +43,7 @@ python scripts/validate_strategy_001j_u1_membership.py
 
 ## Step 3 — Validate the frozen experiment data window
 
-The gate is now session-aware and should be run against the frozen window:
+The gate is session-aware and should be run against the frozen window:
 
 ```cmd
 python scripts/audit_strategy_001j_u1_data.py --input-dir data/raw/strategy_001j_u1
@@ -61,6 +61,25 @@ The gate checks each selected symbol for:
 - no timestamps beyond the normal 15:25 final 5-minute bar.
 
 A terminal session ending at 15:10 is allowed if it is contiguous. A 72-bar session is therefore not automatically rejected merely because it does not contain the 15:15, 15:20, and 15:25 bars. An interior gap is rejected.
+
+### Repairing an incomplete final session
+
+The original full-history download may end before the final frozen session for some symbols. Do **not** use `--overwrite` to repair this: `--overwrite` intentionally replaces a symbol file with only the requested range.
+
+Use the downloader's safe `--merge` mode instead. It preserves the existing history, adds the requested repair range, sorts by timestamp, and replaces overlapping timestamps with the newly fetched observations:
+
+```cmd
+python scripts/fetch_strategy_001j_kite_data.py --start 2026-09-17 --end 2026-09-17 --symbols-file data/universe/strategy_001j_u1_membership.csv --output-dir data/raw/strategy_001j_u1 --merge --manifest data/reports/strategy_001j_kite_repair_20260917.csv
+```
+
+After the repair, rerun both checks:
+
+```cmd
+python scripts/audit_strategy_001j_u1_data.py --input-dir data/raw/strategy_001j_u1
+python scripts/validate_strategy_001j_data_gate.py --start 2026-05-12 --end 2026-09-17
+```
+
+A data-gate failure must be repaired at the data layer. Do not relax the gate merely to obtain a green result.
 
 ## Step 4 — Frozen 001D transfer baseline
 
