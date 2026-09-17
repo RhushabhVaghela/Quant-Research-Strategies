@@ -1,8 +1,8 @@
 # Strategy 001J — Cross-Sectional Equity Experiment Specification
 
-**Parent strategy:** 001 — intraday continuation
-**Status:** Active research; specification locked before candidate selection
-**Universe:** U1 — point-in-time Nifty 100 constituents
+**Parent strategy:** 001 — intraday continuation  
+**Status:** Active research; specification locked before candidate selection  
+**Universe:** U1 — point-in-time Nifty 100 constituents  
 **Primary frequency:** 5-minute OHLCV
 
 ## 1. Research question
@@ -33,6 +33,25 @@ NSE describes Nifty 100 as a diversified 100-stock large-cap index composed of N
 Reference sources:
 - NSE Nifty 100 index page: https://www.nseindia.com/static/products-services/indices-nifty100-index
 - NSE Indices reconstitution calendar: https://www.niftyindices.com/resources/index-rebalancing-schedule
+
+### 4.1 Similarity / behavior discovery layer
+
+U1 remains the primary universe regardless of Strategy 001J performance. Separately, the research records whether U1 securities are descriptively similar to GOLDBEES.
+
+The locked descriptors are:
+
+- aligned 5-minute return correlation;
+- aligned daily return correlation;
+- daily volatility;
+- lag-1 5-minute return autocorrelation;
+- mean absolute 5-minute return;
+- positive-return fraction;
+- positive-tail frequency relative to a fixed GOLDBEES reference threshold;
+- observation and overlap counts.
+
+A descriptive distance/rank is reported for interpretation. It is **not** a universe-selection flag. The analysis requires an explicit observation end boundary and cannot use Strategy 001J P&L, holdout results, or prospective results to choose symbols or a correlation cutoff.
+
+Detailed protocol: `research/journal/001J_universe_discovery_protocol.md`.
 
 ## 5. Baseline — frozen 001D parameters applied cross-sectionally
 
