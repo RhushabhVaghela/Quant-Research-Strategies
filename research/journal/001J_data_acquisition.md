@@ -59,7 +59,20 @@ As a secondary cross-check, dated ETF/fund portfolio documents can help verify h
 
 Acquire the historical membership intervals first. Then acquire 5-minute OHLCV for every symbol needed by those intervals and run the data-coverage audit before any 001J baseline result is generated.
 
-Required local layout:
+After the data audit passes, run the **outcome-independent similarity report** against GOLDBEES using a pre-specified `--end` boundary. This report is diagnostic only and must not be used to alter U1 based on Strategy 001J performance.
+
+Expected command shape:
+
+```powershell
+python scripts/analyze_strategy_001j_universe_similarity.py `
+  --reference <path-to-goldbees-5m.csv> `
+  --universe-dir data/raw/strategy_001j_u1 `
+  --end <frozen-utc-or-offset-aware-boundary>
+```
+
+The resulting `data/reports/strategy_001j_universe_similarity/similarity.csv` must be preserved as research evidence.
+
+## Required local layout
 
 ```text
 data/
