@@ -56,14 +56,17 @@ Strategy 001 began as a GOLDBEES mean-reversion hypothesis. The mean-reversion h
 
 **U1:** point-in-time Nifty 100 constituents, with historical membership represented by effective dates and explicit data/liquidity eligibility rules.
 
-The first baseline applies the exact 001D parameters cross-sectionally. Only after that baseline is recorded may the pre-registered 162-configuration development grid be evaluated. A candidate must be frozen before chronological holdout and prospective paper/shadow testing.
+The first baseline applies the exact 001D parameters cross-sectionally. Separately, a pre-registered GOLDBEES similarity/behavior report measures correlation and other descriptive properties. This report is diagnostic only: it does not replace U1 and does not use Strategy 001J P&L to select or remove securities. Only after the baseline is recorded may the pre-registered 162-configuration development grid be evaluated. A candidate must be frozen before chronological holdout and prospective paper/shadow testing.
 
 See:
 
 - `research/journal/001J_cross_sectional_equity_spec.md`
 - `research/journal/001J_universe_u1_spec.md`
+- `research/journal/001J_universe_discovery_protocol.md`
+- `research/journal/001J_data_acquisition.md`
 - `config/strategy_001j_u1.json`
 - `src/research/strategy_001j_cross_sectional.py`
+- `scripts/analyze_strategy_001j_universe_similarity.py`
 
 ---
 
@@ -98,6 +101,7 @@ See `research/journal/strategy_registry.md` for the current strategy map and exp
 15. Treat cross-sectional observations as potentially correlated rather than assuming every trade is independent.
 16. Do not manufacture trade frequency by weakening thresholds solely to meet a target count.
 17. Preserve strategy/experiment lineage so historical evidence cannot be rewritten by later research.
+18. Keep descriptive universe discovery separate from strategy-outcome-based universe selection.
 
 ---
 
@@ -117,4 +121,4 @@ Run the complete test suite:
 pytest
 ```
 
-Strategy 001 historical scripts and 001I prospective records remain available for reproducibility. The next active work is the 001J U1 data gate, followed by the frozen 001D-parameter cross-sectional baseline.
+Strategy 001 historical scripts and 001I prospective records remain available for reproducibility. The next active work is the 001J U1 data gate, followed by the similarity diagnostics and the frozen 001D-parameter cross-sectional baseline.
