@@ -1,0 +1,2 @@
+trading_days_with_trades,mean_trades_per_active_day,max_trades_in_day,mean_holding_minutes,median_holding_minutes,median_signal_gap_minutes,p10_signal_gap_minutes
+239,1.297071129707113,3,25.0,25.0,1485.0,85.0
