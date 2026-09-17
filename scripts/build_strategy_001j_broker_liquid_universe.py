@@ -38,6 +38,10 @@ def build(input_dir: Path, formation_start: str, formation_end: str, research_en
     research_end_ts = pd.Timestamp(research_end).tz_convert("Asia/Kolkata") if pd.Timestamp(research_end).tzinfo else pd.Timestamp(research_end).tz_localize("Asia/Kolkata")
     if not (start < end < research_end_ts):
         raise ValueError("Require formation_start < formation_end < research_end")
+    if top_n < 1:
+        raise ValueError("top_n must be >= 1")
+    if min_days < 1:
+        raise ValueError("min_days must be >= 1")
 
     rows = []
     for path in sorted(input_dir.glob("*.csv")):
@@ -51,15 +55,16 @@ def build(input_dir: Path, formation_start: str, formation_end: str, research_en
             "mean_daily_traded_value": float(daily.mean()),
         })
 
+    if not rows:
+        raise ValueError("No symbols satisfy the formation-window data requirement")
+
     ranking = pd.DataFrame(rows).sort_values(
         ["median_daily_traded_value", "symbol"], ascending=[False, True]
     ).reset_index(drop=True)
     selected = ranking.head(top_n).copy()
-    if selected.empty:
-        raise ValueError("No symbols satisfy the formation-window data requirement")
 
     # Membership begins after the formation window. The interval is half-open.
-    membership_start = end + pd.Timedelta(minutes=5)
+    membership_start = end + pd.Timedelta(5, unit="min")
     membership = pd.DataFrame({
         "symbol": selected["symbol"],
         "effective_from": membership_start.isoformat(),
