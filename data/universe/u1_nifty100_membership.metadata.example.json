@@ -1,0 +1,13 @@
+{
+  "universe_id": "U1",
+  "index": "Nifty 100",
+  "source_name": "NSE / NSE Indices",
+  "source_url": "https://www.niftyindices.com/indices/equity/broad-based-indices/nifty-100",
+  "reconstitution_calendar_url": "https://www.niftyindices.com/resources/index-rebalancing-schedule",
+  "retrieved_at": "YYYY-MM-DD",
+  "historical_source_identifier": "Describe the exact historical constituent files/announcements used",
+  "membership_convention": "effective_from and effective_to are exchange-local calendar dates; document inclusivity explicitly",
+  "transformation_notes": "Describe symbol normalization and any corporate-action identity mapping",
+  "validation_script": "scripts/validate_strategy_001j_universe.py",
+  "notes": "Do not use the current constituent list as a substitute for point-in-time historical membership."
+}
