@@ -8,9 +8,9 @@ Negative and inconclusive results are preserved as part of the research record.
 
 ---
 
-## Strategy 001 — GOLDBEES intraday continuation
+## Strategy 001 — Intraday continuation research family
 
-Strategy 001 began as a mean-reversion hypothesis and was rejected. The research then investigated the observed continuation structure and produced a frozen long-only continuation strategy for GOLDBEES 5-minute data.
+Strategy 001 began as a GOLDBEES mean-reversion hypothesis. The mean-reversion hypothesis was rejected during the original research. The observed continuation structure then became the active Strategy 001 economic hypothesis.
 
 ### Research status
 
@@ -24,10 +24,13 @@ Strategy 001 began as a mean-reversion hypothesis and was rejected. The research
 | 001E execution audit | 🟡 Complete | Small gross edge is highly friction-sensitive |
 | 001F decomposition | 🟡 Complete | Edge not solely dependent on top tail winners |
 | 001G replay | 🟡 Complete | 310/310 trades reconciled; forward path and MFE/MAE recovered |
-| 001H robustness/chronological holdout | 🟡 Complete | Positive gross performance across all examined periods; costs remain unresolved |
+| 001H robustness/chronological holdout | 🟡 Complete | Positive gross performance across examined periods; costs remain unresolved |
 | 001I prospective OOS / paper-shadow | 🔵 Closed | Two genuine prospective trades on 2026-09-17; too low-frequency for current capital-pursuit sprint; not statistically rejected |
+| **001J cross-sectional equity experiment** | **🟡 Active** | Same economic hypothesis tested across a point-in-time Nifty 100 universe with a separately registered parameter process |
 
 ### Frozen 001D strategy
+
+001D remains immutable evidence:
 
 - 5-minute GOLDBEES OHLCV;
 - previous 30 completed same-session closes;
@@ -41,94 +44,42 @@ Strategy 001 began as a mean-reversion hypothesis and was rejected. The research
 - fixed 12-bar session cooldown;
 - no overnight feature construction;
 - one position at a time;
-- no leverage or optimized sizing;
-- no parameter optimization in the baseline.
+- no leverage or optimized sizing.
 
-### 001H result
+### 001I status
 
-001H kept the 001D strategy frozen and tested chronological periods, trading-frequency stability, return-distribution stability, and a predefined round-trip friction ladder. The frozen gross edge remained positive in all examined periods, but the historical cost grid showed that the small gross edge is highly friction-sensitive.
+001I was the prospective test of frozen 001D. It produced two selected trades on 2026-09-17. The prospective ledger passed validation, but the single-instrument opportunity rate was too low for the accelerated September 2026 capital-pursuit objective. The sample is too small to statistically reject the underlying continuation hypothesis. 001I is closed and must not be restarted or retuned.
 
-### 001I prospective OOS / paper-shadow — CLOSED
+### 001J — active experiment
 
-The 001I collector was deliberately kept unchanged while the prospective cohort was captured. On 2026-09-17 it generated two selected trades:
+001J keeps the **Strategy 001 economic hypothesis** but changes the experimental universe and parameter-selection stage. This is not a modification of 001D.
 
-| Signal | z-score | Paper entry | Paper exit | Gross/net paper return |
-|---|---:|---:|---:|---:|
-| 12:00 | 2.2675 | 124.31 | 124.21 | -8.04 bps |
-| 13:05 | 2.5350 | 124.87 | 124.71 | -12.81 bps |
+**U1:** point-in-time Nifty 100 constituents, with historical membership represented by effective dates and explicit data/liquidity eligibility rules.
 
-The prospective ledger passed the repository validator. No live orders were placed. The sample is too small to statistically reject 001D, but the observed single-instrument frequency is too low for the September 2026 accelerated research/deployment objective.
-
-001I is therefore **closed for capital-pursuit priority**. The frozen 001D rule will not be retuned from these observations. The broader continuation hypothesis may be investigated as a new experiment under Strategy 002.
+The first baseline applies the exact 001D parameters cross-sectionally. Only after that baseline is recorded may the pre-registered 162-configuration development grid be evaluated. A candidate must be frozen before chronological holdout and prospective paper/shadow testing.
 
 See:
 
-- `research/journal/001I_prospective_oos_paper_shadow_protocol.md`
-- `research/journal/001I_prospective_oos_paper_shadow_results.md`
+- `research/journal/001J_cross_sectional_equity_spec.md`
+- `research/journal/001J_universe_u1_spec.md`
+- `config/strategy_001j_u1.json`
+- `src/research/strategy_001j_cross_sectional.py`
 
 ---
 
-# Strategy 002 — Accelerated multi-asset research
+## Strategy portfolio architecture
 
-Strategy 002 is now the active research program. It is designed to avoid the single-instrument frequency bottleneck while preserving the project's research discipline.
+The project will eventually test genuinely different strategies across multiple asset classes, including equities, derivatives, commodities, currencies, and crypto. No two promoted strategies should be materially the same economic hypothesis applied to the same asset class.
 
-The first experiment will test whether the intraday continuation structure from Strategy 001 generalizes to a **predefined, point-in-time liquid Indian equity universe**.
+A parameter variation or universe expansion of an existing hypothesis remains an experiment under the parent strategy. A genuinely different return mechanism receives a new strategy ID.
 
-### First universe: U1
+Derivatives strategies may remain paper-only when reliable realtime data, contract economics, lot size, liquidity, or available capital make live deployment inappropriate. Paper-only status still requires the same research discipline.
 
-U1 is specified as a point-in-time Nifty 100 constituent universe, subject to explicit data-coverage and liquidity eligibility rules. The current constituent list must not be applied blindly to the entire historical sample; historical membership must be represented by effective dates.
-
-See `research/journal/002_universe_u1_spec.md`.
-
-### First hypothesis
-
-Reuse the economic hypothesis, not the frozen parameters:
-
-> After an unusually strong positive intraday move, conditioned on recent positive direction, a short-horizon continuation may persist across liquid equities.
-
-The first baseline will use the exact 001D parameters only as a **cross-sectional baseline**. It is not assumed to be optimal for U1.
-
-A separate, narrow, pre-registered parameter-selection experiment may then be run on development data only. The selected configuration will be frozen before chronological holdout and prospective testing.
-
-### Frequency objective
-
-The objective is to obtain enough observations for rapid research decisions across the universe. An initial engineering target is roughly 20–50 candidate/selected opportunities per session across U1. Trade count is not a performance target, and parameters must not be weakened merely to manufacture 100+ trades/day.
-
-### Research roadmap
-
-```text
-U1 point-in-time universe
-        ↓
-data/coverage/liquidity audit
-        ↓
-001D-parameter cross-sectional baseline
-        ↓
-continuation event study
-        ↓
-pre-registered parameter experiment on development data
-        ↓
-frozen Strategy 002 candidate
-        ↓
-chronological holdout
-        ↓
-one-session multi-symbol paper/shadow validation
-        ↓
-execution-cost audit
-        ↓
-controlled-live validation if all gates pass
-```
-
-Detailed schedule and gates: `research/journal/002_strategy_roadmap.md`.
+See `research/journal/strategy_registry.md` for the current strategy map and experiment lineage.
 
 ---
 
-# Strategy promotion principle
-
-A strategy is not approved merely because a backtest is profitable or because it produces many trades. Promotion requires reproducibility, point-in-time correctness, chronological validation, realistic costs, adequate breadth of evidence, execution feasibility, and explicit risk controls.
-
----
-
-# Research standards
+## Research standards
 
 1. Start with an economic hypothesis, not a model.
 2. Define the prediction target before choosing a model.
@@ -145,10 +96,12 @@ A strategy is not approved merely because a backtest is profitable or because it
 13. Define universe membership before evaluating strategy performance.
 14. Preserve every parameter-search result and never select holdout winners retrospectively.
 15. Treat cross-sectional observations as potentially correlated rather than assuming every trade is independent.
+16. Do not manufacture trade frequency by weakening thresholds solely to meet a target count.
+17. Preserve strategy/experiment lineage so historical evidence cannot be rewritten by later research.
 
 ---
 
-# Reproducibility
+## Reproducibility
 
 Install dependencies:
 
@@ -164,6 +117,4 @@ Run the complete test suite:
 pytest
 ```
 
-Strategy 001 historical scripts remain available for reproducibility. Strategy 001I is closed for capital-pursuit priority and should not be restarted as a new prospective cohort unless a separate research decision explicitly creates a new experiment.
-
-Strategy 002 development begins with the U1 specification and reusable multi-symbol data/signal architecture.
+Strategy 001 historical scripts and 001I prospective records remain available for reproducibility. The next active work is the 001J U1 data gate, followed by the frozen 001D-parameter cross-sectional baseline.

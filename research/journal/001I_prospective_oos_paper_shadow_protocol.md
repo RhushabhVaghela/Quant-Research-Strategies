@@ -2,9 +2,7 @@
 
 ## Purpose
 
-001I was the first genuinely prospective out-of-sample gate for Strategy 001.
-
-The historical research sample had been examined through August 2026. 001I observed the already-frozen 001D strategy prospectively, with each signal recorded before its future outcome was known.
+001I was the first genuinely prospective out-of-sample gate for Strategy 001. The historical research sample had been examined through August 2026. 001I observed the already-frozen 001D strategy prospectively, with each signal recorded before its future outcome was known.
 
 The 001I cohort is now **closed for capital-pursuit priority** because the frozen single-instrument GOLDBEES implementation is too low-frequency for the September 2026 accelerated research/deployment objective. This closure is a research-priority decision, not a statistical rejection based on the two observed trades.
 
@@ -20,7 +18,7 @@ Rules for the completed cohort:
 4. The prospective outcomes were not used to retune 001D.
 5. The captured 001I ledger is preserved as an immutable research record.
 6. No new 001I collection is required for the current capital-pursuit sprint.
-7. Any reuse of the continuation hypothesis on another universe or with different parameters receives a new strategy/experiment identifier and a new prospective boundary.
+7. Reuse of the continuation hypothesis on another universe or with different parameters is registered as a new experiment under the Strategy 001 research family; it does not modify 001D or restart 001I.
 
 ## 2. Frozen strategy that was tested
 
@@ -54,9 +52,9 @@ The observed 2026-09-17 session produced only two selected trades. That is too l
 
 Therefore:
 
-> **Do not wait for 001I to accumulate 20/50/100 trades. Do not optimize 001D from this prospective sample. Close the cohort and move the research effort to a broader universe/new experiment.**
+> **Do not wait for 001I to accumulate more trades. Do not optimize 001D from this prospective sample. Close the cohort and move the research effort to the broader 001J experiment.**
 
-The underlying continuation hypothesis may be reused in Strategy 002, but only as a newly specified experiment.
+The underlying continuation hypothesis remains a Strategy 001 research hypothesis and is being tested in 001J using a predefined point-in-time equity universe and a separately registered parameter-selection process.
 
 ## 5. Execution-cost measurement retained
 
@@ -73,16 +71,17 @@ The following controls remain part of the research standard:
 5. Entry/exit prices cannot be selected after seeing the forward path.
 6. A changed rule receives a new experiment identifier.
 
-## 7. Relationship to Strategy 002
+## 7. Relationship to Strategy 001J
 
-Strategy 002 is independent of the 001I cohort. It may investigate whether the continuation structure generalizes across a predefined liquid equity universe, and it may perform a separately registered parameter-selection experiment on development data.
+001J is a new experiment under Strategy 001, not a continuation of the same prospective 001I cohort. It tests the same broad economic continuation hypothesis across a predefined point-in-time equity universe and may perform a separately registered parameter-selection experiment on development data.
 
 See:
 
-- `research/journal/002_strategy_roadmap.md`
-- `research/journal/002_universe_u1_spec.md`
+- `research/journal/001J_cross_sectional_equity_spec.md`
+- `research/journal/001J_universe_u1_spec.md`
+- `research/journal/strategy_registry.md`
 
-The 001I ledger and conclusions must not be overwritten to make Strategy 002 appear to be a continuation of the same OOS experiment.
+The 001I ledger and conclusions must not be overwritten to make 001J appear to be the same OOS cohort.
 
 ## 8. Final status
 
@@ -90,4 +89,4 @@ The 001I ledger and conclusions must not be overwritten to make Strategy 002 app
 
 The frozen 001D GOLDBEES strategy remains a completed research artifact with historical evidence and a small genuine prospective sample. It is not approved for live deployment.
 
-The next active research program is Strategy 002.
+The next active experiment is Strategy **001J**.

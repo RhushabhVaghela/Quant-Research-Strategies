@@ -4,13 +4,13 @@
 
 **🔵 Closed for capital-pursuit priority — insufficient frequency; not statistically rejected.**
 
-Strategy 001I was created to observe the frozen 001D GOLDBEES strategy prospectively without changing its parameters. The collector operated on 2026-09-17 and recorded two genuine prospective trades after the immutable activation boundary.
+Strategy 001I observed the frozen 001D GOLDBEES strategy prospectively without changing its parameters. The collector operated on 2026-09-17 and recorded two genuine prospective trades after the immutable activation boundary.
 
-The experiment is now **closed as the primary capital-deployment track** because the frozen single-instrument implementation generated only two selected trades in the observed session. This frequency is incompatible with the September 2026 accelerated research/deployment objective.
+The experiment is closed as the primary capital-deployment track because the frozen single-instrument implementation generated only two selected trades in the observed session. This frequency is incompatible with the September 2026 accelerated research/deployment objective.
 
 Closing the track does **not** mean that two trades statistically disprove the 001D hypothesis. The sample is far too small for that conclusion.
 
-The frozen 001D rule must not be changed using these two outcomes. Any reuse of the continuation hypothesis on another universe or with different parameters receives a new strategy/experiment identifier.
+The frozen 001D rule must not be changed using these outcomes. The same economic hypothesis is now being tested as **Strategy 001J**, a new experiment under the same Strategy 001 research family, using a predefined point-in-time equity universe and a separately registered parameter-selection process.
 
 ## OOS qualification
 
@@ -41,7 +41,7 @@ Historical data through August 2026 had already been examined during Strategy 00
 
 Simple sum of the two trade returns was approximately -20.86 bps; compounded return was approximately -20.85 bps. No statistical inference is made from this sample.
 
-The signal ledger recorded quoted signal spreads of approximately 2.41 bps and 0.80 bps respectively. The current paper outcomes do not contain realized broker execution costs; estimated slippage and brokerage fields were zero in the captured paper records. These are therefore raw paper outcomes rather than evidence of executable net profitability.
+The signal ledger recorded quoted signal spreads of approximately 2.41 bps and 0.80 bps respectively. The paper outcomes do not contain realized broker execution costs; estimated slippage and brokerage fields were zero in the captured paper records. These are therefore raw paper outcomes rather than evidence of executable net profitability.
 
 ## Operational integrity
 
@@ -78,13 +78,14 @@ The collector remained paper/shadow only and placed no orders.
 
 **001I is closed as a capital-pursuit experiment because its frozen GOLDBEES implementation is too low-frequency for the current project deadline.**
 
-The broader continuation hypothesis is not discarded. It may be tested in a new experiment across a predefined multi-asset universe. Such work is Strategy 002 research and must not overwrite or contaminate the frozen 001D/001I record.
+The broader continuation hypothesis remains active as Strategy 001 research. It is being investigated in **001J** rather than by modifying 001D or restarting 001I.
 
 ## Next research track
 
 See:
 
-- `research/journal/002_strategy_roadmap.md`
-- `research/journal/002_universe_u1_spec.md`
+- `research/journal/001J_cross_sectional_equity_spec.md`
+- `research/journal/001J_universe_u1_spec.md`
+- `research/journal/strategy_registry.md`
 
 No 001D parameter changes are permitted.
