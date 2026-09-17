@@ -4,7 +4,7 @@
   "experiment": "cross_sectional_equity_u1",
   "universe_id": "U1",
   "name": "Point-in-time Nifty 100 cross-sectional continuation experiment",
-  "status": "definition_locked_membership_data_pending",
+  "status": "membership_data_pending",
   "market": "NSE",
   "asset_class": "Indian equities",
   "bar_interval": "5minute",
@@ -27,6 +27,10 @@
   },
   "selection_rule": "Development data only; candidate frozen before chronological holdout and prospective testing.",
   "liquidity_policy": "Eligibility requires sufficient 5-minute coverage, plausible prices/volume, adequate recent activity, valid instrument mapping, and no unresolved data issue. Exact thresholds must be frozen before final backtest.",
+  "membership_file": "data/universe/strategy_001j_u1_membership.csv",
+  "membership_metadata_file": "data/universe/strategy_001j_u1_membership_metadata.json",
+  "data_audit_script": "scripts/audit_strategy_001j_u1_data.py",
+  "baseline_runner": "scripts/run_strategy_001j_baseline.py",
   "symbols": [],
-  "next_action": "Acquire and validate point-in-time U1 membership and 5-minute coverage before evaluating candidate performance."
+  "next_action": "Load and validate point-in-time U1 membership, acquire 5-minute symbol data, audit coverage, then run the frozen-001D transfer baseline."
 }
