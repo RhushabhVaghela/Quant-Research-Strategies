@@ -2,7 +2,13 @@ from __future__ import annotations
 
 import pandas as pd
 
-from scripts.analyze_strategy_001j_development_stability import _breadth, _metrics
+from scripts.analyze_strategy_001j_development_stability import (
+    DEVELOPMENT_END,
+    DEVELOPMENT_END_EXCLUSIVE,
+    DEVELOPMENT_START,
+    _breadth,
+    _metrics,
+)
 
 
 def test_development_metrics_use_trade_returns() -> None:
@@ -20,3 +26,11 @@ def test_breadth_reports_symbol_distribution() -> None:
     assert breadth["symbol_count"] == 3
     assert breadth["positive_symbol_fraction"] == 2 / 3
     assert 0 < breadth["top5_share_abs"] <= 1
+
+
+def test_development_metadata_end_dates_are_explicit() -> None:
+    """Keep metadata date generation free of generic NumPy timedelta arithmetic."""
+    assert DEVELOPMENT_START.date().isoformat() == "2026-06-10"
+    assert DEVELOPMENT_END.date().isoformat() == "2026-08-19"
+    assert DEVELOPMENT_END_EXCLUSIVE.date().isoformat() == "2026-08-20"
+    assert DEVELOPMENT_END < DEVELOPMENT_END_EXCLUSIVE
