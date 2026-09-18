@@ -83,9 +83,10 @@ def _pair_stats(a: pd.DataFrame, b: pd.DataFrame) -> dict[str, float | int] | No
     denom = float(np.dot(lag_centered, lag_centered))
     if denom <= 0:
         return None
-    ar1 = float(np.dot(lag_centered, delta_centered) / denom)
-    if not np.isfinite(ar1) or not (0.0 < ar1 < 1.0):
+    kappa = float(np.dot(lag_centered, delta_centered) / denom)
+    if not np.isfinite(kappa) or not (-1.0 < kappa < 0.0):
         return None
+    ar1 = 1.0 + kappa
 
     half_life = float(-np.log(2.0) / np.log(ar1))
     if not (MIN_HALF_LIFE_BARS <= half_life <= MAX_HALF_LIFE_BARS):
