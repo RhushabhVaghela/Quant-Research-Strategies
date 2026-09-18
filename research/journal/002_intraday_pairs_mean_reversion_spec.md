@@ -1,7 +1,7 @@
 # Strategy 002 — Intraday Statistical Arbitrage / Pairs Mean Reversion
 
 **Registration date:** 2026-09-18  
-**Status:** Research specification registered; no development result yet  
+**Status:** Formation screen complete; 1 pair selected; development not yet run  
 **Asset class:** Indian equities  
 **Mechanism:** Relative-value / statistical arbitrage  
 **Primary data:** Zerodha/Kite 5-minute OHLCV  
@@ -28,7 +28,7 @@ The initial candidate universe is the locked U1 top-50 Kite-native liquid NSE EQ
 
 Pair selection is **formation-only** and must not use development or holdout P&L.
 
-The first formation implementation uses these preregistered thresholds: return correlation >= 0.75; estimated spread half-life between 2 and 120 five-minute bars; at most 20 selected pairs; and at most 2 selected pairs per symbol. Candidate ranking is by return correlation descending, then overlap descending, then half-life ascending.
+The first formation implementation uses these preregistered thresholds: return correlation >= 0.75; estimated spread half-life between 2 and 120 five-minute bars; at most 20 selected pairs; and at most 2 selected pairs per symbol. Candidate ranking is by return correlation descending, then overlap descending, then half-life ascending. The completed formation run selected 1 pair. This is a formation result only and has not been evaluated on development or holdout P&L.
 
 The spread mean-reversion speed is estimated by regressing spread changes on the lagged spread. A negative change coefficient indicates mean reversion; the implied level AR(1) coefficient is `phi = 1 + kappa`, and half-life is `-ln(2) / ln(phi)`.
 
@@ -60,7 +60,7 @@ The initial architecture will be deliberately simple and interpretable:
 - standardize the spread using only information available before the signal;
 - enter when the spread z-score exceeds a preregistered absolute threshold;
 - long the relatively cheap leg and short the relatively rich leg;
-- exit on spread normalization, a maximum holding period, or a predefined risk stop;
+- exit on spread normalization, a maximum holding period, or a fixed 4.0 absolute-z risk stop;
 - prohibit overnight carry in the first live-feasibility version;
 - enforce same-session entry and exit.
 
@@ -182,3 +182,29 @@ Strategy 002 is intentionally registered as a different mechanism from Strategy 
 002: relative-value intraday mean reversion.
 
 The portfolio must not promote two strategies that are economically redundant simply because their parameter values or symbols differ.
+
+
+## 14. Formation completion record — 2026-09-18
+
+The preregistered formation screen was executed against the locked U1 top-50 universe. The local repository test suite passed with 104 tests, and the formation selector completed without development or holdout access.
+
+**Observed formation result:** 1 eligible pair selected.
+
+The one-pair result is not a profitability result and does not justify changing the registered correlation, half-life, pair-count, or concentration thresholds. The selected pair file is the frozen input to the next development stage.
+
+A prior implementation issue in the half-life calculation was corrected before this formation run: the change-on-lagged-level coefficient is expected to be negative for mean reversion, with the level AR coefficient defined as phi = 1 + kappa. The regression test now covers this sign convention.
+
+## 15. Next stage
+
+The next stage is the preregistered 108-configuration development search on the fixed formation pair set. Development must use only 2026-06-10 through 2026-08-19. The 2026-08-20 through 2026-09-17 holdout remains locked.
+
+The development engine uses:
+- formation-frozen hedge beta;
+- prior-information spread z-score;
+- next-bar-open entry for both legs;
+- equal-dollar long/short pair return;
+- normalization, fixed 4.0-z risk stop, or maximum holding exit;
+- cooldown;
+- per-leg cost scenarios.
+
+No development result may be used to alter the formation pair set. Any change to the pair screen requires a separately registered experiment.
