@@ -11,6 +11,7 @@ from scripts.build_strategy_002_pairs import (
     MIN_HALF_LIFE_BARS,
     MIN_RETURN_CORRELATION,
     select_pairs,
+    _window,
 )
 
 
@@ -40,6 +41,13 @@ def test_pair_selection_is_bounded_and_unique() -> None:
         counts[row.symbol_a] = counts.get(row.symbol_a, 0) + 1
         counts[row.symbol_b] = counts.get(row.symbol_b, 0) + 1
     assert all(v <= MAX_PAIRS_PER_SYMBOL for v in counts.values())
+
+
+def test_window_uses_explicit_python_timedelta():
+    start = _window("2026-05-12")
+    end = _window("2026-06-09", end_of_day=True)
+    assert str(start) == "2026-05-12 00:00:00+05:30"
+    assert str(end) == "2026-06-10 00:00:00+05:30"
 
 
 def test_registered_thresholds_are_explicit() -> None:
