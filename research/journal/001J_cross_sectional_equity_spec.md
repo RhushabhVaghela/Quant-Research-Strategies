@@ -159,3 +159,12 @@ The current development sensitivity grid uses round-trip haircuts of 0, 5, 10, 1
 10. explicit acknowledgement that the tactical U1 is not PIT-clean.
 
 The PIT Nifty 100 path remains the cleaner future validation route. Failure of a gate is a research result.
+
+
+## 7.2 Secondary cost-efficiency development experiment
+
+After the first 162-configuration development review found only a few bps of gross expectancy and poor resilience to the 5 bps sensitivity, a separate exploratory development stage was preregistered. Its specification is `research/journal/001J_secondary_development_spec.md`.
+
+This stage does not reopen the first grid and does not inspect the holdout. It tests a fixed 108-configuration family emphasizing stronger z-score thresholds, shorter holding periods, and longer cooldowns. Because it reuses the same development sample after an earlier review, it carries an explicit sequential-development/overfitting limitation.
+
+The experiment is diagnostic until a manual freeze record is completed. No result from it may alter U1 membership or frozen 001D.
