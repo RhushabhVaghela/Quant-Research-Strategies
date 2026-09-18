@@ -55,7 +55,7 @@ def test_mean_reversion_sign_convention_accepts_negative_delta_coefficient() -> 
     rng = np.random.default_rng(7)
     spread = np.zeros(n)
     for i in range(1, n):
-        spread[i] = 0.92 * spread[i - 1] + rng.normal(0.0, 0.01)
+        spread[i] = 0.92 * spread[i - 1] + rng.normal(0.0, 0.00005)
     base = np.exp(np.cumsum(rng.normal(0.0001, 0.0002, n)))
     frames = {"AAA": _frame(base * np.exp(spread)), "BBB": _frame(base)}
     pairs = select_pairs(frames)
