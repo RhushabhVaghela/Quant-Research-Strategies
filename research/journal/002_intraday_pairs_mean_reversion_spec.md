@@ -28,6 +28,10 @@ The initial candidate universe is the locked U1 top-50 Kite-native liquid NSE EQ
 
 Pair selection is **formation-only** and must not use development or holdout P&L.
 
+The first formation implementation uses these preregistered thresholds: return correlation >= 0.75; estimated spread half-life between 2 and 120 five-minute bars; at most 20 selected pairs; and at most 2 selected pairs per symbol. Candidate ranking is by return correlation descending, then overlap descending, then half-life ascending.
+
+The spread mean-reversion speed is estimated by regressing spread changes on the lagged spread. A negative change coefficient indicates mean reversion; the implied level AR(1) coefficient is `phi = 1 + kappa`, and half-life is `-ln(2) / ln(phi)`.
+
 The formation stage will:
 
 1. align each symbol's 5-minute returns;
