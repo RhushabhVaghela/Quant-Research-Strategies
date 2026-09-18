@@ -12,9 +12,9 @@ No two promoted strategies should be materially the same economic mechanism appl
 
 | Strategy ID | Asset class | Economic hypothesis / mechanism | Current experiment | Status |
 |---|---|---|---|---|
-| 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | Active research |
-| 002 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
-| 003 | — | Reserved | — | Planned |
+| 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | Closed for current candidate selection; no candidate frozen |
+| 002 | Indian equities | Intraday relative-value / statistical arbitrage: temporary pair-spread dislocation followed by normalization | 002 — initial pairs-mean-reversion experiment | Registered; research pending |
+| 003 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
 
@@ -24,11 +24,21 @@ No two promoted strategies should be materially the same economic mechanism appl
 |---|---|---|---|
 | 001D | GOLDBEES | Frozen single-instrument implementation | Immutable historical candidate |
 | 001I | GOLDBEES | Prospective OOS / paper-shadow test of 001D | Closed for capital-pursuit priority; not statistically rejected |
-| 001J | U1: Kite-native liquid NSE EQ universe; PIT Nifty 100 deferred | Test whether the same continuation hypothesis generalizes cross-sectionally using the user's existing broker data infrastructure | Active |
+| 001J | U1: Kite-native liquid NSE EQ universe; PIT Nifty 100 deferred | Test whether the same continuation hypothesis generalizes cross-sectionally using the user's existing broker data infrastructure | Closed for current candidate selection; no candidate frozen |
 
 001D and 001I are immutable historical evidence. 001J is a new experiment under the same Strategy 001 hypothesis family; its parameters must never be back-filled into 001D.
 
 The tactical 001J U1 has an explicit current-instrument/survivorship limitation. A later PIT Nifty 100 implementation remains a separate universe experiment under Strategy 001 rather than being silently substituted into the tactical result.
+
+## Strategy 002 initial experiment
+
+Strategy 002 is deliberately different from Strategy 001. It studies relative-value mean reversion between two securities rather than directional continuation in one security.
+
+The registered specification is:
+
+`research/journal/002_intraday_pairs_mean_reversion_spec.md`
+
+The initial experiment uses U1 only as a **predefined candidate universe**. Pair selection and hedge estimation must be formation-only and frozen before development selection.
 
 ## Portfolio asset classes
 
