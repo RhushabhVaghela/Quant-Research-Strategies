@@ -1,7 +1,7 @@
 # Strategy 001J — Cross-Sectional Equity Experiment Specification
 
 **Parent strategy:** 001 — intraday continuation  
-**Status:** Active research; U1 locked; September 2026 experiment window frozen  
+**Status:** Current candidate-selection sprint closed; U1 locked; no 001J candidate frozen  
 **Universe:** U1 — Kite-native liquid NSE EQ universe  
 **Primary frequency:** 5-minute OHLCV
 
@@ -82,7 +82,7 @@ The earlier U1 liquidity formation window that created membership is separate fr
 
 ## 7. Development search and candidate-freeze protocol
 
-The candidate search is performed on development data only using the pre-registered 162-configuration grid:
+The first candidate search was performed on development data only using the pre-registered 162-configuration grid:
 
 - lookback: 20, 30, 40;
 - z threshold: 1.5, 2.0, 2.5;
@@ -168,3 +168,12 @@ After the first 162-configuration development review found only a few bps of gro
 This stage does not reopen the first grid and does not inspect the holdout. It tests a fixed 108-configuration family emphasizing stronger z-score thresholds, shorter holding periods, and longer cooldowns. Because it reuses the same development sample after an earlier review, it carries an explicit sequential-development/overfitting limitation.
 
 The experiment is diagnostic until a manual freeze record is completed. No result from it may alter U1 membership or frozen 001D.
+
+
+## 14. September 2026 candidate-selection closure
+
+The 108-configuration secondary cost-efficiency experiment has now been completed and reviewed. Its strongest gross mean was approximately 3.63 bps per trade, with negative median trade return and negative mean return under the predefined 5 bps haircut. No candidate was frozen.
+
+Therefore 001J is closed for the current September candidate-selection sprint. The untouched holdout remains protected and is not being consumed merely to search for a favorable configuration. U1 and frozen 001D remain unchanged.
+
+The detailed decision record is `research/journal/001J_secondary_development_review_20260918.md`. Future work on the continuation hypothesis must be registered as a new experiment under Strategy 001 rather than repeatedly reopening this same development sample.
