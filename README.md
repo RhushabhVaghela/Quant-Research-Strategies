@@ -26,7 +26,7 @@ Strategy 001 began as a GOLDBEES mean-reversion hypothesis. The mean-reversion h
 | 001G replay | 🟡 Complete | 310/310 trades reconciled; forward path and MFE/MAE recovered |
 | 001H robustness/chronological holdout | 🟡 Complete | Positive gross performance across examined periods; costs remain unresolved |
 | 001I prospective OOS / paper-shadow | 🔵 Closed | Two genuine prospective trades on 2026-09-17; too low-frequency for current capital-pursuit sprint; not statistically rejected |
-| **001J cross-sectional equity experiment** | **🟡 Active** | Same economic hypothesis tested cross-sectionally using a broker-native liquid NSE EQ universe; PIT Nifty 100 remains deferred |
+| **001J cross-sectional equity experiment** | **🔵 Closed** | Same economic hypothesis tested cross-sectionally using a broker-native liquid NSE EQ universe; no candidate frozen |
 
 ### Frozen 001D strategy
 
@@ -75,6 +75,18 @@ See:
 - `scripts/validate_strategy_001j_data_gate.py`
 
 ---
+
+## Strategy 002 — Intraday pairs mean reversion
+
+Strategy 002 is the project's relative-value/statistical-arbitrage research family for Indian equities. It is deliberately distinct from Strategy 001's directional continuation hypothesis.
+
+### Current status
+
+The formation-only screen has completed on the locked U1 universe and selected **1 pair**. The local test suite passed with **104 tests** at formation completion. No development or holdout P&L has been loaded or used in pair selection.
+
+The next step is the preregistered **108-configuration development grid** using the frozen pair set. Development covers 2026-06-10 through 2026-08-19; the holdout (2026-08-20 through 2026-09-17) remains locked until a candidate freeze record is completed.
+
+See `research/journal/002_intraday_pairs_mean_reversion_spec.md`, `src/research/strategy_002_pairs.py`, and `scripts/run_strategy_002_development.py`.
 
 ## Strategy portfolio architecture
 
@@ -128,4 +140,4 @@ Run the complete test suite:
 pytest
 ```
 
-The immediate active work is the 001J Kite data gate: fetch the pre-strategy formation window, build the broker-native U1, fetch the selected-symbol research window, audit coverage, then run similarity diagnostics and the frozen 001D-parameter cross-sectional baseline.
+The immediate active work is Strategy 002 development: use the frozen formation pair set, run the preregistered 108 configurations on the development window, inspect breadth/stability and two-leg cost sensitivity, then freeze or reject a candidate before opening the holdout.
