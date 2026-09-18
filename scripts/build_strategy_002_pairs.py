@@ -7,6 +7,7 @@ from the frozen 20-session formation window and the locked U1 universe.
 from __future__ import annotations
 
 import argparse
+from datetime import timedelta
 from itertools import combinations
 from pathlib import Path
 
@@ -31,7 +32,7 @@ MAX_PAIRS_PER_SYMBOL = 2
 def _window(value: str, end_of_day: bool = False) -> pd.Timestamp:
     ts = pd.Timestamp(value).tz_localize("Asia/Kolkata")
     if end_of_day:
-        ts += pd.Timedelta(days=1)
+        ts += timedelta(days=1)
     return ts
 
 
