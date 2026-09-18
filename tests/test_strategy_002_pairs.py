@@ -50,6 +50,20 @@ def test_window_uses_explicit_python_timedelta():
     assert str(end) == "2026-06-10 00:00:00+05:30"
 
 
+def test_mean_reversion_sign_convention_accepts_negative_delta_coefficient() -> None:
+    n = 900
+    rng = np.random.default_rng(7)
+    spread = np.zeros(n)
+    for i in range(1, n):
+        spread[i] = 0.92 * spread[i - 1] + rng.normal(0.0, 0.01)
+    base = np.exp(np.cumsum(rng.normal(0.0001, 0.0002, n)))
+    frames = {"AAA": _frame(base * np.exp(spread)), "BBB": _frame(base)}
+    pairs = select_pairs(frames)
+    assert not pairs.empty
+    assert pairs.iloc[0]["half_life_bars"] >= MIN_HALF_LIFE_BARS
+    assert pairs.iloc[0]["half_life_bars"] <= MAX_HALF_LIFE_BARS
+
+
 def test_registered_thresholds_are_explicit() -> None:
     assert MIN_RETURN_CORRELATION == 0.75
     assert MIN_HALF_LIFE_BARS == 2.0
