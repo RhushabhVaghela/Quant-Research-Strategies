@@ -268,7 +268,9 @@ def cross_sectional_diagnostics(
         }
     )
 
-    complete = panel.dropna(axis=1, how="any").dropna(how="any")
+    # PCA requires rows with complete observations across the retained symbols.
+    # Retain symbols with usable coverage first, then remove incomplete rows.
+    complete = panel.dropna(axis=1, how="all").dropna(how="any")
     if complete.shape[0] < 2 or complete.shape[1] < 2:
         pca = pd.DataFrame(
             [
