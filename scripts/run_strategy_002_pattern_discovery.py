@@ -175,6 +175,69 @@ def intraday_diagnostics(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
     return out
 
 
+def daily_correlation_diagnostics(
+    frames: dict[str, pd.DataFrame],
+) -> pd.DataFrame:
+    daily = []
+    for symbol, frame in frames.items():
+        work = frame.set_index("timestamp")
+        close = work["close"].resample("1D").last()
+        daily.append(close.pct_change().rename(symbol))
+    panel = pd.concat(daily, axis=1)
+    corr = panel.corr()
+    upper = np.triu(np.ones(corr.shape, dtype=bool), k=1)
+    return (
+        corr.where(upper)
+        .stack()
+        .rename("correlation")
+        .reset_index()
+        .rename(columns={"level_0": "symbol_a", "level_1": "symbol_b"})
+    )
+
+
+def lead_lag_diagnostics(
+    frames: dict[str, pd.DataFrame],
+) -> pd.DataFrame:
+    series = {
+        symbol: frame.set_index("timestamp")["close"].pct_change()
+        for symbol, frame in frames.items()
+    }
+    rows = []
+    symbols = sorted(series)
+    for i, symbol_a in enumerate(symbols):
+        for symbol_b in symbols[i + 1 :]:
+            pair = pd.concat([series[symbol_a], series[symbol_b]], axis=1).dropna()
+            if len(pair) < max(LAGS) + 10:
+                continue
+            for lag in LAGS:
+                rows.append(
+                    {
+                        "symbol_leader": symbol_a,
+                        "symbol_follower": symbol_b,
+                        "lag_bars": lag,
+                        "correlation": pair.iloc[:, 0].corr(pair.iloc[:, 1].shift(-lag)),
+                        "observations": int(
+                            pair.iloc[:, 0].corr(pair.iloc[:, 1].shift(-lag))
+                            is not None
+                        ),
+                    }
+                )
+                rows.append(
+                    {
+                        "symbol_leader": symbol_b,
+                        "symbol_follower": symbol_a,
+                        "lag_bars": lag,
+                        "correlation": pair.iloc[:, 1].corr(pair.iloc[:, 0].shift(-lag)),
+                        "observations": int(
+                            pair.iloc[:, 1].corr(pair.iloc[:, 0].shift(-lag))
+                            is not None
+                        ),
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
+
 def cross_sectional_diagnostics(
     frames: dict[str, pd.DataFrame],
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -273,6 +336,8 @@ def main() -> None:
         ignore_index=True,
     )
     correlation, dispersion, pca = cross_sectional_diagnostics(frames)
+    daily_correlation = daily_correlation_diagnostics(frames)
+    lead_lag = lead_lag_diagnostics(frames)
 
     dynamics.to_csv(args.output_dir / "return_dynamics.csv", index=False)
     forward.to_csv(args.output_dir / "forward_horizon_diagnostics.csv", index=False)
@@ -280,6 +345,10 @@ def main() -> None:
     correlation.to_csv(
         args.output_dir / "cross_sectional_correlation.csv", index=False
     )
+    daily_correlation.to_csv(
+        args.output_dir / "daily_correlation.csv", index=False
+    )
+    lead_lag.to_csv(args.output_dir / "lead_lag_diagnostics.csv", index=False)
     dispersion.to_csv(
         args.output_dir / "cross_sectional_dispersion.csv", index=False
     )
