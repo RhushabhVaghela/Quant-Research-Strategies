@@ -37,11 +37,11 @@ def _window(value: str) -> pd.Timestamp:
     return ts
 
 
-def _load_frames(membership_path: Path, input_dir: Path) -> dict[str, pd.DataFrame]:
+def _load_frames(membership_path: Path, input_dir: Path, pairs_path: Path) -> dict[str, pd.DataFrame]:
     membership = load_membership(membership_path)
     start = _window(DEV_START)
     end = _window(DEV_END_EXCLUSIVE)
-    symbols = set(pd.read_csv(Path("data/universe/strategy_002_pairs/formation_pairs.csv"))[["symbol_a","symbol_b"]].to_numpy().ravel())
+    symbols = set(pd.read_csv(pairs_path)[["symbol_a", "symbol_b"]].to_numpy().ravel())
     frames = {}
     for symbol in sorted(symbols):
         raw = load_symbol_csv(input_dir / f"{symbol}.csv", None, start, end)
@@ -81,11 +81,11 @@ def main() -> None:
     pairs = pd.read_csv(args.pairs)
     if pairs.empty:
         raise SystemExit("Formation pair file is empty; do not run development.")
-    frames = _load_frames(Path(args.membership), Path(args.input_dir))
+    frames = _load_frames(Path(args.membership), Path(args.input_dir), Path(args.pairs))
     output = Path(args.output_dir)
     output.mkdir(parents=True, exist_ok=True)
 
-    configs = list(product(LOOKBACKS, ENTRY_ZS, EXIT_ZS, HOLDINGS, COOLDOWNS))
+    # COST_BPS is defined as round-trip cost per leg. A two-leg equal-dollar\n    # pair therefore receives a 2x haircut at each cost scenario.\n    configs = list(product(LOOKBACKS, ENTRY_ZS, EXIT_ZS, HOLDINGS, COOLDOWNS))
     assert len(configs) == 108
 
     rows, trade_tables = [], []
@@ -96,7 +96,7 @@ def main() -> None:
         m.update({"config_id": i, "lookback_bars": lb, "entry_z": ez,
                   "exit_z": xz, "max_holding_bars": hold, "cooldown_bars": cooldown})
         for bps in COST_BPS:
-            m[f"mean_after_{bps}bps"] = m["mean_gross"] - bps / 10000 if np.isfinite(m["mean_gross"]) else np.nan
+            m[f"mean_after_{bps}bps_per_leg_roundtrip"] = m["mean_gross"] - (2 * bps) / 10000 if np.isfinite(m["mean_gross"]) else np.nan
         rows.append(m)
         if not trades.empty:
             t = trades.copy()
