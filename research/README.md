@@ -157,30 +157,30 @@ Protocol: `journal/001I_prospective_oos_paper_shadow_protocol.md`.
 
 Results journal: `journal/001I_prospective_oos_paper_shadow_results.md`.
 
-## Strategy 001 historical promotion path — CLOSED
+## Strategy 001 historical research path — CLOSED
+
+The historical sequence from 001C through 001I is preserved as evidence. 001I is no longer current work. The final decision was to close the Strategy 001 family for the current capital-pursuit program because the tested implementations did not establish sufficiently strong cost-resilient economics.
+
+001I's two prospective observations were too few to statistically reject the underlying continuation phenomenon. 001J's broader-universe development searches remained in the few-basis-point gross range, and the strongest secondary search remained negative under the predefined 5-bps sensitivity. Further optimization on the same development sample was stopped to control sequential search and data-snooping risk.
 
 ```text
-001C point-in-time validation                       🟡 promising
+001C point-in-time validation                       🟡 exploratory lead
         ↓
-001D formal baseline backtest                       🟡 gross positive / costs unresolved
+001D formal baseline backtest                       🟡 historical candidate
         ↓
 001E distribution + execution audit                 🟡 complete
         ↓
 001F trade decomposition                            🟡 complete
         ↓
-001G PIT feature + forward-path replay              🟡 complete
+001G PIT feature + forward-path replay              🟢 complete
         ↓
-001H predefined robustness + historical holdout     🟡 complete
+001H robustness + chronological analysis            🟡 complete
         ↓
-001I prospective OOS / paper-shadow                 ← CURRENT
+001I prospective OOS / paper-shadow                 🔵 closed
         ↓
-Execution validation
+001J cross-sectional development                    🔵 closed / no candidate
         ↓
-Controlled live validation (only if justified)
-        ↓
-Strategy 001 final decision
-        ↓
-Only then: Strategy 002
+Strategy 001 closure                                🔵 no promoted implementation
 ```
 
 A failure at any gate is recorded rather than repaired by post-hoc parameter tuning.
