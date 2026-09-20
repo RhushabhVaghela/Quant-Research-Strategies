@@ -23,7 +23,7 @@ No two promoted strategies should be materially the same economic mechanism appl
 | Strategy ID | Asset class | Economic hypothesis / mechanism | Current experiment | Status |
 |---|---|---|---|---|
 | 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
-| 002 | Indian equities | Intraday relative-value / statistical arbitrage: temporary pair-spread dislocation followed by normalization | 002 — initial pairs-mean-reversion experiment | Formation complete: 1 pair selected; development pending |
+| 002 | Indian equities / initial research universe to be confirmed | **No hypothesis yet — data, market structure, fundamentals where applicable, and statistical patterns will be investigated first** | 002 data-first investigation | **Restarted; hypothesis not yet formulated** |
 | 003 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
@@ -48,15 +48,38 @@ Existing 001D, 001I, 001J, universe files, and journals remain historical eviden
 
 The tactical 001J U1 has an explicit current-instrument/survivorship limitation. A later PIT Nifty 100 implementation remains a separate universe experiment under Strategy 001 rather than being silently substituted into the tactical result.
 
-## Strategy 002 initial experiment
+## Strategy 002 restart record
 
-Strategy 002 is deliberately different from Strategy 001. It studies relative-value mean reversion between two securities rather than directional continuation in one security.
+Strategy 002 has been deliberately restarted as a **hypothesis-free research investigation** following the lessons from Strategy 001.
 
-The registered specification is:
+The previous pair-mean-reversion experiment was not promoted and is no longer part of the active Strategy 002 tree. Its implementation files, pair-selection artifacts, development tests/runner, formation outputs, and pair-specific specification were removed from the current branch. Git history preserves the research event and deletion for auditability.
 
-`research/journal/002_intraday_pairs_mean_reversion_spec.md`
+The restart is intentional: Strategy 002 will first investigate the available data and market environment, including fundamentals/economic context where reliable point-in-time information is applicable. The project will then discover and characterize patterns before formulating an economic hypothesis.
 
-The initial experiment uses U1 only as a **predefined candidate universe**. Pair selection and hedge estimation must be formation-only and frozen before development selection.
+The active lifecycle is:
+
+```text
+data audit
+  → data / market understanding
+  → fundamentals / economic context where applicable
+  → descriptive statistics
+  → pattern discovery
+  → pattern characterization
+  → economic interpretation
+  → hypothesis
+  → strategy definition
+  → controlled development
+  → candidate freeze
+  → holdout
+  → prospective
+  → live validation
+```
+
+No mechanism is preferred in advance. Pair mean reversion is one possible future hypothesis, not the Strategy 002 starting assumption. Momentum, reversal, cross-sectional effects, volatility, lead-lag, statistical arbitrage, fundamental effects, and other mechanisms must earn consideration through the investigation rather than being selected beforehand.
+
+The active protocol is `research/journal/002_data_first_investigation_protocol.md`.
+
+**Holdout rule:** no untouched chronological holdout may be used to select patterns, features, hypotheses, parameters, or strategy definitions during this exploratory phase.
 
 ## Portfolio asset classes
 
