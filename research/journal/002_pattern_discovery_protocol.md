@@ -167,3 +167,24 @@ Only a pattern that is:
 
 should proceed to formal hypothesis definition.
 \n## Execution status\n\nThe first locked exploratory pass has now been executed locally with 19 structurally eligible instruments and produced the prescribed diagnostic files. The next step is controlled characterization of those outputs. No hypothesis, strategy P&L, optimization grid, validation-period statistic, or holdout statistic has been introduced.\n
+## Pattern-characterization stage
+
+The first exploratory summary surfaced two broad descriptive features that warrant characterization rather than immediate strategy selection:
+
+1. short-lag signed-return autocorrelation is slightly negative at lag 1 and becomes mildly positive at longer lags;
+2. absolute-return autocorrelation is consistently positive, indicating volatility clustering in the descriptive sample.
+
+The conditional forward-return tables also show differences after prior positive versus prior negative returns. These observations are **not yet a hypothesis** and are not sufficient to call a tradeable reversal or volatility strategy.
+
+The next controlled analysis therefore measures:
+
+- breadth across instruments rather than the cross-sectional median alone;
+- sign-conditioned behavior crossed with return-magnitude quartiles;
+- stability across chronological subperiods inside the exploratory sample;
+- whether the apparent short-horizon reversal survives after separating return sign from return magnitude;
+- whether the pattern is broad enough to justify an economic interpretation;
+- whether the mechanism is plausibly distinct from Strategy 001's continuation mechanism.
+
+This characterization remains restricted to **2025-09-18 through 2026-06-09**. No validation or holdout observation is read.
+
+A pattern will not advance merely because its average return is positive or negative. Advancement requires breadth, stability, an economically coherent mechanism, and a plausible path to surviving execution costs.
