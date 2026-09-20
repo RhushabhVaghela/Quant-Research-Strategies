@@ -22,7 +22,8 @@ No two promoted strategies should be materially the same economic mechanism appl
 
 | Strategy ID | Asset class | Economic hypothesis / mechanism | Current experiment | Status |
 |---|---|---|---|---|
-| 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** || 003 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
+| 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
+| 003 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
 
