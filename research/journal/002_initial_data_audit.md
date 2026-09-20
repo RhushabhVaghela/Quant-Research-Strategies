@@ -200,3 +200,17 @@ The development-validation period and final holdout remain logically inaccessibl
 Proceed with the hypothesis-free exploratory pattern pass using the 19 currently structurally eligible instruments. Preserve HINDUNILVR as a documented data-quality exception rather than silently dropping it from the research universe.
 
 No Strategy 002 economic hypothesis has been selected.
+
+
+### Pattern-discovery execution command
+
+After pulling the latest main branch, the first controlled exploratory pass is:
+
+```cmd
+pytest -q
+python scripts/run_strategy_002_pattern_discovery.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_pattern_discovery
+```
+
+The runner explicitly requires the structural audit report and only admits instruments with zero unexpected intervals and zero zero-volume rows. It then hard-filters every dataset to the exploratory-development period before calculating any diagnostic.
+
+The resulting report directory is local research output and should be inspected before any hypothesis is formulated.
