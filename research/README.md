@@ -52,9 +52,9 @@ The candidate manifest is defined independently of strategy performance.
 
 Strategy 002 is now active. No trading hypothesis has been selected. The first phase is an empirical data audit using the repository's existing research-universe and market-data infrastructure.
 
-Initial research record: `journal/002_initial_data_audit.md`.
+Initial research records: `journal/002_initial_data_audit.md` and `journal/002_pattern_discovery_protocol.md`.
 
-The immediate objective is to establish data coverage, integrity, liquidity characteristics, return/volume distributions, intraday structure, and other descriptive properties before selecting a pattern for deeper investigation. Strategy selection must not be driven by historical P&L during this phase.
+The common historical dataset has now been acquired and audited. Nineteen of twenty candidates currently pass the structural-quality gate; HINDUNILVR remains a documented data-quality exception. The immediate objective is controlled hypothesis-free pattern discovery using only the locked exploratory-development period (2025-09-18 through 2026-06-09). Strategy selection must not be driven by historical P&L during this phase, and the validation/holdout periods remain protected.
 
 ## Strategy 001 research path — CLOSED
 
