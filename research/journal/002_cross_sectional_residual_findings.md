@@ -48,3 +48,10 @@ Only if that investigation produces a broad, stable, economically interpretable 
 ## Research-control statement
 
 No validation-period or final holdout/OOS observations are used in this finding. No trading P&L, threshold optimization, holding-period optimization, or instrument selection was performed.
+
+
+## Follow-up status
+
+The stricter leave-one-out residual mechanism analysis has now been executed locally. Its purpose is to test whether the earlier descriptive residual reversal survives removal of self-contamination and whether it remains outside the previously identified close-to-open boundary effect.
+
+No conclusion from this follow-up is recorded here until its generated outputs are committed and reviewed. The current state is therefore **result pending**, not hypothesis confirmed or rejected.

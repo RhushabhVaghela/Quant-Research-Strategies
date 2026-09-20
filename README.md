@@ -105,8 +105,16 @@ Current records:
 - `research/journal/002_pattern_discovery_protocol.md`
 - `research/journal/002_pattern_characterization_findings.md`
 - `research/journal/002_reversal_mechanism_protocol.md`
+- `research/journal/002_reversal_mechanism_findings.md`
+- `research/journal/002_cross_sectional_residual_protocol.md`
+- `research/journal/002_cross_sectional_residual_findings.md`
+- `research/journal/002_cross_sectional_residual_mechanism_protocol.md`
 
-The next analysis remains restricted to 2025-09-18 through 2026-06-09. Validation and final holdout data remain protected.
+The initial cross-sectional residual investigation found a broad next-bar residual reversal, but its residual construction included each instrument in the contemporaneous market mean. It therefore remains a descriptive finding rather than a Strategy 002 hypothesis. The current controlled stage is a leave-one-out residual decomposition that separately tests close-to-close, close-to-open, and open-to-close components.
+
+The leave-one-out analysis has now been executed locally using the locked exploratory window. It included 19 instruments and excluded 1 instrument under the existing structural-quality gate. The generated results are awaiting committed output review; no conclusion has been drawn from them yet.
+
+All decision-relevant analysis remains restricted to 2025-09-18 through 2026-06-09. Validation and final holdout data remain protected.
 
 ## Strategy portfolio architecture
 
@@ -180,18 +188,18 @@ See `research/journal/repository_resource_policy.md` and `research/journal/resea
 
 ## Reproducibility
 
-Install dependencies:
+Install dependencies from Windows CMD:
 
-```powershell
+```cmd
 python -m venv .venv
-.venv\\Scripts\\Activate.ps1
+.venv\\Scripts\\activate
 pip install -r requirements.txt
 ```
 
 Run the complete test suite:
 
-```powershell
-pytest
+```cmd
+pytest -q
 ```
 
-The immediate active work is Strategy 002 data-first investigation. Do not create a strategy implementation or optimization grid yet. First complete the data audit, market/fundamental context review, repository-resource review, descriptive analysis, and pattern-discovery/characterization record.
+The immediate active work is Strategy 002 data-first investigation. The leave-one-out residual mechanism analysis has been executed, but its generated output has not yet been interpreted. Do not create a strategy implementation or optimization grid until the committed results pass the mechanism and economic-interpretation gates. Validation and final holdout observations remain protected.
