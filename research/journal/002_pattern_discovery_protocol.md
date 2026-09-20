@@ -198,3 +198,16 @@ Local execution:
     python scripts/characterize_strategy_002_patterns.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_pattern_characterization
 
 The characterization loader accepts the full downloaded history as input, then slices it to the locked exploratory window. It must not reject a file merely because the file physically contains observations before the exploratory start date; only observations inside the locked window are decision-relevant.
+
+
+## Characterization finding and next gate
+
+The committed characterization now shows a broad **1–2 bar signed-return reversal pattern** across the 19 eligible instruments. At the next-bar horizon, 84.2% of instruments have a positive mean after a negative prior return, while only 5.3% have a positive mean after a positive prior return. The effect becomes less uniform at longer horizons.
+
+This is strong enough to justify a mechanism investigation, but it is **not** yet sufficient to define a trading hypothesis. In particular, the current OHLCV data cannot distinguish economic short-horizon reversal from bid/ask bounce, price discretization, or bar-boundary effects.
+
+The formal next step is documented in:
+- `research/journal/002_pattern_characterization_findings.md`
+- `research/journal/002_reversal_mechanism_protocol.md`
+
+The mechanism characterization will remain inside the exploratory window and will decompose the next bar into close-to-close, close-to-open, and open-to-close components before any threshold, holding period, strategy rule, or validation-period evaluation is introduced.
