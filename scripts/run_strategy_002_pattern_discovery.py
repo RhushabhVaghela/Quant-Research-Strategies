@@ -135,8 +135,9 @@ def forward_diagnostics(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
                 }
             )
 
-        for bucket, mask in magnitude_bucket.groupby(magnitude_bucket, observed=True):
-            sample = forward.loc[mask.index[mask].intersection(forward.dropna().index)]
+        for bucket in magnitude_bucket.dropna().unique():
+            bucket_mask = magnitude_bucket == bucket
+            sample = forward.loc[bucket_mask].dropna()
             rows.append(
                 {
                     "symbol": symbol,
