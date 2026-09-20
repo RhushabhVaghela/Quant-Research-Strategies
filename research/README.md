@@ -48,6 +48,14 @@ These documents define the project's research and execution controls.
 
 The candidate manifest is defined independently of strategy performance.
 
+## Strategy 002 — active research
+
+Strategy 002 is now active. No trading hypothesis has been selected. The first phase is an empirical data audit using the repository's existing research-universe and market-data infrastructure.
+
+Initial research record: `journal/002_initial_data_audit.md`.
+
+The immediate objective is to establish data coverage, integrity, liquidity characteristics, return/volume distributions, intraday structure, and other descriptive properties before selecting a pattern for deeper investigation. Strategy selection must not be driven by historical P&L during this phase.
+
 ## Strategy 001 research path — CLOSED
 
 ### 001 — GOLDBEES mean reversion
