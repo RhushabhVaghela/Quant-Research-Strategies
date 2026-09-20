@@ -216,3 +216,21 @@ The mechanism characterization will remain inside the exploratory window and wil
 ## Reversal mechanism decision
 
 The subsequent decomposition found that the broad raw-return reversal is concentrated in the prior-close to next-open component, while next-open to next-close does not preserve the same directional effect. The project therefore does not promote the raw reversal observation into a strategy. See research/journal/002_reversal_mechanism_findings.md. The next exploratory investigation is cross-sectional residual behavior, documented in research/journal/002_cross_sectional_residual_protocol.md.
+
+
+## Cross-sectional residual finding and control
+
+The first residual investigation found a broad next-bar residual reversal: after negative residuals, the median instrument mean next-bar residual was +3.7147 bps with 94.7% of instruments positive; after positive residuals, the median was -4.2457 bps with 0% positive. The effect weakened materially beyond the first bar and did not produce a monotonic magnitude relationship.
+
+These results remain descriptive. The implementation subtracts the contemporaneous equal-weight cross-sectional mean including the instrument itself, so the residual specification is not yet sufficiently strict for hypothesis formation. In addition, the earlier raw-return decomposition showed a close-to-open boundary concentration. The project therefore does not promote the residual result into a trading rule.
+
+The next controlled investigation uses a **leave-one-out cross-sectional residual** and separately decomposes close-to-close, close-to-open, and open-to-close components. It is documented in:
+
+- `research/journal/002_cross_sectional_residual_findings.md`
+- `research/journal/002_cross_sectional_residual_mechanism_protocol.md`
+
+Execution:
+
+    python scripts/characterize_strategy_002_leave_one_out_residual.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_leave_one_out_residual
+
+This remains exploratory only. Validation and holdout data stay locked, and no strategy P&L or optimization is introduced.
