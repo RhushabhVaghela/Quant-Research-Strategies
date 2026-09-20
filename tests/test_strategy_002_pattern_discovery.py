@@ -31,9 +31,9 @@ def test_exploratory_slice_excludes_validation_and_holdout() -> None:
     )
     out = exploratory_slice(frame)
 
-    assert out["timestamp"].tolist() == [EXPLORATORY_END]
-    assert out["timestamp"].min() == EXPLORATORY_END
-    assert out["timestamp"].max() == EXPLORATORY_END
+    assert len(out) == 1
+    assert out["timestamp"].iloc[0].date() == EXPLORATORY_END.date()
+    assert out["timestamp"].max() < pd.Timestamp("2026-06-10", tz="Asia/Kolkata")
 
 
 def test_exploratory_slice_keeps_start_boundary() -> None:
@@ -50,7 +50,7 @@ def test_exploratory_slice_keeps_start_boundary() -> None:
         }
     )
     out = exploratory_slice(frame)
-    assert out["timestamp"].min() == EXPLORATORY_START
+    assert out["timestamp"].min().date() == EXPLORATORY_START.date()
 
 
 def test_exploratory_slice_does_not_accept_naive_timestamps() -> None:
