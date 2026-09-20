@@ -214,3 +214,4 @@ python scripts/run_strategy_002_pattern_discovery.py data/raw/strategy_002_unive
 The runner explicitly requires the structural audit report and only admits instruments with zero unexpected intervals and zero zero-volume rows. It then hard-filters every dataset to the exploratory-development period before calculating any diagnostic.
 
 The resulting report directory is local research output and should be inspected before any hypothesis is formulated.
+\n## Exploratory pattern pass execution\n\nThe locked exploratory runner was executed locally after the test suite passed (107 tests). It included 19 structurally eligible instruments and restricted all calculations to 2025-09-18 through 2026-06-09. The run completed without warnings or errors after the pandas `pct_change(fill_method=None)` correction.\n\nThe next step is to summarize and characterize the generated diagnostics. No economic hypothesis has yet been selected.\n
