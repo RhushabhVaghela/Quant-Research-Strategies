@@ -96,11 +96,17 @@ See:
 
 ## Strategy 002 — active research
 
-Strategy 002 has officially entered research. No trading hypothesis has been selected. The first phase is an empirical data audit using the repository's existing universe and market-data infrastructure.
+Strategy 002 has officially entered research. The current work remains exploratory and no trading hypothesis has been frozen.
 
-Initial research record: `research/journal/002_initial_data_audit.md`.
+The locked pattern-characterization stage found a broad short-horizon signed-return reversal pattern across the eligible universe. Before defining a strategy, the project is testing whether that observation is economically interpretable or primarily a bar-boundary/microstructure effect.
 
-The immediate task is to establish what the available data actually supports before defining a pattern, economic hypothesis, or strategy. No strategy-specific optimization is being performed at this stage.
+Current records:
+- `research/journal/002_initial_data_audit.md`
+- `research/journal/002_pattern_discovery_protocol.md`
+- `research/journal/002_pattern_characterization_findings.md`
+- `research/journal/002_reversal_mechanism_protocol.md`
+
+The next analysis remains restricted to 2025-09-18 through 2026-06-09. Validation and final holdout data remain protected.
 
 ## Strategy portfolio architecture
 
