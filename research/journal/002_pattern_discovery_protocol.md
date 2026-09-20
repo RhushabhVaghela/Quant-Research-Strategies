@@ -188,3 +188,13 @@ The next controlled analysis therefore measures:
 This characterization remains restricted to **2025-09-18 through 2026-06-09**. No validation or holdout observation is read.
 
 A pattern will not advance merely because its average return is positive or negative. Advancement requires breadth, stability, an economically coherent mechanism, and a plausible path to surviving execution costs.
+
+## Characterization execution control
+
+The characterization stage uses the same structural universe-audit gate as the initial discovery pass. The audit report is therefore an explicit input to the characterization command; instruments with unresolved unexpected intervals or zero-volume rows are excluded rather than silently included.
+
+Local execution:
+
+    python scripts/characterize_strategy_002_patterns.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_pattern_characterization
+
+The characterization loader accepts the full downloaded history as input, then slices it to the locked exploratory window. It must not reject a file merely because the file physically contains observations before the exploratory start date; only observations inside the locked window are decision-relevant.
