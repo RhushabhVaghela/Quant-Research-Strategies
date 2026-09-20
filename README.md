@@ -94,17 +94,93 @@ See:
 
 ---
 
-## Strategy 002 — Intraday pairs mean reversion
+## Strategy 002 — Data-first market research — RESTARTED
 
-Strategy 002 is the project's relative-value/statistical-arbitrage research family for Indian equities. It is deliberately distinct from Strategy 001's directional continuation hypothesis.
+Strategy 002 has been intentionally restarted after the lessons from Strategy 001. The project will **not begin with a trading hypothesis** for this strategy.
+
+The previous Strategy 002 pair-mean-reversion implementation was deliberately removed from the active repository tree. Its current source files, pair-selection artifacts, development runner/tests, formation outputs, and pair-mean-reversion specification are no longer part of the active Strategy 002 research path. The Git history preserves the fact that this work was attempted and then abandoned/restarted; historical deletion is not treated as if the work never happened.
 
 ### Current status
 
-The formation-only screen has completed on the locked U1 universe and selected **1 pair**. The local test suite passed with **104 tests** at formation completion. No development or holdout P&L has been loaded or used in pair selection.
+**Phase: data and market investigation. No hypothesis has been selected. No strategy has been defined. No development grid exists. No holdout has been opened.**
 
-The next step is the preregistered **108-configuration development grid** using the frozen pair set. Development covers 2026-06-10 through 2026-08-19; the holdout (2026-08-20 through 2026-09-17) remains locked until a candidate freeze record is completed.
+The purpose of this phase is to understand the selected market/data environment before deciding what kind of strategy, if any, is justified.
 
-See `research/journal/002_intraday_pairs_mean_reversion_spec.md`, `src/research/strategy_002_pairs.py`, and `scripts/run_strategy_002_development.py`.
+The research sequence is:
+
+```
+Relevant data
+    ↓
+Data audit and integrity
+    ↓
+Data / market understanding
+    ↓
+Fundamental and economic context (where applicable)
+    ↓
+Descriptive statistics
+    ↓
+Pattern discovery
+    ↓
+Pattern characterization
+    ↓
+Economic interpretation
+    ↓
+Hypothesis formulation
+    ↓
+Strategy definition
+    ↓
+Development / controlled optimization
+    ↓
+Candidate freeze
+    ↓
+Untouched chronological holdout
+    ↓
+Prospective paper / shadow validation
+    ↓
+Controlled live validation
+```
+
+At this stage, pair mean reversion, momentum, reversal, fundamentals, volatility, lead-lag, statistical arbitrage, and other mechanisms are **candidate explanations only**. None has been selected in advance.
+
+### Why Strategy 002 was restarted
+
+Strategy 001 began with an explicit mean-reversion hypothesis and eventually revealed a continuation pattern. The subsequent development path required increasingly careful controls around implementation choice, parameter searches, cost sensitivity, and repeated research on the same development sample.
+
+Strategy 002 therefore intentionally applies the project's updated pattern-first methodology from the beginning: **understand the data first, discover and characterize patterns second, interpret them economically third, and formulate a trading hypothesis only after that evidence exists.**
+
+This gives Strategy 002 a clean methodological identity and makes the research process auditable: the strategy type will be an outcome of investigation rather than an assumption imposed before investigation.
+
+### Phase 1 — Data and fundamentals investigation
+
+The first work should focus on:
+
+- what instruments and asset universe are actually available and reproducible;
+- data coverage, frequency, missingness, corporate-action treatment, liquidity, and survivorship limitations;
+- market structure and trading-session characteristics;
+- return, volatility, volume, and liquidity distributions;
+- autocorrelation and dependence structure;
+- cross-sectional relationships and clustering where relevant;
+- intraday/time-of-day behavior;
+- relationships between price, volume, volatility, and other available fields;
+- fundamental/economic variables where reliable point-in-time data exists and is applicable;
+- whether observed patterns have plausible economic explanations;
+- which observations are broad/stable enough to justify a formal hypothesis.
+
+The investigation must inspect the repository's existing Quantra, WQU, statistical, market-data, and prior research resources before new methods are implemented.
+
+### Holdout protection
+
+The historical holdout is **not** available for choosing patterns, features, hypotheses, parameters, or strategy definitions. Exploratory work must remain within the designated investigation/development information boundary. Once a strategy candidate is formally frozen, the chronological holdout can be evaluated without retuning.
+
+### Strategy 002 research record
+
+The active protocol is:
+
+- `research/journal/002_data_first_investigation_protocol.md`
+- `research/journal/research_methodology.md`
+- `research/journal/repository_resource_policy.md`
+
+No Strategy 002 implementation should be created until the investigation produces a sufficiently characterized pattern and an explicit economic hypothesis.
 
 ## Strategy portfolio architecture
 
@@ -192,4 +268,4 @@ Run the complete test suite:
 pytest
 ```
 
-The immediate active work is Strategy 002 development: use the frozen formation pair set, run the preregistered 108 configurations on the development window, inspect breadth/stability and correctly defined two-leg cost sensitivity, then freeze or reject a candidate before opening the holdout.
+The immediate active work is Strategy 002 data-first investigation. Do not create a strategy implementation or optimization grid yet. First complete the data audit, market/fundamental context review, repository-resource review, descriptive analysis, and pattern-discovery/characterization record.
