@@ -23,7 +23,7 @@ No two promoted strategies should be materially the same economic mechanism appl
 | Strategy ID | Asset class | Economic hypothesis / mechanism | Current experiment | Status |
 |---|---|---|---|---|
 | 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
-| 002 | To be determined | No hypothesis selected; research begins with data and pattern investigation | Initial data audit → common historical data acquisition | **Active research** |
+| 002 | To be determined | No hypothesis selected; research begins with data and pattern investigation | Initial data audit → locked chronological split → controlled exploratory pattern discovery | **Active research** |
 | 003 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
