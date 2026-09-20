@@ -94,6 +94,14 @@ See:
 
 ---
 
+## Strategy 002 — active research
+
+Strategy 002 has officially entered research. No trading hypothesis has been selected. The first phase is an empirical data audit using the repository's existing universe and market-data infrastructure.
+
+Initial research record: `research/journal/002_initial_data_audit.md`.
+
+The immediate task is to establish what the available data actually supports before defining a pattern, economic hypothesis, or strategy. No strategy-specific optimization is being performed at this stage.
+
 ## Strategy portfolio architecture
 
 The project will eventually test genuinely different strategies across multiple asset classes, including equities, derivatives, commodities, currencies, and crypto. No two promoted strategies should be materially the same economic hypothesis applied to the same asset class.
