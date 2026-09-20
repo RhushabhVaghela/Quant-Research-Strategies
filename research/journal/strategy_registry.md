@@ -23,7 +23,7 @@ No two promoted strategies should be materially the same economic mechanism appl
 | Strategy ID | Asset class | Economic hypothesis / mechanism | Current experiment | Status |
 |---|---|---|---|---|
 | 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
-| 002 | Indian equities — mechanism not yet formalized | Exploratory evidence currently points to broad short-horizon signed-return reversal; economic mechanism is not yet established | Initial audit → locked split → pattern discovery → pattern characterization → reversal mechanism decomposition → cross-sectional residual investigation → leave-one-out residual mechanism decomposition | **Active research; no hypothesis frozen** |
+| 002 | Indian equities — mechanism not yet formalized | Exploratory evidence currently points to broad short-horizon signed-return reversal; economic mechanism is not yet established | Initial audit → locked split → pattern discovery → pattern characterization → reversal mechanism decomposition → cross-sectional residual investigation → leave-one-out residual mechanism decomposition → conditional temporal stability characterization | **Active research; no hypothesis frozen** |
 | 003 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
