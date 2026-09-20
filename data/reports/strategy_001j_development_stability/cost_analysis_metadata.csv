@@ -1,0 +1,2 @@
+cost_grid_bps,interpretation,candidate_selection,holdout_access
+"0,5,10,15,20,25,30","round-trip gross-return haircut; excludes symbol-specific fees, taxes, spread and market impact",diagnostic only; no automatic selection,none

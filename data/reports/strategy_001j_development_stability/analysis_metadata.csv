@@ -1,0 +1,2 @@
+phase,start,end,periods,candidate_selection,holdout_access
+development_diagnostics,2026-06-10,2026-08-19,dev_early;dev_middle;dev_late,manual review required; this report is diagnostic and does not freeze a candidate,none

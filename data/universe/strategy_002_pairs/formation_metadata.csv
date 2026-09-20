@@ -1,0 +1,2 @@
+formation_start,formation_end,universe_symbols,return_correlation_floor,half_life_min_bars,half_life_max_bars,max_pairs,max_pairs_per_symbol,selection_rule,development_access,holdout_access
+2026-05-12,2026-06-09,50,0.75,2.0,120.0,20,2,"formation-only; sort by return correlation, then overlap, then half-life; cap two pairs per symbol",none,none

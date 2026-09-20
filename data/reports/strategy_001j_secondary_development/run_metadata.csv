@@ -1,0 +1,2 @@
+phase,start,end,configurations,universe_symbols,cost_grid_bps,selection_rule,holdout_access,sequential_development_warning
+secondary_development,2026-06-10,2026-08-19,108,50,"0,5,10,15,20",manual review only; no automatic candidate selection,none,same development sample was used after first development review

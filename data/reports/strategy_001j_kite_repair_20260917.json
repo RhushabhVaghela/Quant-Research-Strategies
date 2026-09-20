@@ -1,0 +1,11 @@
+{
+  "source": "Zerodha Kite Connect historical_data API",
+  "exchange": "NSE",
+  "instrument_type": "EQ",
+  "interval": "5minute",
+  "requested_start": "2026-09-17",
+  "requested_end": "2026-09-17",
+  "symbol_count_requested": 50,
+  "mode": "merge",
+  "note": "Current Kite instrument dump is used for token mapping. It does not provide historical index membership."
+}

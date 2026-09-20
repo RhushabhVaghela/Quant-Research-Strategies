@@ -1,0 +1,2 @@
+pair_id,symbol_a,symbol_b,overlap_bars,return_correlation,hedge_beta,ar1,half_life_bars,spread_std
+002P01,GOLDBEES,SILVERBEES,1500,0.8015291397033563,0.3382518270271775,0.9890920979523382,63.1982095493463,0.009739825527733737

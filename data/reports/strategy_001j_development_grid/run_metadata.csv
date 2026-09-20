@@ -1,0 +1,2 @@
+phase,start,end,configurations,universe_symbols,selection_rule,holdout_access
+development,2026-06-10,2026-08-19,162,50,"No automatic candidate selection; review breadth, central tendency, tails, costs, concentration, and subperiod stability before freezing one configuration.",none
