@@ -184,7 +184,7 @@ Strategy 002 is intentionally registered as a different mechanism from Strategy 
 The portfolio must not promote two strategies that are economically redundant simply because their parameter values or symbols differ.
 
 
-## 14. Formation completion record — 2026-09-18
+## 17. Formation completion record — 2026-09-18
 
 The preregistered formation screen was executed against the locked U1 top-50 universe. The local repository test suite passed with 104 tests, and the formation selector completed without development or holdout access.
 
@@ -194,7 +194,7 @@ The one-pair result is not a profitability result and does not justify changing 
 
 A prior implementation issue in the half-life calculation was corrected before this formation run: the change-on-lagged-level coefficient is expected to be negative for mean reversion, with the level AR coefficient defined as phi = 1 + kappa. The regression test now covers this sign convention.
 
-## 15. Next stage
+## 18. Next stage
 
 The next stage is the preregistered 108-configuration development search on the fixed formation pair set. Development must use only 2026-06-10 through 2026-08-19. The 2026-08-20 through 2026-09-17 holdout remains locked.
 
