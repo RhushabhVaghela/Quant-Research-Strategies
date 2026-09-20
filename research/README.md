@@ -157,6 +157,32 @@ Protocol: `journal/001I_prospective_oos_paper_shadow_protocol.md`.
 
 Results journal: `journal/001I_prospective_oos_paper_shadow_results.md`.
 
+## Strategy 002 research path — RESTARTED, hypothesis-free
+
+Strategy 002 is intentionally restarted after Strategy 001. The active research path does not begin with pair mean reversion, momentum, reversal, fundamentals, or any other trading hypothesis.
+
+The first objective is to understand the data and market environment. Where applicable, reliable point-in-time fundamental/economic information will be examined alongside market data. The investigation then moves through descriptive statistics, pattern discovery, pattern characterization, and economic interpretation. Only after a sufficiently characterized pattern exists will an explicit falsifiable economic hypothesis be registered.
+
+The previous Strategy 002 pair-mean-reversion implementation was deliberately removed from the active repository tree. Its deletion is itself part of the research record; Git history preserves the abandoned path. No previous pair-selection result is to be treated as a current Strategy 002 finding.
+
+The active protocol is journal/002_data_first_investigation_protocol.md.
+
+### Strategy 002 controls
+
+- no initial trading hypothesis;
+- no strategy-specific optimization grid;
+- no holdout use during exploratory investigation;
+- no selection based on historical P&L;
+- repository-resource review before implementing new methods;
+- preserve negative and inconclusive patterns;
+- record the number and scope of exploratory searches because research freedom contributes to data-snooping risk;
+- formulate the hypothesis only after pattern characterization and economic interpretation;
+- freeze the complete strategy before untouched chronological holdout testing.
+
+### Immediate next step
+
+Complete the data audit and market/fundamental context inventory for the selected research universe. Then run broad descriptive/pattern diagnostics using existing repository methods before deciding what, if any, strategy mechanism deserves formal development.
+
 ## Strategy 001 historical research path — CLOSED
 
 The historical sequence from 001C through 001I is preserved as evidence. 001I is no longer current work. The final decision was to close the Strategy 001 family for the current capital-pursuit program because the tested implementations did not establish sufficiently strong cost-resilient economics.
@@ -185,4 +211,4 @@ Strategy 001 closure                                🔵 no promoted implementat
 
 A failure at any gate is recorded rather than repaired by post-hoc parameter tuning.
 
-**No Strategy 001 implementation was approved for deployment. Strategy 002 is the current active research family.**
+**No Strategy 001 implementation was approved for deployment. Strategy 002 is the current active research family, but it is deliberately still in the hypothesis-free investigation phase.**
