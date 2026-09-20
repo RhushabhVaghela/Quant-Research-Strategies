@@ -231,7 +231,7 @@ The next controlled investigation uses a **leave-one-out cross-sectional residua
 
 Execution:
 
-    python scripts/characterize_strategy_002_leave_one_out_residual.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_leave_one_out_residual
+    python scripts/run_strategy_002_leave_one_out_residual.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_leave_one_out_residual
 
 This remains exploratory only. Validation and holdout data stay locked, and no strategy P&L or optimization is introduced.
 
