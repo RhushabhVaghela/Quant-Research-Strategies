@@ -166,3 +166,4 @@ Only a pattern that is:
 - and distinguishable from already-closed Strategy 001 mechanisms
 
 should proceed to formal hypothesis definition.
+\n## Execution status\n\nThe first locked exploratory pass has now been executed locally with 19 structurally eligible instruments and produced the prescribed diagnostic files. The next step is controlled characterization of those outputs. No hypothesis, strategy P&L, optimization grid, validation-period statistic, or holdout statistic has been introduced.\n
