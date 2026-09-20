@@ -234,3 +234,21 @@ Execution:
     python scripts/characterize_strategy_002_leave_one_out_residual.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_leave_one_out_residual
 
 This remains exploratory only. Validation and holdout data stay locked, and no strategy P&L or optimization is introduced.
+
+## Leave-one-out mechanism result and next gate
+
+The leave-one-out analysis strengthens the residual-reversal observation:
+
+- prior negative residual → next-bar residual: median **+3.92 bps**, positive in **94.7%** of instruments;
+- prior positive residual → next-bar residual: median **−4.48 bps**, positive in **0%** of instruments;
+- the effect is weaker by two bars and inconsistent at longer horizons;
+- for prior negative residuals, both close-to-open (**+2.13 bps**) and open-to-close (**+2.17 bps**) components contribute materially;
+- for prior positive residuals, close-to-open (**−2.45 bps**) and open-to-close (**−0.95 bps**) components both point in the reversal direction.
+
+Thus the effect survives leave-one-out construction and is not primarily a close-to-open boundary artifact.
+
+However, the existing temporal-stability output measures residual autocorrelation rather than the conditional reversal itself, and lag-1 residual autocorrelation becomes materially more mixed in the fourth chronological quartile. The temporal stability gate therefore remains unresolved.
+
+Findings are recorded in `research/journal/002_leave_one_out_residual_findings.md`.
+
+The next controlled analysis directly measures the sign-conditioned residual reversal separately in four chronological subperiods, including boundary components. No economic hypothesis or optimization is introduced until that gate is evaluated.
