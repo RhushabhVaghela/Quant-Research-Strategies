@@ -29,6 +29,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path("data/reports/strategy_002_pattern_discovery"),
     )
+    parser.add_argument(
+        "--audit-report",
+        type=Path,
+        default=Path("data/reports/strategy_002_universe_audit.csv"),
+    )
     return parser.parse_args()
 
 
@@ -304,11 +309,33 @@ def main() -> None:
     if not paths:
         raise SystemExit(f"No *_5minute.csv files found in {args.directory}")
 
+    if not args.audit_report.exists():
+        raise SystemExit(f"Audit report not found: {args.audit_report}")
+    audit = pd.read_csv(args.audit_report)
+    required_audit = {"symbol", "unexpected_interval_count", "zero_volume_rows"}
+    missing_audit = required_audit.difference(audit.columns)
+    if missing_audit:
+        raise SystemExit(
+            f"Audit report missing required columns: {sorted(missing_audit)}"
+        )
+    structurally_eligible = set(
+        audit.loc[
+            (audit["unexpected_interval_count"] == 0)
+            & (audit["zero_volume_rows"] == 0),
+            "symbol",
+        ].astype(str)
+    )
+
     frames: dict[str, pd.DataFrame] = {}
     excluded: list[dict[str, str]] = []
 
     for path in paths:
         symbol = path.name.removeprefix("NSE_").removesuffix("_5minute.csv")
+        if symbol not in structurally_eligible:
+            excluded.append(
+                {"symbol": symbol, "reason": "failed structural universe audit"}
+            )
+            continue
         try:
             frames[symbol] = exploratory_slice(load_symbol(path))
         except (ValueError, AssertionError) as exc:
