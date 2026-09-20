@@ -211,3 +211,8 @@ The formal next step is documented in:
 - `research/journal/002_reversal_mechanism_protocol.md`
 
 The mechanism characterization will remain inside the exploratory window and will decompose the next bar into close-to-close, close-to-open, and open-to-close components before any threshold, holding period, strategy rule, or validation-period evaluation is introduced.
+
+
+## Reversal mechanism decision
+
+The subsequent decomposition found that the broad raw-return reversal is concentrated in the prior-close to next-open component, while next-open to next-close does not preserve the same directional effect. The project therefore does not promote the raw reversal observation into a strategy. See research/journal/002_reversal_mechanism_findings.md. The next exploratory investigation is cross-sectional residual behavior, documented in research/journal/002_cross_sectional_residual_protocol.md.
