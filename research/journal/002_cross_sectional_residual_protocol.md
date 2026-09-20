@@ -43,3 +43,11 @@ If these conditions are not met, preserve the negative finding and continue patt
 ## Reuse
 
 This stage reuses the repository's existing time-series analysis, cross-sectional universe/audit infrastructure, PCA/common-factor analysis, and prior Strategy 001 cross-sectional research conventions.
+
+## Reproducible execution
+
+Run the descriptive residual analysis with:
+
+    python scripts/run_strategy_002_cross_sectional_residual.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_cross_sectional_residual
+
+The output must be reviewed before any hypothesis is written. No validation or holdout observations are permitted in this stage.
