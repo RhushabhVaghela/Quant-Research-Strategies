@@ -2,6 +2,16 @@
 
 This registry defines the portfolio-level research map and prevents the project from creating multiple nominal strategies that are economically the same.
 
+## Research lifecycle
+
+The portfolio uses a pattern-first lifecycle: data → pattern discovery → pattern characterization → economic interpretation → hypothesis → strategy definition → development/controlled optimization → candidate freeze → holdout → prospective → live.
+
+A pattern discovery result is not automatically a strategy. A strategy candidate requires an explicit economic interpretation and precise executable definition.
+
+## Repository resource reminder
+
+Before starting a new investigation, inspect the repository's existing resources and reuse, adapt, or combine relevant methods and code where appropriate. See research/journal/repository_resource_policy.md.
+
 ## Core rule
 
 A **strategy ID** represents a materially different economic return hypothesis. A parameter variation, universe expansion, execution variant, or new experimental implementation of the same hypothesis remains an experiment/version under the parent strategy and does not receive a new strategy ID merely to create another backtest.
@@ -12,11 +22,19 @@ No two promoted strategies should be materially the same economic mechanism appl
 
 | Strategy ID | Asset class | Economic hypothesis / mechanism | Current experiment | Status |
 |---|---|---|---|---|
-| 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | Closed for current candidate selection; no candidate frozen |
+| 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
 | 002 | Indian equities | Intraday relative-value / statistical arbitrage: temporary pair-spread dislocation followed by normalization | 002 — initial pairs-mean-reversion experiment | Formation complete: 1 pair selected; development pending |
 | 003 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
+
+## Strategy 001 closure
+
+Strategy 001 is closed for the current capital-pursuit/candidate-selection program. The tested implementations did not establish sufficiently strong cost-resilient economics. This is **not** a statistical rejection of the broader continuation phenomenon. 001I was too sparse for rejection, while 001J's development results remained only a few basis points gross and did not satisfy the project's economic/cost requirements.
+
+Further optimization was stopped because the same development sample had already been searched through a primary grid and a separately registered secondary grid. Repeatedly reopening it would increase research degrees of freedom, data-snooping risk, and the effective multiple-testing burden.
+
+Existing 001D, 001I, 001J, universe files, and journals remain historical evidence and must not be silently retuned.
 
 ## Strategy 001 lineage
 
