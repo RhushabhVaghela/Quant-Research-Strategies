@@ -54,10 +54,21 @@ Strategy 002 is now active. No trading hypothesis has been selected. The first p
 
 Initial research records: `journal/002_initial_data_audit.md` and `journal/002_pattern_discovery_protocol.md`.
 
-The common historical dataset has now been acquired and audited. Nineteen of twenty candidates currently pass the structural-quality gate; HINDUNILVR remains a documented data-quality exception. The locked exploratory pattern characterization found a broad short-horizon signed-return reversal pattern, but its economic mechanism is not yet established. The next stage is mechanism decomposition, still using only 2025-09-18 through 2026-06-09. Strategy selection, optimization, and all validation/holdout use remain protected.
+The common historical dataset has now been acquired and audited. Nineteen of twenty candidates currently pass the structural-quality gate; HINDUNILVR remains a documented data-quality exception. The locked exploratory pattern characterization found a broad short-horizon signed-return reversal pattern, but its economic mechanism is not yet established.
 
-Current findings: `journal/002_pattern_characterization_findings.md`.
-Next protocol: `journal/002_reversal_mechanism_protocol.md`.
+The first raw-return mechanism decomposition showed that much of the reversal occurs at the prior-close/next-open boundary. A subsequent cross-sectional residual investigation found a broad next-bar residual reversal, but that residual included each instrument in its own contemporaneous market mean. Therefore it remains descriptive and has not been promoted to a hypothesis.
+
+The current controlled stage is the leave-one-out residual mechanism decomposition. It has been executed locally on the locked exploratory window with 19 included instruments and 1 excluded instrument. Generated outputs must be committed and reviewed before any economic hypothesis is written.
+
+Current records:
+- `journal/002_pattern_characterization_findings.md`
+- `journal/002_reversal_mechanism_protocol.md`
+- `journal/002_reversal_mechanism_findings.md`
+- `journal/002_cross_sectional_residual_protocol.md`
+- `journal/002_cross_sectional_residual_findings.md`
+- `journal/002_cross_sectional_residual_mechanism_protocol.md`
+
+Strategy selection, optimization, and all validation/holdout use remain protected.
 
 ## Strategy 001 research path — CLOSED
 
