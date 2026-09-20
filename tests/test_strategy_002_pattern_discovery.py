@@ -70,3 +70,28 @@ def test_exploratory_slice_does_not_accept_naive_timestamps() -> None:
 
 def test_protocol_file_exists() -> None:
     assert Path("research/journal/002_pattern_discovery_protocol.md").exists()
+
+
+def test_pattern_output_files_are_defined() -> None:
+    expected = {
+        "return_dynamics.csv",
+        "forward_horizon_diagnostics.csv",
+        "intraday_diagnostics.csv",
+        "cross_sectional_correlation.csv",
+        "daily_correlation.csv",
+        "lead_lag_diagnostics.csv",
+        "cross_sectional_dispersion.csv",
+        "pca_explained_variance.csv",
+        "run_manifest.json",
+    }
+    assert expected == {
+        "return_dynamics.csv",
+        "forward_horizon_diagnostics.csv",
+        "intraday_diagnostics.csv",
+        "cross_sectional_correlation.csv",
+        "daily_correlation.csv",
+        "lead_lag_diagnostics.csv",
+        "cross_sectional_dispersion.csv",
+        "pca_explained_variance.csv",
+        "run_manifest.json",
+    }
