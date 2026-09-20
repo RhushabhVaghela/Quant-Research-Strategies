@@ -112,7 +112,7 @@ Current records:
 
 The initial cross-sectional residual investigation found a broad next-bar residual reversal, but its residual construction included each instrument in the contemporaneous market mean. It therefore remains a descriptive finding rather than a Strategy 002 hypothesis. The current controlled stage is a leave-one-out residual decomposition that separately tests close-to-close, close-to-open, and open-to-close components.
 
-The leave-one-out analysis has now been executed locally using the locked exploratory window. It included 19 instruments and excluded 1 instrument under the existing structural-quality gate. The generated results are awaiting committed output review; no conclusion has been drawn from them yet.
+After review of the committed leave-one-out outputs, the residual reversal remains broad: prior negative residuals are followed by a median +3.92 bps next-bar residual across instruments, while prior positive residuals are followed by −4.48 bps. The effect survives leave-one-out construction and both close-to-open and open-to-close components contribute materially. However, direct conditional temporal stability has not yet been established, so no economic hypothesis has been frozen.
 
 All decision-relevant analysis remains restricted to 2025-09-18 through 2026-06-09. Validation and final holdout data remain protected.
 
