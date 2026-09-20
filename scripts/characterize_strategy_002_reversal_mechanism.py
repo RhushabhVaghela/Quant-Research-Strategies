@@ -139,9 +139,6 @@ def main() -> None:
     )
 
     stability = []
-    detail["period"] = pd.qcut(
-        detail["state"].astype(str), 1, labels=False
-    )  # placeholder column removed below
     # Recompute temporal stability from raw files without using later periods.
     # Four chronological quarters are used only as descriptive subperiods.
     for path in sorted(a.directory.glob("*_5minute.csv")):
