@@ -155,3 +155,48 @@ python scripts/audit_universe.py data/raw/strategy_002_universe --output data/re
 The next research decision should be made from that audit. In particular, compare common coverage, session completeness, intraday gaps, zero-volume observations, return behavior, and liquidity proxies across the candidate set.
 
 No instrument should be promoted because its historical returns look attractive. The purpose of this step is to establish a clean, comparable descriptive dataset for pattern discovery.
+
+
+## Acquisition result
+
+The local common-window acquisition was completed for all 20 predefined candidates.
+
+- 20/20 downloads completed successfully.
+- 19/20 currently pass the structural minimum filter.
+- HINDUNILVR is the only current structural exception, with one unexpected interval and five zero-volume rows.
+- The other 19 candidates have zero duplicate timestamps, zero unexpected intervals, and zero zero-volume rows.
+- The acquired files contain 247 trading sessions over the requested common window, with a median of 75 five-minute bars per session for the audited candidates.
+
+The structural audit is an eligibility/data-quality result only. Return diagnostics from this audit are descriptive and must not be used to rank instruments or select a strategy.
+
+HINDUNILVR is therefore excluded from the first clean cross-sectional pattern pass until the underlying quality issue is inspected. This is a data-quality decision, not a performance decision.
+
+## Next phase — controlled pattern discovery
+
+The first pattern-discovery workflow is now registered in:
+
+- `research/journal/002_pattern_discovery_protocol.md`
+- `scripts/run_strategy_002_pattern_discovery.py`
+- `tests/test_strategy_002_pattern_discovery.py`
+
+The runner is hard-bounded to the exploratory-development period:
+
+`2025-09-18 through 2026-06-09`.
+
+It performs only descriptive diagnostics:
+
+- return autocorrelation and absolute-return autocorrelation;
+- fixed forward-horizon conditional return diagnostics;
+- intraday/time-of-day structure;
+- aligned cross-sectional correlation and dispersion;
+- descriptive PCA/common-factor diagnostics.
+
+It produces no strategy P&L, no parameter optimization grid, and no holdout statistics.
+
+The development-validation period and final holdout remain logically inaccessible to this workflow. The final holdout cannot be opened until a specific economic hypothesis and executable candidate have been defined, developed, validated, and frozen.
+
+## Current research decision
+
+Proceed with the hypothesis-free exploratory pattern pass using the 19 currently structurally eligible instruments. Preserve HINDUNILVR as a documented data-quality exception rather than silently dropping it from the research universe.
+
+No Strategy 002 economic hypothesis has been selected.
