@@ -5,26 +5,32 @@
 **Universe:** U1 — Kite-native liquid NSE EQ universe  
 **Primary frequency:** 5-minute OHLCV
 
-## 1. Research question
+## 1. Research-stage framing
+
+001J is now treated under the project's pattern-first methodology. The cross-sectional work is evidence about transferability of a discovered continuation pattern and about the economics of candidate implementations; it is not permission to keep optimizing until a profitable parameter set appears.
+
+Before any future continuation investigation, inspect the repository's existing research resources and reuse, adapt, or combine relevant methods where appropriate. See research/journal/repository_resource_policy.md.
+
+## 2. Research question
 
 Does the short-horizon continuation structure identified during Strategy 001 generalize from the single GOLDBEES instrument to a broader liquid Indian equity universe that can be researched and executed through the user's existing Zerodha/Kite infrastructure?
 
 This is a new experiment under Strategy 001. It is not a retuning of frozen 001D and it is not a continuation of the 001I prospective ledger.
 
-## 2. Economic hypothesis
+## 3. Economic hypothesis
 
 After an unusually strong positive intraday move, conditioning on recent positive direction may identify a short-horizon continuation effect in liquid equities.
 
 The hypothesis is evaluated before deciding whether any parameter configuration is economically useful after costs and execution constraints.
 
-## 3. Frozen historical evidence
+## 4. Frozen historical evidence
 
 - 001D remains the frozen GOLDBEES implementation.
 - 001I remains the prospective OOS/paper-shadow record for 001D.
 - The two 001I observations are not used to optimize 001J parameters.
 - No 001D rule is changed as a result of 001I.
 
-## 4. Universe definition
+## 5. Universe definition
 
 U1 is the broker-native tactical universe defined in `001J_universe_u1_spec.md`.
 
@@ -49,7 +55,7 @@ The locked descriptors are:
 
 A descriptive distance/rank is reported for interpretation. It is **not** a universe-selection flag. It cannot use Strategy 001J P&L, holdout results, or prospective results to choose symbols.
 
-## 5. Baseline — frozen 001D parameters applied cross-sectionally
+## 6. Baseline — frozen 001D parameters applied cross-sectionally
 
 The first run must use the exact 001D parameters without optimization:
 
@@ -66,7 +72,7 @@ The first run must use the exact 001D parameters without optimization:
 
 The purpose of this baseline is transferability, not parameter selection.
 
-## 6. Frozen accelerated experiment window
+## 7. Frozen accelerated experiment window
 
 The September 2026 sprint now uses a frozen **90-session** experiment window, recorded in `research/journal/001J_experiment_window.md` and `config/strategy_001j_u1.json`:
 
@@ -80,7 +86,7 @@ The choice is session-based rather than literal 90 calendar days because the pre
 
 The earlier U1 liquidity formation window that created membership is separate from this experiment formation phase.
 
-## 7. Development search and candidate-freeze protocol
+## 8. Development search and candidate-freeze protocol
 
 The first candidate search was performed on development data only using the pre-registered 162-configuration grid:
 
@@ -121,29 +127,29 @@ The development analysis is deliberately split into separate steps:
 
 The stability and cost scripts are diagnostic. Neither script has permission to inspect the holdout or silently choose a production candidate.
 
-## 8. Holdout
+## 9. Holdout
 
 The chronological holdout is frozen before examining candidate holdout results. Once a candidate is frozen from development data, no holdout result may be used to retune it.
 
 The holdout runner requires the five candidate parameters explicitly and performs one configuration only. The current-instrument survivorship limitation must be reported alongside all holdout results.
 
-## 9. Prospective phase
+## 10. Prospective phase
 
 After holdout validation, the selected configuration is frozen and a separate prospective paper/shadow collector is created with an immutable activation boundary. It must use only information available at the signal timestamp, enter at the next observable bar open, record the full forward path and MFE/MAE, and never place live orders during paper/shadow collection.
 
-## 10. Data-integrity gate
+## 11. Data-integrity gate
 
 The pre-backtest gate is session-aware. It evaluates the exact structure required by the engine rather than requiring every file to begin at midnight or end at 15:30.
 
 For each observed session, the gate requires a 09:15 first bar, regular 5-minute increments with no interior gaps, valid OHLC/volume, and at least 37 bars for one complete frozen-baseline trade path. A session may terminate before 15:25 if the observed bars remain contiguous; this is recorded as terminal truncation. Missing interior bars, missing sessions, invalid session boundaries, and short sessions fail the gate.
 
-## 11. Costs and execution
+## 12. Costs and execution
 
 Historical and prospective results must distinguish gross signal return from executable net return. Cost analysis should include brokerage/fees/taxes as applicable, spread, slippage, and adverse execution sensitivity. Observable live-market friction should be measured where available.
 
 The current development sensitivity grid uses round-trip haircuts of 0, 5, 10, 15, 20, 25, and 30 bps as a diagnostic stress range. These are not presented as actual Zerodha fee estimates; final execution economics must use the applicable instrument-specific charges plus measured spread/slippage assumptions.
 
-## 12. Promotion gates
+## 13. Promotion gates
 
 001J may proceed to controlled live validation only if applicable gates pass:
 
@@ -161,7 +167,7 @@ The current development sensitivity grid uses round-trip haircuts of 0, 5, 10, 1
 The PIT Nifty 100 path remains the cleaner future validation route. Failure of a gate is a research result.
 
 
-## 7.2 Secondary cost-efficiency development experiment
+## 14. Secondary cost-efficiency development experiment
 
 After the first 162-configuration development review found only a few bps of gross expectancy and poor resilience to the 5 bps sensitivity, a separate exploratory development stage was preregistered. Its specification is `research/journal/001J_secondary_development_spec.md`.
 
@@ -170,10 +176,10 @@ This stage does not reopen the first grid and does not inspect the holdout. It t
 The experiment is diagnostic until a manual freeze record is completed. No result from it may alter U1 membership or frozen 001D.
 
 
-## 14. September 2026 candidate-selection closure
+## 15. September 2026 candidate-selection closure
 
 The 108-configuration secondary cost-efficiency experiment has now been completed and reviewed. Its strongest gross mean was approximately 3.63 bps per trade, with negative median trade return and negative mean return under the predefined 5 bps haircut. No candidate was frozen.
 
-Therefore 001J is closed for the current September candidate-selection sprint. The untouched holdout remains protected and is not being consumed merely to search for a favorable configuration. U1 and frozen 001D remain unchanged.
+Therefore 001J is closed for the current September candidate-selection sprint. This is an economic/research-decision closure, not a statistical rejection of every possible continuation implementation. The untouched holdout remains protected and is not being consumed merely to search for a favorable configuration. U1 and frozen 001D remain unchanged.
 
 The detailed decision record is `research/journal/001J_secondary_development_review_20260918.md`. Future work on the continuation hypothesis must be registered as a new experiment under Strategy 001 rather than repeatedly reopening this same development sample.
