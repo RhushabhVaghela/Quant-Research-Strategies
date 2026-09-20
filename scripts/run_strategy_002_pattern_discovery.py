@@ -216,10 +216,7 @@ def lead_lag_diagnostics(
                         "symbol_follower": symbol_b,
                         "lag_bars": lag,
                         "correlation": pair.iloc[:, 0].corr(pair.iloc[:, 1].shift(-lag)),
-                        "observations": int(
-                            pair.iloc[:, 0].corr(pair.iloc[:, 1].shift(-lag))
-                            is not None
-                        ),
+                        "observations": int(pair.iloc[:, [0, 1]].dropna().shape[0]),
                     }
                 )
                 rows.append(
@@ -228,10 +225,7 @@ def lead_lag_diagnostics(
                         "symbol_follower": symbol_a,
                         "lag_bars": lag,
                         "correlation": pair.iloc[:, 1].corr(pair.iloc[:, 0].shift(-lag)),
-                        "observations": int(
-                            pair.iloc[:, 1].corr(pair.iloc[:, 0].shift(-lag))
-                            is not None
-                        ),
+                        "observations": int(pair.iloc[:, [0, 1]].dropna().shape[0]),
                     }
                 )
     return pd.DataFrame(rows)
