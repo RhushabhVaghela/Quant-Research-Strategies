@@ -2,17 +2,32 @@
 
 This directory records the research process behind the strategy portfolio.
 
+## Research lifecycle
+
+The project follows a pattern-first workflow: data → pattern discovery → pattern characterization → economic interpretation → hypothesis → strategy definition → controlled development/optimization → candidate freeze → untouched chronological holdout → prospective paper/shadow → controlled live validation.
+
+A pattern is not automatically a strategy, and exploratory discovery is not confirmatory evidence.
+
 ## Research principles
 
-- Start with a financial hypothesis, not a model.
-- Treat Quantra/WQU notebooks as reference material and building blocks, not automatically validated strategies.
+- Start with relevant data and discover/characterize patterns before committing to a strategy.
+- Treat Quantra/WQU notebooks and the broader repository as reference material and building blocks, not automatically validated strategies.
 - Establish a simple baseline before adding ML/DL.
 - Use time-ordered validation and walk-forward testing where appropriate.
-- Prevent look-ahead bias, leakage, survivorship bias, and data snooping.
+- Prevent look-ahead bias, leakage, survivorship bias, data snooping, and uncontrolled multiple testing.
+- Use optimization only inside a pre-designated development sample.
+- Protect the holdout from candidate selection and sequential tuning.
 - Include explicit execution, cost, and slippage assumptions.
 - Record negative and inconclusive results.
 - Keep research-universe selection independent from strategy performance where possible.
-- Complete Strategy 001 before starting Strategy 002.
+
+Detailed policy: `journal/research_methodology.md`.
+
+## Repository resource reminder
+
+Before implementing a new analysis, feature, statistical test, strategy component, or data workflow, inspect the repository for relevant existing resources. Reuse, adapt, refactor, or combine them when appropriate. This includes Quantra, WQU, prior project notebooks, statistical methods, correlation/covariance, PCA, clustering, DBSCAN, stationarity, autocorrelation, pairs trading, portfolio construction, and broker/data-validation code.
+
+Existing resources must still be validated in the current research context.
 
 ## Reference material
 
@@ -33,7 +48,7 @@ These documents define the project's research and execution controls.
 
 The candidate manifest is defined independently of strategy performance.
 
-## Strategy 001 research path
+## Strategy 001 research path — CLOSED
 
 ### 001 — GOLDBEES mean reversion
 
@@ -128,7 +143,7 @@ Detailed results: `journal/001H_predefined_robustness_chronological_holdout_resu
 
 ### 001I — prospective OOS / paper-shadow validation
 
-**Decision: 🟡 Protocol hardened — prospective data collection is the next gate.**
+**Decision: 🔵 Closed for current capital-pursuit program — not statistically rejected.**
 
 Because the historical dataset has been examined through August 2026, we will **not** relabel August 2026 or any September data inspected before the prospective start as OOS. The first genuinely prospective OOS period begins after the immutable activation timestamp, with signals recorded before their outcomes are known.
 
@@ -142,7 +157,7 @@ Protocol: `journal/001I_prospective_oos_paper_shadow_protocol.md`.
 
 Results journal: `journal/001I_prospective_oos_paper_shadow_results.md`.
 
-## Strategy 001 promotion path
+## Strategy 001 historical promotion path — CLOSED
 
 ```text
 001C point-in-time validation                       🟡 promising
@@ -170,4 +185,4 @@ Only then: Strategy 002
 
 A failure at any gate is recorded rather than repaired by post-hoc parameter tuning.
 
-**No strategy is approved for deployment yet.**
+**No Strategy 001 implementation was approved for deployment. Strategy 002 is the current active research family.**
