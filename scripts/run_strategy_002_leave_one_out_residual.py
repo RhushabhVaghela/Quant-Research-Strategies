@@ -100,7 +100,6 @@ def main():
                 rows.append({"symbol": symbol, "condition": condition, "component": "close_to_close",
                              "horizon_bars": h, "observations": len(z), "mean": z.mean(),
                              "median": z.median(), "positive_fraction": (z > 0).mean() if len(z) else np.nan})
-        mag = prior[symbol].abs() if False else None
         q = pd.DataFrame({
             c: pd.qcut(prior[c].abs().dropna(), 4, labels=["Q1", "Q2", "Q3", "Q4"], duplicates="drop").reindex(prior.index)
             for c in prior.columns
