@@ -71,6 +71,12 @@ Before looking for trading patterns, verify:
 
 A data-quality problem must be repaired or documented before pattern interpretation. Do not relax a validation gate merely to obtain more observations.
 
+## 4A. Current temporal information boundary
+
+For the September 2026 research sprint, the active exploratory investigation may use the historical sample through **2026-08-19**. The chronological period **2026-08-20 through 2026-09-17** is reserved as an untouched holdout and must not be inspected for Strategy 002 pattern discovery, hypothesis selection, feature selection, parameter selection, or strategy definition.
+
+This boundary is a research-control decision, not evidence that any future Strategy 002 hypothesis will be profitable. If data integrity requires a different boundary, the change must be documented before using the affected observations.
+
 ## 5. Market and fundamental context
 
 Before interpreting statistical patterns, understand what the instruments represent.
