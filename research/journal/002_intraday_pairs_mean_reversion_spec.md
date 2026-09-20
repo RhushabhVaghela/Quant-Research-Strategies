@@ -8,13 +8,17 @@
 **Broker:** Zerodha/Kite  
 **Parent portfolio role:** Diversifying mechanism from Strategy 001 directional continuation
 
-## 1. Research question
+## 1. Pattern-first framing
+
+Strategy 002 begins with statistical characterization of relative-value behavior in a predefined liquid universe. The formation screen is a pattern-discovery/characterization stage; it does not establish profitability. Repository resources should be consulted before adding new diagnostics or rebuilding existing methods. See research/journal/repository_resource_policy.md.
+
+## 2. Research question
 
 Can short-lived relative mispricing between sufficiently stable, liquid equity pairs be identified and traded intraday as a market-neutral spread-normalization signal after realistic execution costs?
 
 This is deliberately different from Strategy 001. Strategy 001 asks whether an unusually strong move continues. Strategy 002 asks whether the **relative spread between two securities temporarily deviates from its historical relationship and subsequently normalizes**.
 
-## 2. Data and feasibility
+## 3. Data and feasibility
 
 Kite's historical API provides archived candle data for tradable instruments at minute and multi-minute intervals, and the instrument master provides the tradable NSE equity universe and instrument tokens. citeturn1search0turn1search4
 
