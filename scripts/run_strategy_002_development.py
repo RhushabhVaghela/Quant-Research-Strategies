@@ -30,6 +30,7 @@ EXIT_ZS = (0.5, 1.0)
 HOLDINGS = (3, 6, 12)
 COOLDOWNS = (6, 12)
 COST_BPS = (0, 5, 10, 15, 20)
+PAIR_COST_LEG_MULTIPLIER = 2
 
 
 def _window(value: str) -> pd.Timestamp:
@@ -96,7 +97,7 @@ def main() -> None:
         m.update({"config_id": i, "lookback_bars": lb, "entry_z": ez,
                   "exit_z": xz, "max_holding_bars": hold, "cooldown_bars": cooldown})
         for bps in COST_BPS:
-            m[f"mean_after_{bps}bps_per_leg_roundtrip"] = m["mean_gross"] - (2 * bps) / 10000 if np.isfinite(m["mean_gross"]) else np.nan
+            m[f"mean_after_{bps}bps_per_leg_roundtrip"] = m["mean_gross"] - (PAIR_COST_LEG_MULTIPLIER * bps) / 10000 if np.isfinite(m["mean_gross"]) else np.nan
         rows.append(m)
         if not trades.empty:
             t = trades.copy()
