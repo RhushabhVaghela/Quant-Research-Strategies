@@ -187,7 +187,7 @@ def daily_correlation_diagnostics(
     for symbol, frame in frames.items():
         work = frame.set_index("timestamp")
         close = work["close"].resample("1D").last()
-        daily.append(close.pct_change().rename(symbol))
+        daily.append(close.pct_change(fill_method=None).rename(symbol))
     panel = pd.concat(daily, axis=1)
     corr = panel.corr()
     upper = np.triu(np.ones(corr.shape, dtype=bool), k=1)
