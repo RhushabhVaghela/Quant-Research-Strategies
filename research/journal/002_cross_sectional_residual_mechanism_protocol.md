@@ -78,7 +78,7 @@ This investigation reuses the repository's existing:
 
 Run:
 
-    python scripts/characterize_strategy_002_leave_one_out_residual.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_leave_one_out_residual
+    python scripts/run_strategy_002_leave_one_out_residual.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_leave_one_out_residual
 
 No validation or holdout statistic may be introduced by this workflow.
 
