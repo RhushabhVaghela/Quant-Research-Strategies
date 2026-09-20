@@ -81,3 +81,17 @@ Run:
     python scripts/characterize_strategy_002_leave_one_out_residual.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_leave_one_out_residual
 
 No validation or holdout statistic may be introduced by this workflow.
+
+
+## Execution status
+
+The leave-one-out residual mechanism analysis has now been executed locally.
+
+- Included instruments: **19**
+- Excluded instruments: **1**
+- Decision-relevant window: **2025-09-18 through 2026-06-09**
+- Validation/holdout observations: not used
+- Strategy P&L: not calculated
+- Optimization: not performed
+
+The generated CSV/JSON outputs must be committed and reviewed before interpreting the mechanism. This execution status records only that the predefined analysis ran successfully; it does not imply that the residual effect survived the stricter test.
