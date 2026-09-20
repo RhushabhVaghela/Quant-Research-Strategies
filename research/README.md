@@ -54,7 +54,10 @@ Strategy 002 is now active. No trading hypothesis has been selected. The first p
 
 Initial research records: `journal/002_initial_data_audit.md` and `journal/002_pattern_discovery_protocol.md`.
 
-The common historical dataset has now been acquired and audited. Nineteen of twenty candidates currently pass the structural-quality gate; HINDUNILVR remains a documented data-quality exception. The immediate objective is controlled hypothesis-free pattern discovery using only the locked exploratory-development period (2025-09-18 through 2026-06-09). Strategy selection must not be driven by historical P&L during this phase, and the validation/holdout periods remain protected.
+The common historical dataset has now been acquired and audited. Nineteen of twenty candidates currently pass the structural-quality gate; HINDUNILVR remains a documented data-quality exception. The locked exploratory pattern characterization found a broad short-horizon signed-return reversal pattern, but its economic mechanism is not yet established. The next stage is mechanism decomposition, still using only 2025-09-18 through 2026-06-09. Strategy selection, optimization, and all validation/holdout use remain protected.
+
+Current findings: `journal/002_pattern_characterization_findings.md`.
+Next protocol: `journal/002_reversal_mechanism_protocol.md`.
 
 ## Strategy 001 research path — CLOSED
 
