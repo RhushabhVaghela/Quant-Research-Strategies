@@ -113,14 +113,26 @@ The default local output directory is data/raw/strategy_002_universe/.
 
 The downloader also writes a manifest and JSON metadata report under data/reports/. Raw market data remains local and is not expected to be committed to Git.
 
-### Common window
+### Common data window and validation reserve
 
-For the accelerated September 2026 research sprint, use:
+The acquisition window is:
 
 - start: 2025-09-18
 - end: 2026-09-17
 
-This is a data-availability window, not a strategy-training/holdout definition. The later pattern-discovery phase must establish its own development/holdout discipline without using the eventual holdout for exploratory selection.
+The full downloaded window must **not** be treated as one pool for pattern discovery, optimization, and final validation. The chronological research split is locked before pattern discovery:
+
+| Phase | Dates | Allowed use |
+|---|---|---|
+| Exploratory development | 2025-09-18 through 2026-06-09 | Pattern discovery, descriptive analysis, hypothesis formation, controlled development |
+| Development validation | 2026-06-10 through 2026-08-19 | Candidate comparison/robustness checks after a pattern/hypothesis is specified; no final holdout claims |
+| Untouched chronological holdout/OOS | 2026-08-20 through 2026-09-17 | Final evaluation of one frozen candidate only; no pattern discovery, feature selection, threshold tuning, or strategy changes |
+
+The holdout is therefore **already present in the downloaded files, but remains logically inaccessible to exploratory research**. All research code and analysis must filter by timestamp before calculating statistics that can influence decisions. A result computed over the entire 2025-09-18 through 2026-09-17 window must be treated as descriptive-only and must not be used to select a pattern, feature, hypothesis, parameter, or candidate.
+
+The development-validation split also protects against repeatedly searching the earliest sample and then calling the same observations OOS. The final holdout is the strongest chronological protection and may only be opened after a candidate is frozen.
+
+These dates are a research-control decision, not a claim that the eventual strategy must trade on every session or that all instruments have identical usable coverage.
 
 ### Local acquisition command
 
