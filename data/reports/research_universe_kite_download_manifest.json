@@ -1,0 +1,14 @@
+{
+  "source": "Zerodha Kite Connect historical_data API",
+  "exchange": "NSE",
+  "instrument_type": "EQ",
+  "interval": "5minute",
+  "requested_start": "2025-09-18",
+  "requested_end": "2026-09-17",
+  "symbol_count_requested": 20,
+  "chunk_days": 30,
+  "pause_seconds": 0.35,
+  "overwrite": false,
+  "universe_manifest": "research\\universe_candidates.csv",
+  "note": "Current Kite instrument mapping is used only for token resolution. Historical index membership is not inferred."
+}
