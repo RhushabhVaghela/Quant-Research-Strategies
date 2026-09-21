@@ -4,7 +4,7 @@ This registry defines the portfolio-level research map and prevents the project 
 
 ## Research lifecycle
 
-The portfolio uses a pattern-first lifecycle: data → pattern discovery → pattern characterization → economic interpretation → hypothesis → strategy definition → development/controlled optimization → candidate freeze → holdout → prospective → live.
+The portfolio uses a pattern-first lifecycle: data → pattern/predictive-information discovery → characterization → economic interpretation → hypothesis → strategy definition → development/controlled optimization → candidate freeze → holdout → prospective → live.
 
 A pattern discovery result is not automatically a strategy. A strategy candidate requires an explicit economic interpretation and precise executable definition.
 
