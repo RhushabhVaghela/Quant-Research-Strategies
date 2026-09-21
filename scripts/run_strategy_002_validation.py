@@ -102,7 +102,7 @@ def build_signals(series: dict[str, pd.DataFrame]) -> pd.DataFrame:
         n = len(valid)
         residual = valid - (cross_sum - valid) / (n - 1)
 
-        next_ts = ts + pd.Timedelta(minutes=5)
+        next_ts = pd.Timestamp(ts) + pd.Timedelta(minutes=5)
         if next_ts not in opens.index or next_ts not in closes.index:
             continue
         # Never carry a position overnight.
