@@ -1,0 +1,21 @@
+{
+  "analysis": "strategy_002_turnover_reduction_development",
+  "development_start": "2025-09-18 00:00:00+05:30",
+  "validation_start": "2026-06-10 00:00:00+05:30",
+  "holdout_start": "2026-08-20 00:00:00+05:30",
+  "holding_bars": [
+    2,
+    3,
+    6
+  ],
+  "cost_scenarios_round_trip_bps": [
+    0.0,
+    2.0,
+    5.0,
+    10.0
+  ],
+  "holdout_used": false,
+  "validation_used": false,
+  "optimization_after_results": false,
+  "selection_rule": "pre-registered H2/H3/H6 only"
+}

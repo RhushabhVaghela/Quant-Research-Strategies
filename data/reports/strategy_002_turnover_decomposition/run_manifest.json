@@ -5,5 +5,8 @@
   "holdout_used": false,
   "optimization_performed": false,
   "signal_definition": "frozen Strategy 002 leave-one-out residual sign",
-  "execution_definition": "next 5-minute bar open to next 5-minute bar close"
+  "execution_definition": "next 5-minute bar open to next 5-minute bar close",
+  "position_lifecycle": "enter next-bar open and close next-bar close; no position carried to the following signal",
+  "target_turnover_definition": "0.5 * sum(abs(current_target_weight - previous_target_weight))",
+  "executed_round_trip_turnover_definition": "entry gross notional + exit gross notional; normalized to 2.0 per one-bar 100%-gross round trip"
 }
