@@ -95,3 +95,12 @@ This analysis reuses the fixed leave-one-out residual construction and the repos
 Run:
 
     python scripts/characterize_strategy_002_residual_temporal_conditioning.py data/raw/strategy_002_universe --audit-report data/reports/strategy_002_universe_audit.csv --output-dir data/reports/strategy_002_residual_temporal_conditioning
+
+
+## Controlled review step
+
+After the temporal-conditioning runner completes, create the descriptive summary with:
+
+    python scripts/summarize_strategy_002_residual_temporal_conditioning.py data/reports/strategy_002_residual_temporal_conditioning
+
+The summary script refuses to proceed if the manifest indicates validation/holdout use, strategy P&L, or optimization. The chronological stability result must be reviewed before the fixed-baseline validation period is opened.
