@@ -48,44 +48,21 @@ These documents define the project's research and execution controls.
 
 The candidate manifest is defined independently of strategy performance.
 
-## Strategy 002 — frozen baseline not promotable; turnover diagnostic in progress
+## Strategy 002 — CLOSED
 
-Strategy 002 is the Indian-equity cross-sectional residual-reversal research family.
+Strategy 002 was the Indian-equity cross-sectional residual-reversal research family.
 
-The pattern-first sequence is complete through chronological validation:
+The pattern-first sequence reached chronological validation for the fixed one-bar executable baseline. The baseline produced a small positive zero-cost gross validation result (+0.0896 bps mean return per portfolio observation), but the predefined 5 bps sensitivity overwhelmed the effect, so the implementation was not promotable.
 
-- the exploratory data audit passed for 19 structurally eligible instruments;
-- short-horizon signed-return reversal was characterized;
-- the close/open mechanism was decomposed;
-- cross-sectional residual reversal was tested;
-- leave-one-out construction removed self-contamination;
-- the residual effect showed directional temporal stability across four development periods;
-- a fixed executable baseline was frozen;
-- chronological validation was run on 2026-06-10 through 2026-08-19.
+A separate, pre-registered development experiment then tested H2, H3, and H6 holding lengths using **only 2025-09-18 through 2026-06-09**. H2 and H3 retained only +0.1921 and +0.2121 bps mean gross return per trade and were negative under the first 2 bps cost sensitivity. H6 was negative gross. No candidate satisfied the selection gate, so none was frozen and the protected validation period was not reopened for these variants.
 
-The fixed baseline generated a small positive zero-cost gross result, but only **+0.0896 bps mean return per portfolio observation**. The predefined 5 bps round-trip sensitivity overwhelmed the gross effect. The baseline therefore failed the cost-resilience/promotion gate.
+The final holdout (**2026-08-20 through 2026-09-17**) remained untouched throughout this turnover-reduction selection process.
 
-This is **not a statistical rejection of the residual-reversal mechanism**. It is a failure of the current executable implementation to establish adequate economic value after costs.
+The turnover experiment also clarified the accounting: each completed trade has 2.0 normalized units of executed round-trip notional turnover (1.0 entry + 1.0 exit). Longer holding reduces trade frequency, but does not reduce turnover per completed round trip.
 
-### Current controlled diagnostic
+**Decision:** Strategy 002 is closed for the current capital-pursuit/candidate-selection program. This is not a statistical rejection of every possible residual-reversal phenomenon; it is closure of the tested executable research line under the project's cost and research-discipline gates.
 
-Before deciding whether Strategy 002 should close or whether a new lower-turnover development experiment is justified, the project is measuring the frozen baseline's actual execution activity.
-
-This diagnostic is restricted to the validation period and does not use the final holdout. It distinguishes:
-
-- target-weight turnover between consecutive hypothetical portfolios; and
-- executed turnover under the actual one-bar lifecycle.
-
-Because every selected portfolio is entered at the next-bar open and closed at that same bar's close, a normalized 100%-gross round trip has 2.0 units of executed notional turnover.
-
-Records:
-
-- research/journal/002_turnover_execution_decomposition_protocol.md
-- scripts/run_strategy_002_turnover_decomposition.py
-- tests/test_strategy_002_turnover_decomposition.py
-- journal/002_validation_findings.md
-
-The frozen baseline remains immutable. No lower-turnover candidate has been selected, and the final holdout remains locked.
+Detailed findings: `journal/002_turnover_reduction_development_findings.md`.
 
 ## Strategy 001 research path — CLOSED
 
