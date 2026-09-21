@@ -2,6 +2,8 @@
 
 **Status:** Development diagnostic in progress after the fixed baseline failed the initial cost-resilience gate.
 
+**Important accounting clarification:** target-weight turnover between consecutive hypothetical portfolios is reported separately from executed turnover. The frozen baseline does not carry positions from one signal to the next; it enters the next portfolio at the next-bar open and closes it at that same bar's close. Therefore a normalized 100%-gross one-bar round trip has 2.0 units of executed notional turnover: 1.0 entry + 1.0 exit.
+
 ## Purpose
 
 Measure the actual trading activity implied by the frozen Strategy 002 baseline before deciding whether the underlying residual-reversal mechanism has any defensible lower-turnover expression.
@@ -45,7 +47,7 @@ For signed target weights w_i,t normalized so total absolute exposure is 1:
 
 The first portfolio has no prior target and is reported separately.
 
-The one-bar holding convention means prior positions are exited and the new target portfolio is entered. The diagnostic must distinguish these flows and must not double-count them in cost interpretation.
+The one-bar holding convention means every selected portfolio has 1.0 unit of gross entry notional and 1.0 unit of gross exit notional. The diagnostic reports this **executed round-trip turnover** separately from target-weight turnover so the same trading activity is not double-counted.
 
 ## Interpretation
 
