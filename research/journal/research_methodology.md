@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The project follows a pattern-first research process. We do not begin by inventing a strategy and then searching historical data until it appears profitable. We first acquire relevant data, discover and characterize statistical patterns, interpret them economically, formulate a falsifiable hypothesis, and only then define a tradable strategy.
+The project follows a pattern-first research process. We do not begin by inventing a strategy and then searching historical data until it appears profitable. We first acquire relevant data, discover and characterize statistical patterns, interpret them economically, formulate a falsifiable hypothesis, and only then define a tradable strategy. For prediction-driven research, the same discipline applies one layer earlier: first establish stable predictive information, then interpret it economically and only then convert it into a portfolio/strategy.
 
 ## Lifecycle
 
