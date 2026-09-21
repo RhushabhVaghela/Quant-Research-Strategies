@@ -1,0 +1,9 @@
+{
+  "analysis": "strategy_002_turnover_execution_decomposition",
+  "validation_start": "2026-06-10 00:00:00+05:30",
+  "holdout_start": "2026-08-20 00:00:00+05:30",
+  "holdout_used": false,
+  "optimization_performed": false,
+  "signal_definition": "frozen Strategy 002 leave-one-out residual sign",
+  "execution_definition": "next 5-minute bar open to next 5-minute bar close"
+}
