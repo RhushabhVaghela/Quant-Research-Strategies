@@ -1,6 +1,6 @@
 # Strategy 002 — Candidate Baseline Specification
 
-**Status:** Candidate baseline prepared; temporal-stability gate must pass before chronological validation opens.
+**Status:** Frozen for chronological validation after the temporal-stability gate passed descriptively.
 
 ## Purpose
 
@@ -85,6 +85,8 @@ Initial evaluation must report:
 No cost assumption may be tuned to make the strategy pass.
 
 ## Promotion gate
+
+For P&L validation, the signal remains generated at the completed-bar close, but the executable return is measured from the next bar open to the next bar close. The close-to-close residual is retained as a predictive diagnostic, not as the tradable return after an open-time entry.
 
 A positive validation result alone is insufficient. Promotion requires:
 
