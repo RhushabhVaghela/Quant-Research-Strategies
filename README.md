@@ -94,51 +94,19 @@ See:
 
 ---
 
-## Strategy 002 — frozen baseline not promotable; turnover diagnostic in progress
+## Strategy 002 — CLOSED
 
 Strategy 002 developed from a pattern-first investigation of short-horizon cross-sectional residual reversal in Indian equities.
 
-### Current status
+The research sequence reached chronological validation for the fixed one-bar executable baseline. The baseline produced only **+0.0896 bps mean gross return per five-minute portfolio observation**, and the predefined 5 bps sensitivity overwhelmed the effect. The fixed baseline therefore was not promotable.
 
-The research sequence has now reached:
+A pre-registered turnover-reduction development experiment then tested H2, H3, and H6 using only the development period (**2025-09-18 through 2026-06-09**). H2 and H3 retained only +0.1921 and +0.2121 bps mean gross return per trade and were negative under the first 2 bps cost sensitivity. H6 was negative gross. No candidate satisfied the selection gate, so chronological validation was not reopened for these variants.
 
-1. data audit;
-2. locked chronological split;
-3. exploratory pattern discovery;
-4. reversal mechanism decomposition;
-5. cross-sectional residual investigation;
-6. leave-one-out residual mechanism decomposition;
-7. temporal stability characterization;
-8. frozen baseline definition;
-9. chronological validation;
-10. cost-resilience assessment.
+The final holdout (**2026-08-20 through 2026-09-17**) remained untouched. The turnover accounting was also clarified: each completed one-position round trip has 2.0 normalized units of executed notional turnover (1.0 entry + 1.0 exit); longer holding reduces trade frequency but not turnover per completed trade.
 
-The frozen baseline produced a small positive gross validation effect, but the mean gross return was only **+0.0896 bps per five-minute portfolio observation**. The predefined 5 bps round-trip sensitivity overwhelmed the gross effect. Therefore the fixed baseline is **not promotable** and has not been advanced to the final holdout or live/shadow trading.
+**Decision: Strategy 002 is closed for the current capital-pursuit/candidate-selection program.** This closes the tested executable research line; it is not a statistical rejection of every possible residual-reversal phenomenon.
 
-This does **not** statistically disprove the underlying residual-reversal phenomenon. It shows that the particular fully reconstituted, one-bar executable implementation does not currently demonstrate sufficient cost-resilient economics.
-
-### Turnover/execution diagnostic
-
-The next controlled diagnostic measures the trading activity of the frozen baseline using only the validation period (**2026-06-10 through 2026-08-19**). The final holdout (**2026-08-20 through 2026-09-17**) remains locked.
-
-A crucial accounting distinction is now explicit:
-
-- **target-weight turnover** measures the change between consecutive hypothetical target portfolios;
-- **executed turnover** reflects the actual frozen lifecycle: enter the next portfolio at the next-bar open and close it at that same bar's close;
-- each normalized 100%-gross one-bar round trip therefore represents **2.0 units of executed notional turnover**: 1.0 entry + 1.0 exit.
-
-The diagnostic does not change the signal, threshold, universe, holding period, or portfolio construction.
-
-Relevant records:
-
-- `research/journal/002_turnover_execution_decomposition_protocol.md`
-- `scripts/run_strategy_002_turnover_decomposition.py`
-- `tests/test_strategy_002_turnover_decomposition.py`
-- `research/journal/002_validation_findings.md`
-
-No lower-turnover candidate has been selected yet. If a specific economically motivated lower-turnover expression is justified, it will be registered as a new development experiment under Strategy 002 and tested only on permitted development data. Otherwise the strategy will be closed for the current capital-pursuit program.
-
-The final holdout remains protected.
+Detailed findings: research/journal/002_turnover_reduction_development_findings.md.
 
 ## Strategy portfolio architecture
 
