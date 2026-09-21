@@ -48,27 +48,44 @@ These documents define the project's research and execution controls.
 
 The candidate manifest is defined independently of strategy performance.
 
-## Strategy 002 — active research
+## Strategy 002 — frozen baseline not promotable; turnover diagnostic in progress
 
-Strategy 002 is now active. No trading hypothesis has been selected. The first phase is an empirical data audit using the repository's existing research-universe and market-data infrastructure.
+Strategy 002 is the Indian-equity cross-sectional residual-reversal research family.
 
-Initial research records: `journal/002_initial_data_audit.md` and `journal/002_pattern_discovery_protocol.md`.
+The pattern-first sequence is complete through chronological validation:
 
-The common historical dataset has now been acquired and audited. Nineteen of twenty candidates currently pass the structural-quality gate; HINDUNILVR remains a documented data-quality exception. The locked exploratory pattern characterization found a broad short-horizon signed-return reversal pattern, but its economic mechanism is not yet established.
+- the exploratory data audit passed for 19 structurally eligible instruments;
+- short-horizon signed-return reversal was characterized;
+- the close/open mechanism was decomposed;
+- cross-sectional residual reversal was tested;
+- leave-one-out construction removed self-contamination;
+- the residual effect showed directional temporal stability across four development periods;
+- a fixed executable baseline was frozen;
+- chronological validation was run on 2026-06-10 through 2026-08-19.
 
-The first raw-return mechanism decomposition showed that much of the reversal occurs at the prior-close/next-open boundary. A subsequent cross-sectional residual investigation found a broad next-bar residual reversal, but that residual included each instrument in its own contemporaneous market mean. Therefore it remains descriptive and has not been promoted to a hypothesis.
+The fixed baseline generated a small positive zero-cost gross result, but only **+0.0896 bps mean return per portfolio observation**. The predefined 5 bps round-trip sensitivity overwhelmed the gross effect. The baseline therefore failed the cost-resilience/promotion gate.
 
-The leave-one-out residual mechanism decomposition has now been reviewed. It confirms a broad next-bar residual reversal after self-contamination is removed and shows that the effect is not primarily confined to the close-to-open boundary. The remaining gate is direct chronological stability of the conditional effect. The current controlled stage is therefore the four-period residual temporal-conditioning analysis; no economic hypothesis has yet been frozen.
+This is **not a statistical rejection of the residual-reversal mechanism**. It is a failure of the current executable implementation to establish adequate economic value after costs.
 
-Current records:
-- `journal/002_pattern_characterization_findings.md`
-- `journal/002_reversal_mechanism_protocol.md`
-- `journal/002_reversal_mechanism_findings.md`
-- `journal/002_cross_sectional_residual_protocol.md`
-- `journal/002_cross_sectional_residual_findings.md`
-- `journal/002_cross_sectional_residual_mechanism_protocol.md`
+### Current controlled diagnostic
 
-Strategy selection, optimization, and all validation/holdout use remain protected.
+Before deciding whether Strategy 002 should close or whether a new lower-turnover development experiment is justified, the project is measuring the frozen baseline's actual execution activity.
+
+This diagnostic is restricted to the validation period and does not use the final holdout. It distinguishes:
+
+- target-weight turnover between consecutive hypothetical portfolios; and
+- executed turnover under the actual one-bar lifecycle.
+
+Because every selected portfolio is entered at the next-bar open and closed at that same bar's close, a normalized 100%-gross round trip has 2.0 units of executed notional turnover.
+
+Records:
+
+- research/journal/002_turnover_execution_decomposition_protocol.md
+- scripts/run_strategy_002_turnover_decomposition.py
+- tests/test_strategy_002_turnover_decomposition.py
+- journal/002_validation_findings.md
+
+The frozen baseline remains immutable. No lower-turnover candidate has been selected, and the final holdout remains locked.
 
 ## Strategy 001 research path — CLOSED
 
