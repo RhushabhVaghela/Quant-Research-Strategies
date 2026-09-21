@@ -25,6 +25,18 @@ No two promoted strategies should be materially the same economic mechanism appl
 | 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
 | 002 | Indian equities | Short-horizon cross-sectional residual reversal: unusually negative peer-relative returns are followed by positive relative returns, and vice versa | Initial audit → locked split → pattern discovery → pattern characterization → reversal mechanism decomposition → cross-sectional residual investigation → leave-one-out residual mechanism decomposition → temporal stability characterization → fixed-baseline validation → cost-resilience gate failed → turnover/execution decomposition → H2/H3/H6 turnover-reduction development | **Closed; no candidate frozen** |
 | 003 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
+## Strategy 003 — prediction-driven alpha discovery
+
+Strategy 003 is a **research program**, not yet a frozen trading strategy. It changes the discovery layer from directly searching for executable short-horizon rules to searching for stable, point-in-time predictive information.
+
+The first experiment asks whether observable market information can predict cross-sectional differences in 1-day and 5-day future returns across the existing Indian-equity research universe. It uses a fixed, finite feature taxonomy and a controlled model ladder (zero baseline → OLS → fixed Ridge), with a chronological internal development split. The final validation and holdout periods remain protected.
+
+This program is intentionally broader than a single momentum or reversal hypothesis. If the evidence merely reproduces the already-closed Strategy 002 residual-reversal mechanism, it must not be disguised as a new Strategy 003 alpha. The eventual strategy ID requires a materially different economic interpretation and a precise executable hypothesis.
+
+Protocol: `research/journal/003_prediction_discovery_protocol.md`.
+
+Runner: `scripts/run_strategy_003_prediction_discovery.py`.
+
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
 
