@@ -94,27 +94,51 @@ See:
 
 ---
 
-## Strategy 002 — active research
+## Strategy 002 — frozen baseline not promotable; turnover diagnostic in progress
 
-Strategy 002 has officially entered research. The current work remains exploratory and no trading hypothesis has been frozen.
+Strategy 002 developed from a pattern-first investigation of short-horizon cross-sectional residual reversal in Indian equities.
 
-The locked pattern-characterization stage found a broad short-horizon signed-return reversal pattern across the eligible universe. Before defining a strategy, the project is testing whether that observation is economically interpretable or primarily a bar-boundary/microstructure effect.
+### Current status
 
-Current records:
-- `research/journal/002_initial_data_audit.md`
-- `research/journal/002_pattern_discovery_protocol.md`
-- `research/journal/002_pattern_characterization_findings.md`
-- `research/journal/002_reversal_mechanism_protocol.md`
-- `research/journal/002_reversal_mechanism_findings.md`
-- `research/journal/002_cross_sectional_residual_protocol.md`
-- `research/journal/002_cross_sectional_residual_findings.md`
-- `research/journal/002_cross_sectional_residual_mechanism_protocol.md`
+The research sequence has now reached:
 
-The initial cross-sectional residual investigation found a broad next-bar residual reversal, but its residual construction included each instrument in the contemporaneous market mean. It therefore remains a descriptive finding rather than a Strategy 002 hypothesis. The current controlled stage is a leave-one-out residual decomposition that separately tests close-to-close, close-to-open, and open-to-close components.
+1. data audit;
+2. locked chronological split;
+3. exploratory pattern discovery;
+4. reversal mechanism decomposition;
+5. cross-sectional residual investigation;
+6. leave-one-out residual mechanism decomposition;
+7. temporal stability characterization;
+8. frozen baseline definition;
+9. chronological validation;
+10. cost-resilience assessment.
 
-After review of the committed leave-one-out outputs, the residual reversal remains broad: prior negative residuals are followed by a median +3.92 bps next-bar residual across instruments, while prior positive residuals are followed by −4.48 bps. The effect survives leave-one-out construction and both close-to-open and open-to-close components contribute materially. However, direct conditional temporal stability has not yet been established, so no economic hypothesis has been frozen.
+The frozen baseline produced a small positive gross validation effect, but the mean gross return was only **+0.0896 bps per five-minute portfolio observation**. The predefined 5 bps round-trip sensitivity overwhelmed the gross effect. Therefore the fixed baseline is **not promotable** and has not been advanced to the final holdout or live/shadow trading.
 
-All decision-relevant analysis remains restricted to 2025-09-18 through 2026-06-09. Validation and final holdout data remain protected.
+This does **not** statistically disprove the underlying residual-reversal phenomenon. It shows that the particular fully reconstituted, one-bar executable implementation does not currently demonstrate sufficient cost-resilient economics.
+
+### Turnover/execution diagnostic
+
+The next controlled diagnostic measures the trading activity of the frozen baseline using only the validation period (**2026-06-10 through 2026-08-19**). The final holdout (**2026-08-20 through 2026-09-17**) remains locked.
+
+A crucial accounting distinction is now explicit:
+
+- **target-weight turnover** measures the change between consecutive hypothetical target portfolios;
+- **executed turnover** reflects the actual frozen lifecycle: enter the next portfolio at the next-bar open and close it at that same bar's close;
+- each normalized 100%-gross one-bar round trip therefore represents **2.0 units of executed notional turnover**: 1.0 entry + 1.0 exit.
+
+The diagnostic does not change the signal, threshold, universe, holding period, or portfolio construction.
+
+Relevant records:
+
+- `research/journal/002_turnover_execution_decomposition_protocol.md`
+- `scripts/run_strategy_002_turnover_decomposition.py`
+- `tests/test_strategy_002_turnover_decomposition.py`
+- `research/journal/002_validation_findings.md`
+
+No lower-turnover candidate has been selected yet. If a specific economically motivated lower-turnover expression is justified, it will be registered as a new development experiment under Strategy 002 and tested only on permitted development data. Otherwise the strategy will be closed for the current capital-pursuit program.
+
+The final holdout remains protected.
 
 ## Strategy portfolio architecture
 
