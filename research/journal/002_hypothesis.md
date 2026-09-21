@@ -1,6 +1,6 @@
 # Strategy 002 — Economic Hypothesis
 
-**Status:** Preregistered candidate hypothesis. Validation not yet evaluated.
+**Status:** Preregistered candidate hypothesis; temporal-stability gate pending. Validation not yet evaluated.
 
 ## Hypothesis
 
