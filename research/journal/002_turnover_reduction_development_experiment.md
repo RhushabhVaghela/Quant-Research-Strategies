@@ -1,6 +1,6 @@
 # Strategy 002 — Turnover-Reduction Development Experiment
 
-**Status:** Registered development experiment; no results evaluated yet.
+**Status:** Completed — no H2/H3/H6 candidate survived the pre-registered economic selection gate.
 
 ## Why this experiment exists
 
@@ -91,3 +91,15 @@ A successful development variant must be frozen before the existing chronologica
 
 The existing 2026-06-10 through 2026-08-19 validation result must not be used to choose among H2/H3/H6. If a development variant survives, the validation period can later be evaluated once, with the final holdout remaining untouched.
 
+
+## Decision after the development run
+
+The pre-registered H2/H3/H6 search was completed on the development period only. No variant is promoted.
+
+- H2: +0.1921 bps mean gross return per trade; 0.5276 gross win rate; at 2 bps round-trip cost, -1.8079 bps mean net return.
+- H3: +0.2121 bps mean gross return per trade; 0.5320 gross win rate; at 2 bps round-trip cost, -1.7879 bps mean net return.
+- H6: -0.1564 bps mean gross return per trade; at 2 bps round-trip cost, -2.1564 bps mean net return.
+
+The low-cost sensitivity is a pre-registered selection gate, not an estimate of realized broker costs. Because all three variants fail it, none can be frozen or used to reopen chronological validation. The result also shows that extending the holding period did not turn the residual-reversal effect into a cost-resilient executable strategy within the tested development sample.
+
+The experiment is therefore closed. The final holdout remains untouched, and no additional holding lengths may be searched under this experiment after observing these results.
