@@ -6,6 +6,7 @@ the signal and does not read the final holdout.
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 from pathlib import Path
 
@@ -165,7 +166,10 @@ def build_records(series: dict[str, pd.DataFrame]) -> pd.DataFrame:
         n = len(valid)
         residual = valid - (cross_sum - valid) / (n - 1)
 
-        next_ts = pd.Timestamp(ts) + pd.Timedelta(minutes=5)
+        # Convert to a native Python datetime before adding the interval.
+        # This avoids NumPy's deprecated generic-timedelta conversion on
+        # timestamp values with non-nanosecond datetime resolutions.
+        next_ts = pd.Timestamp(ts.to_pydatetime() + dt.timedelta(minutes=5))
         if next_ts not in opens.index or next_ts not in closes.index:
             continue
         if next_ts.date() != ts.date():
