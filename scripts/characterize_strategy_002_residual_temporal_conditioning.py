@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from run_strategy_002_leave_one_out_residual import (
+from scripts.run_strategy_002_leave_one_out_residual import (
     END,
     HORIZONS,
     START,
