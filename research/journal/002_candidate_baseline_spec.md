@@ -1,6 +1,6 @@
 # Strategy 002 — Candidate Baseline Specification
 
-**Status:** Frozen for initial chronological validation.
+**Status:** Candidate baseline prepared; temporal-stability gate must pass before chronological validation opens.
 
 ## Purpose
 
@@ -56,7 +56,7 @@ The baseline is deliberately simple. Execution feasibility and costs must be eva
 
 ## Development and validation
 
-The baseline definition is frozen before reading validation performance.
+The baseline definition is fixed, but chronological validation must not begin until the preceding temporal-stability gate is reviewed and documented.
 
 - Exploratory development: 2025-09-18 through 2026-06-09.
 - Chronological validation: 2026-06-10 through 2026-08-19.
