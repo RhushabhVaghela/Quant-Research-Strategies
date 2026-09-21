@@ -1,0 +1,41 @@
+{
+  "exploratory_start":"2025-09-18 00:00:00+05:30",
+  "exploratory_end":"2026-06-09 23:59:59+05:30",
+  "validation_start":"2026-06-10 00:00:00+05:30",
+  "periods":[
+    "Q1_time",
+    "Q2_time",
+    "Q3_time",
+    "Q4_time"
+  ],
+  "included_instruments":[
+    "AXISBANK",
+    "BANKBEES",
+    "BHARTIARTL",
+    "GOLDBEES",
+    "HCLTECH",
+    "HDFCBANK",
+    "ICICIBANK",
+    "INFY",
+    "ITBEES",
+    "ITC",
+    "KOTAKBANK",
+    "LT",
+    "M&M",
+    "MARUTI",
+    "NIFTYBEES",
+    "RELIANCE",
+    "SBIN",
+    "SUNPHARMA",
+    "TATASTEEL"
+  ],
+  "excluded_instruments":[
+    {
+      "symbol":"HINDUNILVR",
+      "reason":"failed structural universe audit"
+    }
+  ],
+  "holdout_used":false,
+  "strategy_pnl_calculated":false,
+  "optimization_performed":false
+}

@@ -1,0 +1,44 @@
+{
+  "analysis": "strategy_002_fixed_baseline_validation",
+  "validation_start": "2026-06-10 00:00:00+05:30",
+  "holdout_start": "2026-08-20 00:00:00+05:30",
+  "included_instruments": [
+    "AXISBANK",
+    "BANKBEES",
+    "BHARTIARTL",
+    "GOLDBEES",
+    "HCLTECH",
+    "HDFCBANK",
+    "ICICIBANK",
+    "INFY",
+    "ITBEES",
+    "ITC",
+    "KOTAKBANK",
+    "LT",
+    "M&M",
+    "MARUTI",
+    "NIFTYBEES",
+    "RELIANCE",
+    "SBIN",
+    "SUNPHARMA",
+    "TATASTEEL"
+  ],
+  "excluded_instruments": [
+    {
+      "symbol": "HINDUNILVR",
+      "reason": "failed structural universe audit"
+    }
+  ],
+  "cost_scenarios_round_trip_bps": [
+    0.0,
+    5.0,
+    10.0,
+    15.0
+  ],
+  "signal_definition": "leave-one-out residual sign at completed 5-minute close",
+  "execution_definition": "next 5-minute bar open to next 5-minute bar close",
+  "overnight_positions": false,
+  "optimization_performed": false,
+  "holdout_used": false,
+  "live_orders_placed": false
+}
