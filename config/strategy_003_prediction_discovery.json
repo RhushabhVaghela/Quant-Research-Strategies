@@ -1,0 +1,39 @@
+{
+  "strategy_id": "003",
+  "status": "discovery_only",
+  "research_question": "Can observable point-in-time market information predict cross-sectional differences in future returns sufficiently well to form a cost-resilient portfolio?",
+  "data_source": "Existing Strategy 002 5-minute OHLCV universe, aggregated to daily observations",
+  "universe_manifest": "research/universe_candidates.csv",
+  "audit_report": "data/reports/strategy_002_universe_audit.csv",
+  "data_directory_default": "data/raw/strategy_002_universe",
+  "market_proxy": "NIFTYBEES",
+  "equity_categories": ["large_cap_equity", "liquid_auto"],
+  "exploratory_start": "2025-09-18",
+  "exploratory_end": "2026-06-09",
+  "validation_start": "2026-06-10",
+  "validation_end": "2026-08-19",
+  "holdout_start": "2026-08-20",
+  "holdout_end": "2026-09-17",
+  "prediction_horizons_days": [1, 5],
+  "internal_development_split": {
+    "train_fraction": 0.60,
+    "validation_fraction": 0.20,
+    "test_fraction": 0.20,
+    "shuffle": false
+  },
+  "feature_families": [
+    "price_momentum_state",
+    "short_term_reversal_state",
+    "volatility",
+    "volume_activity",
+    "market_relative",
+    "cross_sectional_state",
+    "regime_context"
+  ],
+  "models": ["zero_baseline", "ols", "ridge_fixed_alpha"],
+  "ridge_alpha": 1.0,
+  "quintile_count": 5,
+  "holdout_used": false,
+  "strategy_pnl": false,
+  "parameter_search": false
+}
