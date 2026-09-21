@@ -602,7 +602,10 @@ def main() -> None:
         raise SystemExit(f"Missing required market proxy data file: {market_path}")
 
     market = daily_ohlcv(load_intraday(market_path))
-    panel = locked_exploratory_slice(add_targets(build_panel(frames, market)))
+    # Lock the decision/outcome panel before creating forward targets so the
+    # 5-day target cannot cross into the protected validation period.
+    panel = locked_exploratory_slice(build_panel(frames, market))
+    panel = add_targets(panel)
     features = feature_columns(panel)
 
     ic = univariate_ic(panel, features)
