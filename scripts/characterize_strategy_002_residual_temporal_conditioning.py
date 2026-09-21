@@ -91,60 +91,54 @@ def main():
     prior = residuals["close_to_close"]
     periods = build_periods(prior.index)
 
+    # Keep the same calculations as the original implementation, but perform
+    # repeated masking on NumPy arrays rather than constructing a new pandas
+    # DataFrame for every period/condition/symbol combination.
     rows = []
-    for period in periods.cat.categories:
-        period_mask = periods == period
+    symbols = list(prior.columns)
+    period_masks = {
+        str(period): np.asarray(periods == period)
+        for period in periods.cat.categories
+    }
+    condition_masks = {
+        "prior_negative": (prior.to_numpy() < 0),
+        "prior_positive": (prior.to_numpy() > 0),
+    }
 
-        for horizon in HORIZONS:
-            future = residuals["close_to_close"].shift(-horizon)
-            for condition, sign_mask in {
-                "prior_negative": prior < 0,
-                "prior_positive": prior > 0,
-            }.items():
-                values = future.where(period_mask & sign_mask)
-                for symbol in prior.columns:
-                    sample = values[symbol].dropna()
-                    rows.append(
-                        {
-                            "period": str(period),
-                            "symbol": symbol,
-                            "condition": condition,
-                            "component": "close_to_close",
-                            "horizon_bars": horizon,
-                            "observations": len(sample),
-                            "mean": sample.mean(),
-                            "median": sample.median(),
-                            "positive_fraction": (
-                                (sample > 0).mean() if len(sample) else np.nan
-                            ),
-                        }
-                    )
+    def append_rows(future_df, component, horizon, period_name, period_mask):
+        future_values = future_df.to_numpy()
+        for condition, sign_matrix in condition_masks.items():
+            for j, symbol in enumerate(symbols):
+                mask = period_mask & sign_matrix[:, j] & np.isfinite(future_values[:, j])
+                sample = future_values[mask, j]
+                rows.append({
+                    "period": period_name,
+                    "symbol": symbol,
+                    "condition": condition,
+                    "component": component,
+                    "horizon_bars": horizon,
+                    "observations": int(sample.size),
+                    "mean": float(np.mean(sample)) if sample.size else np.nan,
+                    "median": float(np.median(sample)) if sample.size else np.nan,
+                    "positive_fraction": (
+                        float(np.mean(sample > 0)) if sample.size else np.nan
+                    ),
+                })
 
-        for component in ("close_to_open", "open_to_close"):
-            future = residuals[component].shift(-1)
-            for condition, sign_mask in {
-                "prior_negative": prior < 0,
-                "prior_positive": prior > 0,
-            }.items():
-                values = future.where(period_mask & sign_mask)
-                for symbol in prior.columns:
-                    sample = values[symbol].dropna()
-                    rows.append(
-                        {
-                            "period": str(period),
-                            "symbol": symbol,
-                            "condition": condition,
-                            "component": component,
-                            "horizon_bars": 1,
-                            "observations": len(sample),
-                            "mean": sample.mean(),
-                            "median": sample.median(),
-                            "positive_fraction": (
-                                (sample > 0).mean() if len(sample) else np.nan
-                            ),
-                        }
-                    )
+    future_by_horizon = {
+        horizon: residuals["close_to_close"].shift(-horizon)
+        for horizon in HORIZONS
+    }
+    boundary_future = {
+        component: residuals[component].shift(-1)
+        for component in ("close_to_open", "open_to_close")
+    }
 
+    for period_name, period_mask in period_masks.items():
+        for horizon, future in future_by_horizon.items():
+            append_rows(future, "close_to_close", horizon, period_name, period_mask)
+        for component, future in boundary_future.items():
+            append_rows(future, component, 1, period_name, period_mask)
     detail = pd.DataFrame(rows)
     breadth = (
         detail.groupby(
