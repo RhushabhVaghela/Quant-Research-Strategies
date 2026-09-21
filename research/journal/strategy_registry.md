@@ -23,7 +23,7 @@ No two promoted strategies should be materially the same economic mechanism appl
 | Strategy ID | Asset class | Economic hypothesis / mechanism | Current experiment | Status |
 |---|---|---|---|---|
 | 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
-| 002 | Indian equities | Short-horizon cross-sectional residual reversal: unusually negative peer-relative returns are followed by positive relative returns, and vice versa | Initial audit → locked split → pattern discovery → pattern characterization → reversal mechanism decomposition → cross-sectional residual investigation → leave-one-out residual mechanism decomposition → conditional temporal stability characterization → temporal-stability gate passed → fixed-baseline validation → cost-resilience gate failed → turnover/execution decomposition → pre-registered H2/H3/H6 turnover-reduction development experiment | **Development experiment registered; frozen baseline not promotable, validation/holdout protected** |
+| 002 | Indian equities | Short-horizon cross-sectional residual reversal: unusually negative peer-relative returns are followed by positive relative returns, and vice versa | Initial audit → locked split → pattern discovery → pattern characterization → reversal mechanism decomposition → cross-sectional residual investigation → leave-one-out residual mechanism decomposition → temporal stability characterization → fixed-baseline validation → cost-resilience gate failed → turnover/execution decomposition → H2/H3/H6 turnover-reduction development | **Closed; no candidate frozen** |
 | 003 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
@@ -47,6 +47,14 @@ Existing 001D, 001I, 001J, universe files, and journals remain historical eviden
 001D and 001I are immutable historical evidence. 001J is a new experiment under the same Strategy 001 hypothesis family; its parameters must never be back-filled into 001D.
 
 The tactical 001J U1 has an explicit current-instrument/survivorship limitation. A later PIT Nifty 100 implementation remains a separate universe experiment under Strategy 001 rather than being silently substituted into the tactical result.
+
+## Strategy 002 closure
+
+Strategy 002 is closed for the current capital-pursuit/candidate-selection program. The fixed one-bar implementation produced only +0.0896 bps mean gross return per validation observation and failed the predefined cost-resilience gate. The subsequent pre-registered H2/H3/H6 development experiment was confined to 2025-09-18 through 2026-06-09; H2 and H3 retained only about +0.19/+0.21 bps gross per trade and became negative under the 2 bps sensitivity, while H6 was negative gross. No candidate was frozen, chronological validation was not reopened for these variants, and the final holdout remained untouched.
+
+This closes the tested Strategy 002 research line rather than claiming that every residual-reversal phenomenon is false. Further searches under the same mechanism should not be added after the observed results. A new strategy ID should use a materially different economic mechanism and/or asset class.
+
+Detailed findings: `research/journal/002_turnover_reduction_development_findings.md`.
 
 ## Portfolio asset classes
 
