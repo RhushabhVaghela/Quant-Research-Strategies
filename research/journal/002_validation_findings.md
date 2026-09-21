@@ -56,8 +56,18 @@ The final holdout remains locked.
 
 ## Follow-up diagnostic
 
-The fixed baseline remains frozen and is not being retuned. A turnover/execution decomposition has been registered using only the validation period. Its purpose is to quantify the actual portfolio churn, opening/closing/replacement activity, and turnover-adjusted economics before deciding whether a lower-turnover development experiment is justified.
+The fixed baseline remains frozen and is not being retuned. The turnover/execution decomposition is restricted to the validation period.
+
+A critical accounting distinction is now explicit. The diagnostic reports both:
+
+1. **target-weight turnover** — the mathematical change between consecutive hypothetical target portfolios; and
+2. **executed round-trip turnover** — the actual trading lifecycle of the frozen baseline.
+
+The frozen baseline does not carry a position from one signal timestamp into the following signal timestamp. It enters the selected portfolio at the next bar's open and closes that portfolio at the next bar's close. With normalized gross exposure of 1.0, that is 1.0 unit of entry notional plus 1.0 unit of exit notional, or **2.0 units of executed round-trip turnover per portfolio observation**.
+
+This distinction matters because target-weight turnover alone would understate the execution activity and could incorrectly suggest that the baseline is less expensive to trade than its implementation actually is.
 
 The diagnostic is defined in `research/journal/002_turnover_execution_decomposition_protocol.md` and implemented in `scripts/run_strategy_002_turnover_decomposition.py`. It does not authorize use of the final holdout.
 
-No conclusion about the lower-turnover expression is recorded until the diagnostic is run and its outputs are reviewed.
+No lower-turnover candidate has been selected from this diagnostic. If a specific economically motivated modification is justified, it must be registered as a new development experiment and evaluated without using the final holdout.
+
