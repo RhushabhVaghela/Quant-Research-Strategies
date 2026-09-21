@@ -226,4 +226,4 @@ Run the complete test suite:
 pytest -q
 ```
 
-The immediate active work is Strategy 002 data-first investigation. The leave-one-out residual mechanism analysis has been executed, but its generated output has not yet been interpreted. Do not create a strategy implementation or optimization grid until the committed results pass the mechanism and economic-interpretation gates. Validation and final holdout observations remain protected.
+Strategy 002 is now closed for the current capital-pursuit/candidate-selection program: the fixed one-bar baseline failed cost resilience, and the pre-registered H2/H3/H6 turnover-reduction development variants did not produce a cost-resilient candidate. The final holdout remained protected. The next active research line should be a new Strategy 003 with a genuinely different economic mechanism/asset-class combination, after reviewing the repository's existing research resources and registering a fresh data-first investigation.
