@@ -104,3 +104,16 @@ After the temporal-conditioning runner completes, create the descriptive summary
     python scripts/summarize_strategy_002_residual_temporal_conditioning.py data/reports/strategy_002_residual_temporal_conditioning
 
 The summary script refuses to proceed if the manifest indicates validation/holdout use, strategy P&L, or optimization. The chronological stability result must be reviewed before the fixed-baseline validation period is opened.
+
+
+## Gate outcome
+
+The executed four-period summary is directionally coherent:
+
+- negative residual → positive next-bar residual in Q1–Q4;
+- positive residual → negative next-bar residual in Q1–Q4;
+- negative-side positive-instrument breadth remains 84.2%–89.5%.
+
+The temporal-stability gate is therefore satisfied descriptively. This does not establish profitability or cost resilience.
+
+The next stage is the fixed-baseline chronological validation on **2026-06-10 through 2026-08-19**. The final holdout **2026-08-20 through 2026-09-17** remains locked.
