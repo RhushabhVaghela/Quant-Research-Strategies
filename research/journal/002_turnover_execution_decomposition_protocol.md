@@ -1,6 +1,6 @@
 # Strategy 002 — Turnover and Execution Decomposition Protocol
 
-**Status:** Development diagnostic in progress after the fixed baseline failed the initial cost-resilience gate.
+**Status:** Completed diagnostic. The fixed baseline was not promotable, and the subsequent H2/H3/H6 turnover-reduction development search was closed without a candidate.
 
 **Important accounting clarification:** target-weight turnover between consecutive hypothetical portfolios is reported separately from executed turnover. The frozen baseline does not carry positions from one signal to the next; it enters the next portfolio at the next-bar open and closes it at that same bar's close. Therefore a normalized 100%-gross one-bar round trip has 2.0 units of executed notional turnover: 1.0 entry + 1.0 exit.
 
@@ -57,6 +57,6 @@ High turnover does not itself invalidate the signal. Low turnover does not itsel
 
 If turnover is so high that the observed gross edge remains far below plausible execution costs, document closure for the current capital-pursuit program.
 
-If a specific economically motivated lower-turnover expression is identified without using holdout information, define it as a new Strategy 002 development experiment. It must be specified before testing and remain within the permitted development data.
+A pre-registered H2/H3/H6 holding-period development experiment was subsequently run only on the development period. None survived the low-cost economic gate, so no additional Strategy 002 turnover-reduction search is authorized from these results.
 
 The final holdout remains locked.
