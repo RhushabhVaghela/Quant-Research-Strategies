@@ -52,3 +52,12 @@ Before any new candidate is created, record the failure and preserve the frozen 
 If further Strategy 002 work is justified, it must be treated as a **new development experiment** using only the exploratory/development data. Any change intended to reduce turnover or improve execution economics—such as signal persistence, entry filtering, portfolio rebalancing frequency, or alternative execution timing—would be a new candidate and must not use the final holdout for selection.
 
 The final holdout remains locked.
+
+
+## Follow-up diagnostic
+
+The fixed baseline remains frozen and is not being retuned. A turnover/execution decomposition has been registered using only the validation period. Its purpose is to quantify the actual portfolio churn, opening/closing/replacement activity, and turnover-adjusted economics before deciding whether a lower-turnover development experiment is justified.
+
+The diagnostic is defined in `research/journal/002_turnover_execution_decomposition_protocol.md` and implemented in `scripts/run_strategy_002_turnover_decomposition.py`. It does not authorize use of the final holdout.
+
+No conclusion about the lower-turnover expression is recorded until the diagnostic is run and its outputs are reviewed.
