@@ -22,6 +22,26 @@ The central discipline is: Pattern ≠ predictive information ≠ hypothesis ≠
 
 ML is an extraction tool, not the hypothesis.
 
+## 2A. Interview-ready horizon decision record
+
+The initial 003 draft tested **1-day and 5-day targets** even though the broader project objective is intraday strategy research. The defensible explanation is that the first draft was intended as a broad **prediction-discovery experiment**, not yet as an intraday trading-strategy specification. We wanted to establish whether observable market information contained predictive content at all before committing the research program to a particular execution horizon. A 5-day target was a legitimate medium-horizon stock-selection question and was straightforward to construct from the available data.
+
+The important methodological distinction is that this was an **exploratory research question**, not a claim that five-day prediction was the project's final objective. Once the project scope was reviewed against the explicit objective — intraday strategy discovery — the five-day target was recognized as a different research problem. Continuing to optimize it would have created scope drift and potentially turned Strategy 003 into a medium-horizon/swing program rather than answering the intraday question.
+
+The pivot therefore was **not driven by weak five-day performance**. It was an objective-alignment decision. The daily experiment remains historical evidence and a methodological lesson; it is not erased or rewritten. If the project later wants to research swing/medium-horizon prediction, that should be registered as a separate research line with its own hypothesis, horizon, validation design and economic rationale.
+
+A concise interview answer is:
+
+> “We initially used one-day and five-day targets because Strategy 003 was designed as a broader prediction-discovery experiment. Five-day prediction is a legitimate medium-horizon stock-selection problem, so it was useful for testing whether the feature space contained predictive information at a smoother horizon. But our project objective is intraday strategy research. We realized that continuing to optimize a five-day target would answer a different question and create scope drift, so we preserved that work as historical evidence and re-registered the active experiment at the native five-minute decision horizon. The pivot was about research-objective alignment, not about abandoning a weak result.”
+
+### Why one 5-minute bar rather than 15 minutes?
+
+The underlying Indian-equity dataset is sampled at 5-minute bars, and Strategies 001 and 002 already established that as the project's intraday decision resolution. Starting with the native bar avoids throwing away intermediate information before the signal's time scale is known.
+
+The 5-minute target is a **discovery horizon**, not a commitment to hold every eventual position for exactly five minutes. If predictive information survives, a small pre-registered set of adjacent horizons such as 5, 10 and 15 minutes can later characterize signal persistence and execution economics. The horizon must not be chosen retrospectively because one horizon produces the best historical P&L.
+
+A 15-minute target is therefore a legitimate later characterization experiment. Starting there would aggregate away two intermediate 5-minute observations before we know whether the information decays after 5 minutes, persists to 10 minutes, or remains meaningful at 15 minutes.
+
 ## 3. Locked universe and data
 
 - Reuse the existing Strategy 002 Indian-equity data acquisition.
@@ -194,22 +214,3 @@ If the only stable information is the already-closed Strategy 002 reversal mecha
 ## Research principle
 
 > We are not searching directly for profitable trading rules. We are searching for stable, economically interpretable predictive information, and only then asking whether that information can be converted into a profitable portfolio after risk, execution and transaction costs
-## 2A. Interview-ready horizon decision record
-
-The initial 003 draft tested **1-day and 5-day targets** even though the broader project objective is intraday strategy research. The defensible explanation is that the first draft was intended as a broad **prediction-discovery experiment**, not yet as an intraday trading-strategy specification. We wanted to establish whether observable market information contained predictive content at all before committing the research program to a particular execution horizon. A 5-day target was a legitimate medium-horizon stock-selection question and was straightforward to construct from the available data.
-
-The important methodological distinction is that this was an **exploratory research question**, not a claim that five-day prediction was the project's final objective. Once the project scope was reviewed against the explicit objective — intraday strategy discovery — the five-day target was recognized as a different research problem. Continuing to optimize it would have created scope drift and potentially turned Strategy 003 into a medium-horizon/swing program rather than answering the intraday question.
-
-The pivot therefore was **not driven by weak five-day performance**. It was an objective-alignment decision. The daily experiment remains historical evidence and a methodological lesson; it is not erased or rewritten. If the project later wants to research swing/medium-horizon prediction, that should be registered as a separate research line with its own hypothesis, horizon, validation design and economic rationale.
-
-A concise interview answer is:
-
-> “We initially used one-day and five-day targets because Strategy 003 was designed as a broader prediction-discovery experiment. Five-day prediction is a legitimate medium-horizon stock-selection problem, so it was useful for testing whether the feature space contained predictive information at a smoother horizon. But our project objective is intraday strategy research. We realized that continuing to optimize a five-day target would answer a different question and create scope drift, so we preserved that work as historical evidence and re-registered the active experiment at the native five-minute decision horizon. The pivot was about research-objective alignment, not about abandoning a weak result.”
-
-### Why one 5-minute bar rather than 15 minutes?
-
-The underlying Indian-equity dataset is sampled at 5-minute bars, and Strategies 001 and 002 already established that as the project's intraday decision resolution. Starting with the native bar avoids throwing away intermediate information before the signal's time scale is known.
-
-The 5-minute target is a **discovery horizon**, not a commitment to hold every eventual position for exactly five minutes. If predictive information survives, a small pre-registered set of adjacent horizons such as 5, 10 and 15 minutes can later characterize signal persistence and execution economics. The horizon must not be chosen retrospectively because one horizon produces the best historical P&L.
-
-A 15-minute target is therefore a legitimate later characterization experiment. Starting there would aggregate away two intermediate 5-minute observations before we know whether the information decays after 5 minutes, persists to 10 minutes, or remains meaningful at 15 minutes.
