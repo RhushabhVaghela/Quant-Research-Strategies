@@ -230,12 +230,12 @@ def feature_columns(panel: pd.DataFrame) -> list[str]:
 def univariate_ic(panel: pd.DataFrame, features: list[str]) -> pd.DataFrame:
     rows = []
     target = "target_excess_1bar"
-    work_all = panel[["timestamp", "date", target] + features].dropna()
 
     for feature in features:
         daily_pearson = []
         daily_rank = []
-        for _, day in work_all.groupby("date"):
+        work = panel[["timestamp", "date", target, feature]].dropna()
+        for _, day in work.groupby("date"):
             timestamp_ics = []
             timestamp_rank_ics = []
             for _, group in day.groupby("timestamp"):
