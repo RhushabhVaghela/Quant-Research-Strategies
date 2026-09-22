@@ -48,15 +48,17 @@ These documents define the project's research and execution controls.
 
 The candidate manifest is defined independently of strategy performance.
 
-## Strategy 003 — Prediction-driven alpha discovery
+## Strategy 003 — Intraday prediction-driven alpha discovery
 
-Strategy 003 is now the active discovery program. It deliberately changes the research question after Strategies 001 and 002:
+Strategy 003 is the active discovery program and is explicitly intraday.
 
-> Can observable, point-in-time market information predict cross-sectional differences in future returns sufficiently well to become a cost-resilient portfolio?
+The original draft used daily 1-day and 5-day targets. That draft is superseded because a 5-day close-to-close target is a multi-day prediction, not the project's intraday research objective.
 
-The first experiment uses the existing Strategy 002 Indian-equity data acquisition, aggregated from 5-minute OHLCV to daily observations. It evaluates 1-day and 5-day cross-sectional excess-return targets and a fixed feature taxonomy covering price/momentum state, short-term state, volatility, volume/activity, market-relative state, and cross-sectional transforms.
+The revised experiment stays on the existing 5-minute OHLCV data and predicts the next 5-minute cross-sectional excess return. The first feature families are liquidity/activity, volatility/state, bar shape/intraday state, and market context.
 
-The first model ladder is deliberately controlled:
+The first pass excludes signed-return direction and explicit continuation/reversal rules so Strategy 003 does not silently reproduce Strategy 001 or Strategy 002.
+
+The first model ladder remains deliberately controlled:
 
 ```
 zero baseline
@@ -66,9 +68,7 @@ OLS
 fixed Ridge
 ```
 
-No large hyperparameter search is allowed in discovery. Tree ensembles and neural models are reserved for later controlled escalation only if the simpler models establish stable predictive information worth explaining.
-
-The final validation and holdout periods remain protected. Discovery results do not freeze a trading strategy.
+Chronological model-development boundaries are purged by one decision timestamp. No large hyperparameter search, strategy PnL, or protected-period evaluation is allowed in discovery.
 
 Protocol: `journal/003_prediction_discovery_protocol.md`.
 
