@@ -1,0 +1,50 @@
+{
+  "strategy_id": "003",
+  "analysis": "prediction_discovery",
+  "status": "discovery_only",
+  "exploratory_start": "2025-09-18",
+  "exploratory_end": "2026-06-09",
+  "validation_start": "2026-06-10",
+  "holdout_start": "2026-08-20",
+  "prediction_horizons_days": [
+    1,
+    5
+  ],
+  "equity_symbols": [
+    "AXISBANK",
+    "BHARTIARTL",
+    "HCLTECH",
+    "HDFCBANK",
+    "ICICIBANK",
+    "INFY",
+    "ITC",
+    "KOTAKBANK",
+    "LT",
+    "M&M",
+    "MARUTI",
+    "RELIANCE",
+    "SBIN",
+    "SUNPHARMA",
+    "TATASTEEL"
+  ],
+  "market_proxy": "NIFTYBEES",
+  "feature_count": 45,
+  "models": [
+    "zero_baseline",
+    "ols",
+    "ridge_fixed_alpha"
+  ],
+  "ridge_alpha": 1.0,
+  "quintiles": 5,
+  "internal_split": {
+    "train_start": "2025-09-18",
+    "train_end": "2026-02-19",
+    "validation_start": "2026-02-20",
+    "validation_end": "2026-04-16",
+    "test_start": "2026-04-17",
+    "test_end": "2026-06-09"
+  },
+  "holdout_used": false,
+  "strategy_pnl_calculated": false,
+  "parameter_search": false
+}
