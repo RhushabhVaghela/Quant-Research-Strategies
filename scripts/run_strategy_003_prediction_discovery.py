@@ -550,41 +550,36 @@ def model_diagnostics(
 
 def feature_metadata(features: list[str]) -> pd.DataFrame:
     descriptions = {
-        "ret_1d": "Prior 1-day close-to-close return",
-        "ret_5d": "Prior 5-day close-to-close return",
-        "ret_20d": "Prior 20-day close-to-close return",
-        "ma_gap_5d": "Close relative to trailing 5-day moving average",
-        "ma_gap_20d": "Close relative to trailing 20-day moving average",
-        "vol_5d": "Annualized trailing 5-day realized volatility",
-        "vol_20d": "Annualized trailing 20-day realized volatility",
-        "range_1d": "Daily high-low range divided by close",
-        "log_volume": "Log(1 + daily volume)",
-        "volume_mean_5d": "Trailing 5-day mean log volume",
-        "volume_z_20d": "Trailing 20-day z-score of log volume",
-        "market_rel_1d": "1-day return relative to NIFTYBEES",
-        "market_rel_5d": "5-day return relative to NIFTYBEES",
-        "market_rel_20d": "20-day return relative to NIFTYBEES",
-        "market_beta_20d": "Trailing 20-day beta to NIFTYBEES",
+        "log_volume": "Log(1 + current 5-minute volume)",
+        "volume_change_1bar": "Current 5-minute volume change versus previous bar",
+        "volume_z_12bar": "Trailing 12-bar z-score of log volume within session",
+        "volume_z_78bar": "Trailing 78-bar z-score of log volume within session",
+        "realized_vol_12bar": "Trailing 12-bar realized volatility within session",
+        "realized_vol_78bar": "Trailing 78-bar realized volatility within session",
+        "range_1bar": "Current 5-minute high-low range divided by close",
+        "range_z_78bar": "Current range relative to trailing 78-bar range distribution",
+        "close_location_1bar": "Current close location inside the current 5-minute bar",
+        "intraday_position_78bar": "Current close relative to trailing 78-bar mean close",
+        "bars_since_session_open": "Bars elapsed since session open",
+        "market_return_1bar": "NIFTYBEES return over the current 5-minute interval",
+        "market_vol_78bar": "Trailing 78-bar realized volatility of NIFTYBEES",
     }
     rows = []
     for feature in features:
         base = feature
-        transform = "raw trailing feature"
+        transform = "raw intraday feature"
         if feature.endswith("_rank"):
             base = feature[:-5]
             transform = "cross-sectional percentile rank"
         elif feature.endswith("_cs_z"):
             base = feature[:-5]
             transform = "cross-sectional z-score"
-
         rows.append(
             {
                 "feature": feature,
                 "base_feature": base,
                 "transform": transform,
-                "description": descriptions.get(
-                    base, "Derived cross-sectional feature"
-                ),
+                "description": descriptions.get(base, "Derived cross-sectional feature"),
             }
         )
     return pd.DataFrame(rows)
