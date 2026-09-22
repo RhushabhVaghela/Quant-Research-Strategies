@@ -16,6 +16,7 @@ from scripts.run_strategy_003_prediction_discovery import (
     build_symbol_panel,
     feature_columns,
     load_intraday,
+    model_diagnostics,
     session_bar_features,
     locked_exploratory_slice,
     purged_chronological_splits,
@@ -169,3 +170,37 @@ def test_feature_ic_handles_structurally_undefined_feature_transforms() -> None:
 
     assert set(result["feature"]) == {"useful_feature", "market_context"}
     assert result["usable_dates"].min() > 0
+
+
+def test_model_diagnostics_ignores_structurally_undefined_registered_features() -> None:
+    from scripts.run_strategy_003_prediction_discovery import QUINTILES
+
+    timestamps = pd.date_range(
+        "2026-01-01 09:15",
+        periods=30,
+        freq="5min",
+        tz="Asia/Kolkata",
+    )
+    rows = []
+    for i, ts in enumerate(timestamps):
+        for j in range(10):
+            rows.append(
+                {
+                    "timestamp": ts,
+                    "symbol": f"S{j:02d}",
+                    "target_excess_1bar": float(j - 4.5) * (1 + i / 100),
+                    "feature_a": float(j) + i / 10,
+                    "feature_b_cs_z": float("nan"),
+                }
+            )
+    panel = pd.DataFrame(rows)
+
+    models, quintiles = model_diagnostics(panel, ["feature_a", "feature_b_cs_z"])
+
+    assert not models.empty
+    assert set(models["model"]) == {"zero_baseline", "ols", "ridge_fixed_alpha"}
+    assert models["split"].isin({"validation", "development_test"}).all()
+    assert len(quintiles) > 0
+    assert quintiles["model"].isin({"ols", "ridge_fixed_alpha"}).all()
+    assert (quintiles["horizon_bars"] == HORIZON_BARS).all()
+    assert (quintiles["horizon_minutes"] == BAR_MINUTES).all()
