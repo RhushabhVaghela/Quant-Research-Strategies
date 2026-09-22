@@ -57,15 +57,17 @@ The target is converted to cross-sectional excess return by subtracting the equa
 
 ## 6. Initial feature families
 
-1. Price/momentum state: 1d, 5d and 20d returns; distance from 5d and 20d moving averages.
-2. Short-term state: recent return and moving-average deviations, treated as information sources rather than a Strategy 002 reopening.
-3. Volatility: 5d and 20d realized volatility; daily high-low range.
-4. Volume/activity: log daily volume, 5d average log volume, 20d volume z-score.
-5. Market-relative: 1d, 5d and 20d excess return versus NIFTYBEES; 20d rolling beta.
-6. Cross-sectional state: date-by-date percentile ranks and z-scores of the feature families.
-7. Regime context: market volatility and cross-sectional dispersion as diagnostics, not post-hoc filters.
+The first pass explicitly excludes raw signed-return direction, prior signed-return threshold/event rules, explicit abnormal-move continuation rules, peer-relative lagged-return reversal rules, Strategy 001-style z-score event definitions, and Strategy 002-style residual-reversal signal rules.
 
-All features must use only information available at the decision date. Rolling statistics are trailing-only. Cross-sectional transforms are date-by-date. Missingness is explicit.
+The initial feature families are:
+
+1. Liquidity/activity: current 5-minute log volume, one-bar volume change, 12-bar volume z-score, 78-bar volume z-score.
+2. Volatility/state: 12-bar realized volatility, 78-bar realized volatility, current bar range, 78-bar range z-score.
+3. Bar shape/intraday state: close location within the current bar, close relative to trailing 78-bar mean, bars since session open.
+4. Market context: NIFTYBEES current 5-minute return and trailing 78-bar market volatility.
+5. Cross-sectional transforms: percentile ranks and z-scores of the registered features.
+
+All features must use only information available at the decision bar close. If a later model is dominated by signed-return information, that result must be classified against Strategy 001/002 rather than promoted as a new Strategy 003 mechanism.
 
 ## 7. Evidence layers
 
@@ -93,11 +95,13 @@ Predictions are converted only for diagnostics into a simple cross-sectional top
 
 Inside the locked exploratory period:
 
-- first 60% of dates: training
+- first 60% of 5-minute decision timestamps: training
 - next 20%: model-development validation
 - final 20%: development test
 
-No random shuffling. The project validation and final holdout remain untouched.
+No random shuffling. Because the target is the next 5-minute bar, the final training timestamp and final validation timestamp whose labels could cross the following segment are removed. This is a one-decision-timestamp purge. Future longer intraday horizons must purge by their registered horizon in decision bars.
+
+The project validation and final holdout remain untouched.
 
 ## 9. Model escalation
 
