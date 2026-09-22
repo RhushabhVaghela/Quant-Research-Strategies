@@ -27,9 +27,11 @@ No two promoted strategies should be materially the same economic mechanism appl
 | 003 | Indian equities | Intraday prediction-driven discovery using liquidity/activity, volatility/state, bar-shape/intraday-state and market context; first pass excludes 001/002 signed-return mechanisms | Revised next-5-minute prediction discovery | **Active discovery; no candidate frozen** |
 ## Strategy 003 — intraday prediction-driven alpha discovery
 
-Strategy 003 is a **research program**, not a frozen trading strategy. The original draft used 1-day and 5-day daily targets and is now superseded because the project objective is intraday strategy research. A 5-trading-day target is a multi-day close-to-close prediction, not an intraday prediction target.
+Strategy 003 is a **research program**, not a frozen trading strategy. The original draft used 1-day and 5-day daily targets as a broad prediction-discovery experiment. It is now superseded because the project objective is intraday strategy research. A 5-trading-day target is a multi-day close-to-close prediction, not an intraday prediction target.
 
-The revised program uses the existing 5-minute equity data, predicts the next 5-minute cross-sectional excess return, and begins with liquidity/activity, volatility/state, bar-shape/intraday-state and market-context features. It explicitly excludes signed-return mechanisms already owned by Strategy 001 continuation and Strategy 002 residual reversal, so ML cannot silently relabel an old mechanism as new alpha.
+The initial daily experiment is preserved rather than rewritten. It was a legitimate medium-horizon prediction question, but continuing to optimize it would have created scope drift. The pivot to intraday was an objective-alignment decision, not a reaction to an unfavorable result.
+
+The revised program uses the existing 5-minute equity data, predicts the next 5-minute cross-sectional excess return, and begins with liquidity/activity, volatility/state, bar-shape/intraday-state and market-context features. Its longer rolling feature window is 60 bars, because an Indian cash-equity session contains about 75 five-minute bars; a 78-bar within-session window would never warm up. It explicitly excludes signed-return mechanisms already owned by Strategy 001 continuation and Strategy 002 residual reversal, so ML cannot silently relabel an old mechanism as new alpha.
 
 The model ladder remains zero baseline → OLS → fixed Ridge. Chronological development is purged by one decision timestamp because the target is the next 5-minute bar. Protected validation and final holdout remain untouched.
 
