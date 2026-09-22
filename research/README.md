@@ -230,3 +230,12 @@ Strategy 001 closure                                🔵 no promoted implementat
 A failure at any gate is recorded rather than repaired by post-hoc parameter tuning.
 
 **No Strategy 001 implementation was approved for deployment.**
+
+
+### Strategy 003 characterization
+
+The first intraday discovery run is complete. The frozen model relationship is now being characterized before any economic hypothesis, strategy construction, nonlinear model escalation, or protected validation.
+
+Runner: `../scripts/run_strategy_003_prediction_characterization.py`.
+
+Protocol: `journal/003_prediction_discovery_characterization_protocol.md`.
