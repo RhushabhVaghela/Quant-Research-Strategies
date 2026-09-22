@@ -321,12 +321,19 @@ def main() -> None:
     train = base[
         (base["timestamp"] >= splits["train_start"])
         & (base["timestamp"] <= splits["train_end"])
-    ].dropna(subset=all_features)
+    ].copy()
     test = base[
         (base["timestamp"] >= splits["test_start"])
         & (base["timestamp"] <= splits["test_end"])
-    ].dropna(subset=all_features)
-    train_x, test_x, kept = fit_transform(train, test, all_features)
+    ].copy()
+
+    usable_features = [feature for feature in all_features if train[feature].notna().any()]
+    if len(usable_features) < 3:
+        raise ValueError("Too few features with usable training observations for coefficient decomposition")
+
+    train = train.dropna(subset=usable_features)
+    test = test.dropna(subset=usable_features)
+    train_x, test_x, kept = fit_transform(train, test, usable_features)
     for model, alpha in (("ols", None), ("ridge_fixed_alpha", RIDGE_ALPHA)):
         beta = fit_linear(train_x, train[target].to_numpy(), ridge_alpha=alpha)
         for feature, coefficient in zip(kept, beta[1:]):
