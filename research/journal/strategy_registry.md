@@ -24,14 +24,14 @@ No two promoted strategies should be materially the same economic mechanism appl
 |---|---|---|---|---|
 | 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
 | 002 | Indian equities | Short-horizon cross-sectional residual reversal: unusually negative peer-relative returns are followed by positive relative returns, and vice versa | Initial audit → locked split → pattern discovery → pattern characterization → reversal mechanism decomposition → cross-sectional residual investigation → leave-one-out residual mechanism decomposition → temporal stability characterization → fixed-baseline validation → cost-resilience gate failed → turnover/execution decomposition → H2/H3/H6 turnover-reduction development | **Closed; no candidate frozen** |
-| 003 | — | Reserved for a genuinely different strategy/asset-class combination | — | Planned |
-## Strategy 003 — prediction-driven alpha discovery
+| 003 | Indian equities | Intraday prediction-driven discovery using liquidity/activity, volatility/state, bar-shape/intraday-state and market context; first pass excludes 001/002 signed-return mechanisms | Revised next-5-minute prediction discovery | **Active discovery; no candidate frozen** |
+## Strategy 003 — intraday prediction-driven alpha discovery
 
-Strategy 003 is a **research program**, not yet a frozen trading strategy. It changes the discovery layer from directly searching for executable short-horizon rules to searching for stable, point-in-time predictive information.
+Strategy 003 is a **research program**, not a frozen trading strategy. The original draft used 1-day and 5-day daily targets and is now superseded because the project objective is intraday strategy research. A 5-trading-day target is a multi-day close-to-close prediction, not an intraday prediction target.
 
-The first experiment asks whether observable market information can predict cross-sectional differences in 1-day and 5-day future returns across the existing Indian-equity research universe. It uses a fixed, finite feature taxonomy and a controlled model ladder (zero baseline → OLS → fixed Ridge), with a chronological internal development split. The final validation and holdout periods remain protected.
+The revised program uses the existing 5-minute equity data, predicts the next 5-minute cross-sectional excess return, and begins with liquidity/activity, volatility/state, bar-shape/intraday-state and market-context features. It explicitly excludes signed-return mechanisms already owned by Strategy 001 continuation and Strategy 002 residual reversal, so ML cannot silently relabel an old mechanism as new alpha.
 
-This program is intentionally broader than a single momentum or reversal hypothesis. If the evidence merely reproduces the already-closed Strategy 002 residual-reversal mechanism, it must not be disguised as a new Strategy 003 alpha. The eventual strategy ID requires a materially different economic interpretation and a precise executable hypothesis.
+The model ladder remains zero baseline → OLS → fixed Ridge. Chronological development is purged by one decision timestamp because the target is the next 5-minute bar. Protected validation and final holdout remain untouched.
 
 Protocol: `research/journal/003_prediction_discovery_protocol.md`.
 
@@ -85,6 +85,10 @@ These categories are research directions, not claims that any particular strateg
 ## Derivatives deployment policy
 
 A derivatives strategy may remain paper-only when reliable real-time data, contract economics, lot size, liquidity, margin requirements, transaction costs, or available capital make live deployment inappropriate. Paper-only status still requires the same sequence: hypothesis → data audit → backtest → robustness → chronological validation → paper/shadow validation.
+
+## Strategy-lineage guardrail
+
+Strategy 003 may use Strategies 001 and 002 only as historical evidence and exclusion references. Continuation-like signed-return prediction remains 001 lineage; cross-sectional residual reversal remains 002 lineage. A 003 model must demonstrate a distinct information source and economic interpretation before candidate promotion.
 
 ## Promotion discipline
 
