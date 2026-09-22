@@ -398,12 +398,24 @@ def score_predictions(
         if len(group) < 10:
             continue
 
-        daily_ic.append(group["prediction"].corr(group[target_col]))
-        daily_rank_ic.append(
-            group["prediction"].corr(group[target_col], method="spearman")
-        )
+        prediction = group["prediction"]
+        target = group[target_col]
 
-        rank = group["prediction"].rank(method="first", pct=True)
+        # Pearson correlation is undefined for a constant prediction (as in
+        # the zero baseline). Check variance explicitly so the baseline does
+        # not emit NumPy warnings or depend on scipy through pandas.corr().
+        if prediction.nunique(dropna=True) > 1 and target.nunique(dropna=True) > 1:
+            ic_value = prediction.corr(target)
+            prediction_rank = prediction.rank(method="average")
+            target_rank = target.rank(method="average")
+            rank_ic_value = prediction_rank.corr(target_rank)
+
+            if np.isfinite(ic_value):
+                daily_ic.append(ic_value)
+            if np.isfinite(rank_ic_value):
+                daily_rank_ic.append(rank_ic_value)
+
+        rank = prediction.rank(method="first", pct=True)
         high = group.loc[rank > 0.8, target_col].mean()
         low = group.loc[rank <= 0.2, target_col].mean()
         spreads.append(high - low)
