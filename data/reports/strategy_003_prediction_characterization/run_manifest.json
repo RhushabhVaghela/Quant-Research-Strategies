@@ -1,0 +1,37 @@
+{
+  "strategy_id": "003",
+  "analysis": "intraday_prediction_characterization",
+  "status": "characterization_only",
+  "frozen_discovery_horizon_bars": 1,
+  "frozen_ridge_alpha": 1.0,
+  "exploratory_window": {
+    "start": "2025-09-18",
+    "end": "2026-06-09"
+  },
+  "project_validation_start": "2026-06-10",
+  "final_holdout_start": "2026-08-20",
+  "holdout_used": false,
+  "strategy_pnl_calculated": false,
+  "parameter_search": false,
+  "model_escalation": false,
+  "frozen_discovery_models": [
+    "ols",
+    "ridge_fixed_alpha"
+  ],
+  "characterizations": [
+    "spread distribution and winsor sensitivity",
+    "time-of-day stability",
+    "stock stability",
+    "base feature-family ablations",
+    "standardized model coefficient decomposition",
+    "OLS-vs-Ridge score correlation"
+  ],
+  "repository_resources_consulted": [
+    "research/journal/repository_resource_policy.md",
+    "trading_resources/Concepts/Data-and-Feature-Engineering-for-Trading.md",
+    "trading_resources/Concepts/Trading-with-Machine-Learning-Regression.md",
+    "trading_resources/WQU_resources/Financial Economics/Module 2/Lesson 3 - Penalized Regression.ipynb"
+  ],
+  "note": "Descriptive characterization only; no parameter or feature search.",
+  "ols_ridge_prediction_correlation": 0.9999998953204436
+}
