@@ -153,8 +153,13 @@ def trailing_features(daily: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame
     out["market_rel_5d"] = ret5.to_numpy() - market_ret5.to_numpy()
     out["market_rel_20d"] = ret20.to_numpy() - market_ret20.to_numpy()
 
-    cov20 = ret1.rolling(20).cov(market_ret1)
-    var20 = market_ret1.rolling(20).var()
+    # Align the market-return series explicitly to the stock's daily index.
+    # Mixing a Series indexed by stock dates with a market Series carrying its
+    # own index can make pandas align by label and produce a longer result than
+    # the stock frame. The beta feature must have exactly one value per stock date.
+    market_ret1_aligned = market_ret1.reindex(out["date"]).set_axis(out.index)
+    cov20 = ret1.rolling(20).cov(market_ret1_aligned)
+    var20 = market_ret1_aligned.rolling(20).var()
     out["market_beta_20d"] = (
         cov20 / var20.replace(0, np.nan)
     ).to_numpy()
