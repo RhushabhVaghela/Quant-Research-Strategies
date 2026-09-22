@@ -108,25 +108,30 @@ The final holdout (**2026-08-20 through 2026-09-17**) remained untouched. The tu
 
 Detailed findings: research/journal/002_turnover_reduction_development_findings.md.
 
-## Strategy 003 — Prediction-driven alpha discovery — ACTIVE DISCOVERY
+## Strategy 003 — Intraday prediction-driven alpha discovery — ACTIVE DISCOVERY
 
-After two short-horizon pattern-led research lines failed to establish cost-resilient executable economics, Strategy 003 changes the discovery layer rather than simply trying another narrow trading rule.
+After Strategies 001 and 002, Strategy 003 changes the discovery layer rather than simply trying another narrow trading rule.
 
-The research question is:
+The original 003 draft used daily 1-day and 5-day targets. That draft is superseded because a 5-day close-to-close target is a multi-day prediction, not the project's intraday research objective.
 
-> Can observable, point-in-time market information predict cross-sectional differences in future returns strongly and consistently enough to form a cost-resilient portfolio?
+The revised 003 experiment stays on the existing 5-minute OHLCV data and predicts the next 5-minute cross-sectional excess return.
 
-The first experiment uses the existing Strategy 002 Indian-equity data acquisition but aggregates it to daily observations. It evaluates fixed 1-day and 5-day cross-sectional excess-return targets and a finite feature taxonomy covering momentum/price state, short-term state, volatility, volume/activity, market-relative state, and cross-sectional transforms.
+The first feature families are:
 
-The first model ladder is:
+- liquidity/activity;
+- volatility/state;
+- bar shape/intraday state;
+- market context.
+
+The first pass explicitly excludes signed-return direction and continuation/reversal event rules so Strategy 003 cannot silently reproduce Strategy 001 continuation or Strategy 002 residual reversal.
+
+The model ladder remains:
 
 ```
 zero baseline → OLS → fixed Ridge
 ```
 
-This is deliberately not an ML fishing exercise. More complex nonlinear models are permitted only after the simpler models establish stable predictive information and only inside a registered development experiment.
-
-If the resulting information is simply the already-closed Strategy 002 residual-reversal mechanism, it is not promoted as a new Strategy 003 mechanism.
+Chronological development boundaries are purged by one decision timestamp. No large hyperparameter search, strategy PnL, or protected-period evaluation is allowed in discovery.
 
 See `research/journal/003_prediction_discovery_protocol.md` and `scripts/run_strategy_003_prediction_discovery.py`.
 
