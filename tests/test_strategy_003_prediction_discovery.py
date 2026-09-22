@@ -139,6 +139,33 @@ def test_feature_set_excludes_signed_return_direction_features() -> None:
     assert forbidden.isdisjoint(features)
 
 
+def test_feature_ic_skips_zero_cross_sectional_variance_without_warnings() -> None:
+    from scripts.run_strategy_003_prediction_discovery import univariate_ic
+
+    timestamps = pd.date_range(
+        "2026-01-01 09:15",
+        periods=10,
+        freq="5min",
+        tz="Asia/Kolkata",
+    )
+    rows = []
+    for i, ts in enumerate(timestamps):
+        for j in range(5):
+            rows.append(
+                {
+                    "timestamp": ts,
+                    "date": ts.tz_convert("Asia/Kolkata").normalize().tz_localize(None),
+                    "target_excess_1bar": float(j - 2),
+                    "constant_feature": 0.001 * i,
+                    "varying_feature": float(j) + i / 10,
+                }
+            )
+    panel = pd.DataFrame(rows)
+
+    result = univariate_ic(panel, ["constant_feature", "varying_feature"])
+
+    assert set(result["feature"]) == {"varying_feature"}
+
 def test_feature_ic_handles_structurally_undefined_feature_transforms() -> None:
     from scripts.run_strategy_003_prediction_discovery import univariate_ic
 
