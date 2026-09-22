@@ -423,7 +423,8 @@ def model_diagnostics(
     quintile_rows = []
     target = "target_excess_1bar"
 
-    base = panel[["timestamp", "symbol", target] + features].dropna().copy()
+    base = panel[["timestamp", "symbol", target] + features].copy()
+    base = base.dropna(subset=[target])
     splits = purged_chronological_splits(base["timestamp"])
 
     train = base[
@@ -439,9 +440,17 @@ def model_diagnostics(
         & (base["timestamp"] <= splits["test_end"])
     ].copy()
 
-    train_x, valid_x, kept = fit_transform(train, validation, features)
-    _, test_x, _ = fit_transform(train, test, kept)
-    y_train = train[target].to_numpy()
+    train_model = train.dropna(subset=features).copy()
+    validation_model = validation.dropna(subset=features).copy()
+    test_model = test.dropna(subset=features).copy()
+
+    train_x, valid_x, kept = fit_transform(train_model, validation_model, features)
+    _, test_x, _ = fit_transform(train_model, test_model, kept)
+    y_train = train_model[target].to_numpy()
+
+    train = train_model
+    validation = validation_model
+    test = test_model
 
     model_specs = [("ols", None), ("ridge_fixed_alpha", RIDGE_ALPHA)]
 
