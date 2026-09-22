@@ -16,6 +16,10 @@ For intraday experiments, horizon definitions must be expressed in decision bars
 
 The project's current 003 starting resolution is one 5-minute bar because the source data and existing intraday research are 5-minute. This is a discovery resolution, not a permanent five-minute holding-period assumption. If the signal survives, a pre-registered small set of adjacent horizons can be characterized later.
 
+Strategy 003 initially explored 1-day and 5-day targets as a broader prediction-discovery experiment. That work is retained as historical research. It was superseded when the project explicitly aligned the active research question with its intraday objective; this was not a performance-driven abandonment of the five-day result. A medium-horizon research question should receive a separate registered research line rather than silently changing the objective of an intraday program.
+
+For within-session rolling features, the lookback must fit the actual session length. The current 5-minute Indian-equity experiment uses a 60-bar long window rather than a 78-bar window because a regular NSE cash-equity session contains approximately 75 five-minute bars. A 78-bar within-session feature would remain unavailable for the entire session and can silently collapse the usable sample.
+
 
 ## Lifecycle
 
