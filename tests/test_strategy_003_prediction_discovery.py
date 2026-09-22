@@ -16,6 +16,7 @@ from scripts.run_strategy_003_prediction_discovery import (
     build_symbol_panel,
     feature_columns,
     load_intraday,
+    session_bar_features,
     locked_exploratory_slice,
     purged_chronological_splits,
 )
@@ -85,6 +86,32 @@ def test_last_bar_of_each_session_has_no_overnight_target() -> None:
     last_bars = panel.groupby("date").tail(1)
 
     assert last_bars["future_return_1bar"].isna().all()
+
+
+def test_long_feature_window_fits_within_indian_equity_session() -> None:
+    timestamps = pd.date_range(
+        "2026-01-01 09:15",
+        periods=75,
+        freq="5min",
+        tz="Asia/Kolkata",
+    )
+    frame = pd.DataFrame(
+        {
+            "timestamp": timestamps,
+            "open": 100.0,
+            "high": 101.0,
+            "low": 99.0,
+            "close": 100.0,
+            "volume": 1000.0,
+        }
+    )
+
+    enriched = session_bar_features(frame)
+
+    assert enriched["volume_z_60bar"].notna().sum() > 0
+    assert enriched["realized_vol_60bar"].notna().sum() > 0
+    assert enriched["range_z_60bar"].notna().sum() > 0
+    assert enriched["intraday_position_60bar"].notna().sum() > 0
 
 
 def test_feature_set_excludes_signed_return_direction_features() -> None:
