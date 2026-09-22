@@ -37,7 +37,7 @@ The model ladder remains zero baseline → OLS → fixed Ridge. Chronological de
 
 The first discovery run established a stable-looking development-test predictive relationship: OLS mean IC was +0.0696 with mean rank IC +0.0826 and mean top-bottom quintile spread +2.22 bps; fixed Ridge was essentially identical. This is discovery evidence, not validated alpha or strategy P&L.
 
-The active next stage is characterization of the frozen model only: spread distribution/tail sensitivity, quintile monotonicity, time-of-day stability, stock-level stability, feature-family ablations, coefficient decomposition, and OLS-vs-Ridge score agreement. No protected validation or final holdout data are used.
+The active stage remains characterization of the frozen model only. A controlled second pass has been registered to expose the full Q1–Q5 realized-return ordering and full four-bucket time-of-day coverage, including raw target rows versus rows lost to the frozen 60-bar feature warm-up. No protected validation or final holdout data are used, and no feature set is changed to improve coverage.
 
 Protocol: `research/journal/003_prediction_discovery_protocol.md`.
 
