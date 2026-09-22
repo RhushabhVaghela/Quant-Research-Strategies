@@ -523,16 +523,16 @@ def feature_metadata(features: list[str]) -> pd.DataFrame:
         "log_volume": "Log(1 + current 5-minute volume)",
         "volume_change_1bar": "Current 5-minute volume change versus previous bar",
         "volume_z_12bar": "Trailing 12-bar z-score of log volume within session",
-        "volume_z_60bar": "Trailing 78-bar z-score of log volume within session",
+        "volume_z_60bar": "Trailing 60-bar z-score of log volume within session",
         "realized_vol_12bar": "Trailing 12-bar realized volatility within session",
-        "realized_vol_60bar": "Trailing 78-bar realized volatility within session",
+        "realized_vol_60bar": "Trailing 60-bar realized volatility within session",
         "range_1bar": "Current 5-minute high-low range divided by close",
-        "range_z_60bar": "Current range relative to trailing 78-bar range distribution",
+        "range_z_60bar": "Current range relative to trailing 60-bar range distribution",
         "close_location_1bar": "Current close location inside the current 5-minute bar",
-        "intraday_position_60bar": "Current close relative to trailing 78-bar mean close",
+        "intraday_position_60bar": "Current close relative to trailing 60-bar mean close",
         "bars_since_session_open": "Bars elapsed since session open",
         "market_return_1bar": "NIFTYBEES return over the current 5-minute interval",
-        "market_vol_60bar": "Trailing 78-bar realized volatility of NIFTYBEES",
+        "market_vol_60bar": "Trailing 60-bar realized volatility of NIFTYBEES",
     }
     rows = []
     for feature in features:
