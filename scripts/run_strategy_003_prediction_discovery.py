@@ -294,7 +294,11 @@ def univariate_ic(panel: pd.DataFrame, features: list[str]) -> pd.DataFrame:
                 if len(group) < 5:
                     continue
                 daily_pearson.append(group[feature].corr(group[target]))
-                daily_rank.append(group[feature].corr(group[target], method="spearman"))
+                # Compute Spearman IC from within-day ranks so this discovery
+                # script does not require SciPy just to evaluate rank correlation.
+                feature_rank = group[feature].rank(method="average")
+                target_rank = group[target].rank(method="average")
+                daily_rank.append(feature_rank.corr(target_rank))
 
             if not daily_pearson:
                 continue
