@@ -4,6 +4,16 @@
 
 The project follows a pattern-first research process. We do not begin by inventing a strategy and then searching historical data until it appears profitable. We first acquire relevant data, discover and characterize statistical patterns, interpret them economically, formulate a falsifiable hypothesis, and only then define a tradable strategy. For prediction-driven research, the same discipline applies one layer earlier: first establish stable predictive information, then interpret it economically and only then convert it into a portfolio/strategy.
 
+## Intraday target alignment
+
+When the project's stated objective is intraday strategy research, discovery targets must live on an intraday decision horizon unless a separate multi-horizon research question has been explicitly registered.
+
+A daily or multi-day forward-return target is not an intraday prediction target merely because it may later inform an intraday trade. A 5-trading-day target is a multi-day close-to-close outcome.
+
+Prediction horizon and trading holding period are related but not identical. A next-bar predictive target can be evaluated first without assuming the eventual strategy must hold for exactly one bar. The eventual executable holding period is chosen after the predictive information is understood and a distinct economic mechanism is formulated.
+
+For intraday experiments, horizon definitions must be expressed in decision bars/minutes, and chronological train/validation boundaries must be purged by the number of future decision observations used by the target.
+
 ## Lifecycle
 
 Data → data audit → pattern discovery → pattern characterization → economic interpretation → hypothesis → strategy definition → development → candidate freeze → untouched chronological holdout → prospective paper/shadow → controlled live validation.
