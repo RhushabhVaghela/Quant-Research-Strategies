@@ -54,7 +54,9 @@ Strategy 003 is the active discovery program and is explicitly intraday.
 
 The original draft used daily 1-day and 5-day targets. That draft is superseded because a 5-day close-to-close target is a multi-day prediction, not the project's intraday research objective.
 
-The revised experiment stays on the existing 5-minute OHLCV data and predicts the next 5-minute cross-sectional excess return. The first feature families are liquidity/activity, volatility/state, bar shape/intraday state, and market context.
+The revised experiment stays on the existing 5-minute OHLCV data and predicts the next 5-minute cross-sectional excess return. The first feature families are liquidity/activity, volatility/state, bar shape/intraday state, and market context. The long within-session feature window is 60 bars because an Indian cash-equity session has about 75 five-minute bars; a 78-bar within-session window would never warm up.
+
+The horizon decision is documented in `journal/003_horizon_decision_record.md`.
 
 The first pass excludes signed-return direction and explicit continuation/reversal rules so Strategy 003 does not silently reproduce Strategy 001 or Strategy 002.
 
