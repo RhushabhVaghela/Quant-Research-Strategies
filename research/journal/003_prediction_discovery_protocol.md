@@ -121,6 +121,8 @@ For multivariate models, the model-fitting sample is formed after selecting the 
 
 This handling is an implementation control only. It does **not** change the registered feature families, target, horizon, model ladder, protected validation boundary, or holdout protection.
 
+At the timestamp level, Pearson and rank IC are calculated only when both the feature and target have non-zero cross-sectional variation. A market-wide or otherwise cross-sectionally invariant feature therefore contributes no IC observation at that timestamp rather than producing an undefined correlation or a runtime warning.
+
 ## 8. Chronological development split
 
 Inside the locked exploratory period:
