@@ -77,3 +77,28 @@ The next registered characterization investigates:
 The final project validation and final holdout remain protected.
 
 See `research/journal/003_prediction_discovery_characterization_protocol.md`.
+
+
+## Controlled second characterization pass — implementation update
+
+The first characterization production run showed that two requested diagnostics were not yet sufficiently observable:
+
+1. the output contained only Q5-minus-Q1 spreads, so intermediate Q2–Q4 monotonicity could not be evaluated directly;
+2. only the late-session time bucket appeared in the scored output, but the frozen 60-bar feature windows can remove early-session observations through complete-case requirements.
+
+The characterization runner has therefore been extended without changing the frozen discovery model or protected data boundaries.
+
+New outputs:
+
+- `data/reports/strategy_003_prediction_characterization/quintile_returns.csv` — timestamp/model/Q1–Q5 realized next-bar excess returns;
+- `data/reports/strategy_003_prediction_characterization/quintile_summary.csv` — aggregate return distribution by quintile;
+- `data/reports/strategy_003_prediction_characterization/time_of_day_coverage.csv` — raw target rows versus frozen-model scored rows for all four registered time buckets;
+- `time_of_day_stability.csv` now emits all four buckets, including explicit zero-observation/status rows.
+
+The time-of-day coverage diagnostic is intentionally based on the full development-test target sample. It does not change the frozen 60-bar feature set or impute missing early-session features. Therefore any early-session scoring gap will be recorded as a feature-availability limitation rather than silently interpreted as absence of the predictive relationship.
+
+### Evidence status
+
+This implementation change does **not** establish quintile monotonicity or time-of-day stability by itself. Those conclusions require the regenerated outputs from the controlled characterization run.
+
+No economic hypothesis, nonlinear model escalation, strategy construction, protected validation, or final holdout evaluation is authorized from this pass until the new outputs have been reviewed.
