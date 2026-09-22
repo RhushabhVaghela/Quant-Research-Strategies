@@ -59,7 +59,7 @@ def test_intraday_horizon_is_one_five_minute_bar() -> None:
 def test_purged_split_removes_one_decision_timestamp_from_each_prior_split() -> None:
     timestamps = pd.date_range(
         "2026-01-01 09:15",
-        periods=100,
+        periods=300,
         freq="5min",
     )
     splits = purged_chronological_splits(timestamps)
