@@ -135,6 +135,15 @@ Chronological development boundaries are purged by one decision timestamp. No la
 
 See `research/journal/003_prediction_discovery_protocol.md` and `scripts/run_strategy_003_prediction_discovery.py`.
 
+The first Strategy 003 intraday discovery run is now complete. OLS and fixed Ridge showed similar predictive separation across the internal validation and development-test periods, so the research has advanced only to frozen-model characterization. No protected validation or final holdout data have been used.
+
+Current characterization runner: `scripts/run_strategy_003_prediction_characterization.py`.
+
+Characterization protocol: `research/journal/003_prediction_discovery_characterization_protocol.md`.
+
+Discovery results record: `research/journal/003_prediction_discovery_results.md`.
+
+
 ## Strategy portfolio architecture
 
 The project will eventually test genuinely different strategies across multiple asset classes, including equities, derivatives, commodities, currencies, and crypto. No two promoted strategies should be materially the same economic hypothesis applied to the same asset class.
