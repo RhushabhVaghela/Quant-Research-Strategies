@@ -42,20 +42,22 @@ The objective is to distinguish a broad effect from a small number of extreme ob
 
 ### 2. Monotonicity
 
-The diagnostic output must preserve the original quintile information so a later review can check whether predicted-score ordering maps monotonically into realized next-bar excess returns.
+The diagnostic output preserves the full Q1–Q5 realized next-bar excess-return table for every usable timestamp/model pair. A summary table aggregates each quintile across timestamps.
 
-A positive top-minus-bottom spread alone is insufficient if intermediate quintiles are non-monotonic.
+Review must check the direction and ordering of the intermediate quintiles. A positive top-minus-bottom spread alone is insufficient if Q2–Q4 do not move coherently with the prediction score.
+
+No quintile result may be used to choose a new threshold, holding period, feature subset or model.
 
 ### 3. Time-of-day stability
 
-Partition the development-test sample into fixed clock buckets:
+Partition the full development-test target sample into fixed clock buckets:
 
 - 09:15–09:59;
 - 10:00–11:59;
 - 12:00–13:59;
 - 14:00–15:30.
 
-These are descriptive buckets selected before reviewing the characterization results. The objective is to determine whether the signal is present broadly or concentrated in one session segment.
+These are descriptive buckets selected before reviewing the characterization results. The output reports both raw target-row coverage and frozen-model scored-row coverage. This distinction is required because the registered 60-bar rolling features impose an intraday warm-up and can remove early-session rows from complete-case model scoring. The objective is to determine whether the signal is present broadly or concentrated in one session segment, without changing the frozen feature set to manufacture coverage.
 
 ### 4. Cross-sectional stability
 
@@ -111,6 +113,17 @@ Potential interpretation to test:
 > Current within-bar price location and recent intraday state may contain short-horizon information about subsequent cross-sectional returns.
 
 This statement remains provisional until the characterization and later protected validation support it.
+
+## Controlled second characterization pass
+
+The implementation adds:
+
+- `quintile_returns.csv`: timestamp-level Q1–Q5 realized excess returns;
+- `quintile_summary.csv`: aggregate realized return by model/quintile;
+- `time_of_day_coverage.csv`: raw target rows versus frozen-model scored rows for every registered bucket;
+- explicit zero-observation/status rows in `time_of_day_stability.csv` rather than silently omitting buckets.
+
+This pass remains descriptive and uses no protected validation or final holdout data.
 
 ## Explicit non-goals
 
