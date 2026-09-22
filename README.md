@@ -112,9 +112,9 @@ Detailed findings: research/journal/002_turnover_reduction_development_findings.
 
 After Strategies 001 and 002, Strategy 003 changes the discovery layer rather than simply trying another narrow trading rule.
 
-The original 003 draft used daily 1-day and 5-day targets. That draft is superseded because a 5-day close-to-close target is a multi-day prediction, not the project's intraday research objective.
+The original 003 draft used daily 1-day and 5-day targets as a broad prediction-discovery experiment. That draft is superseded because a 5-day close-to-close target is a multi-day prediction, not the project's intraday research objective. The pivot was an objective-alignment decision, not a reaction to the five-day result.
 
-The revised 003 experiment stays on the existing 5-minute OHLCV data and predicts the next 5-minute cross-sectional excess return.
+The revised 003 experiment stays on the existing 5-minute OHLCV data and predicts the next 5-minute cross-sectional excess return. The first long rolling feature window is 60 bars because a regular Indian cash-equity session has about 75 five-minute bars; a 78-bar within-session window would never become fully populated.
 
 The first feature families are:
 
@@ -221,4 +221,4 @@ Run the complete test suite:
 pytest -q
 ```
 
-Strategy 002 is now closed for the current capital-pursuit/candidate-selection program: the fixed one-bar baseline failed cost resilience, and the pre-registered H2/H3/H6 turnover-reduction development variants did not produce a cost-resilient candidate. The final holdout remained protected. The next active research line should be a new Strategy 003 with a genuinely different economic mechanism/asset-class combination, after reviewing the repository's existing research resources and registering a fresh data-first investigation.
+Strategy 002 is now closed for the current capital-pursuit/candidate-selection program: the fixed one-bar baseline failed cost resilience, and the pre-registered H2/H3/H6 turnover-reduction development variants did not produce a cost-resilient candidate. The final holdout remained protected. Strategy 003 is the current active discovery program and is deliberately prediction-driven rather than another narrow hand-written rule.
