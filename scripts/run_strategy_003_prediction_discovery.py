@@ -20,9 +20,29 @@ EXPLORATORY_END = pd.Timestamp("2026-06-09 23:59:59")
 VALIDATION_START = pd.Timestamp("2026-06-10")
 HOLDOUT_START = pd.Timestamp("2026-08-20")
 
-HORIZONS = (1, 5)
+HORIZON_BARS = 1
+BAR_MINUTES = 5
 RIDGE_ALPHA = 1.0
 QUINTILES = 5
+
+BASE_FEATURES = [
+    "log_volume",
+    "volume_change_1bar",
+    "volume_z_12bar",
+    "volume_z_78bar",
+    "realized_vol_12bar",
+    "realized_vol_78bar",
+    "range_1bar",
+    "range_z_78bar",
+    "close_location_1bar",
+    "intraday_position_78bar",
+    "bars_since_session_open",
+]
+
+CONTEXT_FEATURES = [
+    "market_return_1bar",
+    "market_vol_78bar",
+]
 
 
 def parse_args() -> argparse.Namespace:
@@ -100,143 +120,88 @@ def load_intraday(path: Path) -> pd.DataFrame:
     return df
 
 
-def daily_ohlcv(df: pd.DataFrame) -> pd.DataFrame:
-    work = df.copy()
-    # `date` is the local trading calendar date, not an instant in time.
-    # Keep it timezone-naive so it can be compared safely with the locked
-    # research-window boundaries and used consistently as a join/group key.
+def session_bar_features(intraday: pd.DataFrame) -> pd.DataFrame:
+    work = intraday.copy()
     work["date"] = (
-        work["timestamp"]
-        .dt.tz_convert("Asia/Kolkata")
-        .dt.normalize()
-        .dt.tz_localize(None)
+        work["timestamp"].dt.tz_convert("Asia/Kolkata").dt.normalize().dt.tz_localize(None)
     )
-    return (
-        work.groupby("date", sort=True)
-        .agg(
-            open=("open", "first"),
-            high=("high", "max"),
-            low=("low", "min"),
-            close=("close", "last"),
-            volume=("volume", "sum"),
-            bars=("close", "count"),
-        )
-        .reset_index()
+    work["bar_in_session"] = work.groupby("date").cumcount()
+    work["bars_since_session_open"] = work["bar_in_session"].astype(float)
+
+    close = work["close"]
+    volume = work["volume"].astype(float)
+    log_volume = np.log1p(volume)
+    ret1 = work.groupby("date")["close"].pct_change()
+
+    work["log_volume"] = log_volume
+    work["volume_change_1bar"] = work.groupby("date")["volume"].pct_change()
+    work["volume_z_12bar"] = work.groupby("date")["log_volume"].transform(
+        lambda s: (s - s.rolling(12).mean()) / s.rolling(12).std(ddof=1).replace(0, np.nan)
     )
-
-
-def trailing_features(daily: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame:
-    out = daily.copy()
-    close = out["close"]
-    ret1 = close.pct_change()
-    ret5 = close.pct_change(5)
-    ret20 = close.pct_change(20)
-
-    out["ret_1d"] = ret1
-    out["ret_5d"] = ret5
-    out["ret_20d"] = ret20
-    out["ma_gap_5d"] = close / close.rolling(5).mean() - 1.0
-    out["ma_gap_20d"] = close / close.rolling(20).mean() - 1.0
-    out["vol_5d"] = ret1.rolling(5).std(ddof=1) * np.sqrt(252.0)
-    out["vol_20d"] = ret1.rolling(20).std(ddof=1) * np.sqrt(252.0)
-    out["range_1d"] = (out["high"] - out["low"]) / close
-
-    log_volume = np.log1p(out["volume"])
-    out["log_volume"] = log_volume
-    out["volume_mean_5d"] = log_volume.rolling(5).mean()
-    volume_mean_20 = log_volume.rolling(20).mean()
-    volume_std_20 = log_volume.rolling(20).std(ddof=1)
-    out["volume_z_20d"] = (
-        (log_volume - volume_mean_20) / volume_std_20.replace(0, np.nan)
+    work["volume_z_78bar"] = work.groupby("date")["log_volume"].transform(
+        lambda s: (s - s.rolling(78).mean()) / s.rolling(78).std(ddof=1).replace(0, np.nan)
     )
+    work["realized_vol_12bar"] = ret1.groupby(work["date"]).transform(
+        lambda s: s.rolling(12).std(ddof=1)
+    )
+    work["realized_vol_78bar"] = ret1.groupby(work["date"]).transform(
+        lambda s: s.rolling(78).std(ddof=1)
+    )
+    work["range_1bar"] = (work["high"] - work["low"]) / close
+    range_mean = work.groupby("date")["range_1bar"].transform(
+        lambda s: s.rolling(78).mean()
+    )
+    range_std = work.groupby("date")["range_1bar"].transform(
+        lambda s: s.rolling(78).std(ddof=1)
+    )
+    work["range_z_78bar"] = (
+        (work["range_1bar"] - range_mean) / range_std.replace(0, np.nan)
+    )
+    work["close_location_1bar"] = (
+        (close - work["low"]) / (work["high"] - work["low"]).replace(0, np.nan)
+    )
+    work["intraday_position_78bar"] = (
+        close / work.groupby("date")["close"].transform(lambda s: s.rolling(78).mean()) - 1.0
+    )
+    return work
 
-    market_close = market.set_index("date")["close"].reindex(out["date"]).ffill()
-    market_ret1 = market_close.pct_change()
-    market_ret5 = market_close.pct_change(5)
-    market_ret20 = market_close.pct_change(20)
 
-    out["market_rel_1d"] = ret1.to_numpy() - market_ret1.to_numpy()
-    out["market_rel_5d"] = ret5.to_numpy() - market_ret5.to_numpy()
-    out["market_rel_20d"] = ret20.to_numpy() - market_ret20.to_numpy()
+def add_market_context(stock: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame:
+    market_work = session_bar_features(market)
+    market_work["market_return_1bar"] = market_work.groupby("date")["close"].pct_change()
+    market_work["market_vol_78bar"] = market_work.groupby("date")["market_return_1bar"].transform(
+        lambda s: s.rolling(78).std(ddof=1)
+    )
+    context = market_work[["timestamp", "market_return_1bar", "market_vol_78bar"]].drop_duplicates("timestamp")
+    return stock.merge(context, on="timestamp", how="left", validate="one_to_one")
 
-    # Align the market-return series explicitly to the stock's daily index.
-    # Mixing a Series indexed by stock dates with a market Series carrying its
-    # own index can make pandas align by label and produce a longer result than
-    # the stock frame. The beta feature must have exactly one value per stock date.
-    market_ret1_aligned = market_ret1.reindex(out["date"]).set_axis(out.index)
-    cov20 = ret1.rolling(20).cov(market_ret1_aligned)
-    var20 = market_ret1_aligned.rolling(20).var()
-    out["market_beta_20d"] = (
-        cov20 / var20.replace(0, np.nan)
-    ).to_numpy()
 
+def build_symbol_panel(frame: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame:
+    out = session_bar_features(frame)
+    out = add_market_context(out, market)
+    out["future_return_1bar"] = (
+        out.groupby("date")["close"].shift(-HORIZON_BARS) / out["close"] - 1.0
+    )
     return out
 
 
-def build_panel(
-    frames: dict[str, pd.DataFrame],
-    market: pd.DataFrame,
-) -> pd.DataFrame:
+def build_panel(frames: dict[str, pd.DataFrame], market: pd.DataFrame) -> pd.DataFrame:
     parts = []
     for symbol, frame in frames.items():
-        enriched = trailing_features(daily_ohlcv(frame), market)
+        enriched = build_symbol_panel(frame, market)
         enriched["symbol"] = symbol
         parts.append(enriched)
+    panel = pd.concat(parts, ignore_index=True).sort_values(["timestamp", "symbol"])
+    future_mean = panel.groupby("timestamp")["future_return_1bar"].transform("mean")
+    panel["target_excess_1bar"] = panel["future_return_1bar"] - future_mean
 
-    panel = pd.concat(parts, ignore_index=True).sort_values(["date", "symbol"])
-
-    base_features = [
-        "ret_1d",
-        "ret_5d",
-        "ret_20d",
-        "ma_gap_5d",
-        "ma_gap_20d",
-        "vol_5d",
-        "vol_20d",
-        "range_1d",
-        "log_volume",
-        "volume_mean_5d",
-        "volume_z_20d",
-        "market_rel_1d",
-        "market_rel_5d",
-        "market_rel_20d",
-        "market_beta_20d",
-    ]
-
-    for col in base_features:
-        grouped = panel.groupby("date")[col]
+    for col in BASE_FEATURES + CONTEXT_FEATURES:
+        grouped = panel.groupby("timestamp")[col]
         panel[f"{col}_rank"] = grouped.rank(pct=True, method="average")
         mean = grouped.transform("mean")
         std = grouped.transform("std")
         panel[f"{col}_cs_z"] = (panel[col] - mean) / std.replace(0, np.nan)
-
-    market_daily = market.set_index("date")
-    market_ret = market_daily["close"].pct_change()
-    market_vol = market_ret.rolling(20).std(ddof=1) * np.sqrt(252.0)
-    panel["market_return_1d"] = panel["date"].map(market_ret)
-    panel["market_vol_20d"] = panel["date"].map(market_vol)
-
-    return panel
-
-
-def add_targets(panel: pd.DataFrame) -> pd.DataFrame:
-    parts = []
-    for _, group in panel.groupby("symbol", sort=False):
-        g = group.sort_values("date").copy()
-        for horizon in HORIZONS:
-            g[f"future_return_{horizon}d"] = (
-                g["close"].shift(-horizon) / g["close"] - 1.0
-            )
-        parts.append(g)
-
-    out = pd.concat(parts, ignore_index=True)
-
-    for horizon in HORIZONS:
-        target = f"future_return_{horizon}d"
-        future_mean = out.groupby("date")[target].transform("mean")
-        out[f"target_excess_{horizon}d"] = out[target] - future_mean
-
-    return out.sort_values(["date", "symbol"]).reset_index(drop=True)
+    return panel.sort_values(["timestamp", "symbol"]).reset_index(drop=True)
 
 
 def locked_exploratory_slice(panel: pd.DataFrame) -> pd.DataFrame:
@@ -244,7 +209,6 @@ def locked_exploratory_slice(panel: pd.DataFrame) -> pd.DataFrame:
         (panel["date"] >= EXPLORATORY_START)
         & (panel["date"] <= EXPLORATORY_END)
     ].copy()
-
     if out.empty:
         raise ValueError("No observations remain in the locked exploratory window")
     if out["date"].max() >= VALIDATION_START:
@@ -255,87 +219,61 @@ def locked_exploratory_slice(panel: pd.DataFrame) -> pd.DataFrame:
 
 
 def feature_columns(panel: pd.DataFrame) -> list[str]:
-    base = [
-        "ret_1d",
-        "ret_5d",
-        "ret_20d",
-        "ma_gap_5d",
-        "ma_gap_20d",
-        "vol_5d",
-        "vol_20d",
-        "range_1d",
-        "log_volume",
-        "volume_mean_5d",
-        "volume_z_20d",
-        "market_rel_1d",
-        "market_rel_5d",
-        "market_rel_20d",
-        "market_beta_20d",
-    ]
     derived = [
         col for col in panel.columns
         if col.endswith("_rank") or col.endswith("_cs_z")
     ]
-    return list(dict.fromkeys(base + derived))
+    return list(dict.fromkeys(BASE_FEATURES + CONTEXT_FEATURES + derived))
 
 
 def univariate_ic(panel: pd.DataFrame, features: list[str]) -> pd.DataFrame:
     rows = []
-    for horizon in HORIZONS:
-        target = f"target_excess_{horizon}d"
-        for feature in features:
-            daily_pearson = []
-            daily_rank = []
+    target = "target_excess_1bar"
+    work_all = panel[["timestamp", "date", target] + features].dropna()
 
-            work = panel[["date", feature, target]].dropna()
-            for _, group in work.groupby("date"):
+    for feature in features:
+        daily_pearson = []
+        daily_rank = []
+        for _, day in work_all.groupby("date"):
+            timestamp_ics = []
+            timestamp_rank_ics = []
+            for _, group in day.groupby("timestamp"):
                 if len(group) < 5:
                     continue
-                daily_pearson.append(group[feature].corr(group[target]))
-                # Compute Spearman IC from within-day ranks so this discovery
-                # script does not require SciPy just to evaluate rank correlation.
-                feature_rank = group[feature].rank(method="average")
-                target_rank = group[target].rank(method="average")
-                daily_rank.append(feature_rank.corr(target_rank))
-
-            if not daily_pearson:
-                continue
-
-            pearson = np.asarray(daily_pearson, dtype=float)
-            rank = np.asarray(daily_rank, dtype=float)
-            std = np.nanstd(pearson, ddof=1) if len(pearson) > 1 else np.nan
-
-            rows.append(
-                {
-                    "horizon_days": horizon,
-                    "feature": feature,
-                    "usable_dates": int(len(pearson)),
-                    "mean_ic": float(np.nanmean(pearson)),
-                    "ic_std": float(std),
-                    "ic_ir": float(np.nanmean(pearson) / std * np.sqrt(len(pearson)))
-                    if np.isfinite(std) and std > 0
-                    else np.nan,
-                    "positive_ic_date_fraction": float(np.nanmean(pearson > 0)),
-                    "mean_rank_ic": float(np.nanmean(rank)),
-                    "rank_ic_std": float(np.nanstd(rank, ddof=1))
-                    if len(rank) > 1
-                    else np.nan,
-                }
-            )
-
-    return pd.DataFrame(rows).sort_values(
-        ["horizon_days", "mean_rank_ic"], ascending=[True, False]
-    )
+                timestamp_ics.append(group[feature].corr(group[target]))
+                timestamp_rank_ics.append(
+                    group[feature].rank(method="average").corr(
+                        group[target].rank(method="average")
+                    )
+                )
+            if timestamp_ics:
+                daily_pearson.append(np.nanmean(timestamp_ics))
+                daily_rank.append(np.nanmean(timestamp_rank_ics))
+        if not daily_pearson:
+            continue
+        pearson = np.asarray(daily_pearson, dtype=float)
+        rank = np.asarray(daily_rank, dtype=float)
+        std = np.nanstd(pearson, ddof=1) if len(pearson) > 1 else np.nan
+        rows.append({
+            "feature": feature,
+            "usable_dates": int(len(pearson)),
+            "mean_ic": float(np.nanmean(pearson)),
+            "ic_std": float(std),
+            "ic_ir": float(np.nanmean(pearson) / std * np.sqrt(len(pearson)))
+            if np.isfinite(std) and std > 0 else np.nan,
+            "positive_ic_date_fraction": float(np.nanmean(pearson > 0)),
+            "mean_rank_ic": float(np.nanmean(rank)),
+            "rank_ic_std": float(np.nanstd(rank, ddof=1)) if len(rank) > 1 else np.nan,
+        })
+    return pd.DataFrame(rows).sort_values(["mean_rank_ic", "mean_ic"], ascending=[False, False])
 
 
-def chronological_splits(dates: pd.Series | pd.DatetimeIndex) -> dict[str, pd.Timestamp]:
-    unique = pd.DatetimeIndex(sorted(pd.DatetimeIndex(dates).unique()))
-    if len(unique) < 30:
-        raise ValueError("Too few decision dates for the fixed internal split")
-
+def chronological_splits(timestamps: pd.Series | pd.DatetimeIndex) -> dict[str, pd.Timestamp]:
+    unique = pd.DatetimeIndex(sorted(pd.DatetimeIndex(timestamps).unique()))
+    if len(unique) < 300:
+        raise ValueError("Too few intraday decision timestamps for the fixed internal split")
     train_end_i = int(len(unique) * 0.60) - 1
     valid_end_i = int(len(unique) * 0.80) - 1
-
     return {
         "train_start": unique[0],
         "train_end": unique[train_end_i],
@@ -344,6 +282,29 @@ def chronological_splits(dates: pd.Series | pd.DatetimeIndex) -> dict[str, pd.Ti
         "test_start": unique[valid_end_i + 1],
         "test_end": unique[-1],
     }
+
+
+def purged_chronological_splits(
+    timestamps: pd.Series | pd.DatetimeIndex,
+    horizon_bars: int = HORIZON_BARS,
+) -> dict[str, pd.Timestamp]:
+    unique = pd.DatetimeIndex(sorted(pd.DatetimeIndex(timestamps).unique()))
+    splits = chronological_splits(unique)
+    train_end_idx = unique.get_loc(splits["train_end"])
+    valid_end_idx = unique.get_loc(splits["validation_end"])
+    if train_end_idx - horizon_bars < 0:
+        raise ValueError("Not enough timestamps for horizon-aware train purge")
+    if valid_end_idx - horizon_bars < unique.get_loc(splits["validation_start"]):
+        raise ValueError("Not enough timestamps for horizon-aware validation purge")
+    splits["train_end_unpurged"] = splits["train_end"]
+    splits["validation_end_unpurged"] = splits["validation_end"]
+    splits["train_end"] = unique[train_end_idx - horizon_bars]
+    splits["validation_end"] = unique[valid_end_idx - horizon_bars]
+    splits["train_purge_count"] = horizon_bars
+    splits["validation_purge_count"] = horizon_bars
+    splits["purge_unit"] = "decision_timestamp"
+    splits["horizon_bars"] = horizon_bars
+    return splits
 
 
 def fit_linear(
