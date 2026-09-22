@@ -1,11 +1,9 @@
-"""Run the locked first-pass Strategy 003 prediction-discovery experiment.
+"""Run Strategy 003 intraday prediction discovery.
 
 This is a discovery/prediction diagnostic, not a trading-strategy backtest.
-It uses only the Strategy 003 exploratory window and cannot read the protected
-validation or final holdout periods.
-
-The first model ladder is zero-baseline -> OLS -> fixed-penalty Ridge, with no
-hyperparameter search.
+The primary target is the next 5-minute cross-sectional excess return.
+The first feature set deliberately excludes signed-return mechanisms owned by
+Strategies 001 and 002. Protected validation/holdout periods are not read.
 """
 
 from __future__ import annotations
@@ -453,99 +451,99 @@ def model_diagnostics(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     model_rows = []
     quintile_rows = []
+    target = "target_excess_1bar"
 
-    for horizon in HORIZONS:
-        target = f"target_excess_{horizon}d"
-        base = panel[["date", "symbol", target] + features].dropna().copy()
-        splits = chronological_splits(base["date"])
+    base = panel[["timestamp", "symbol", target] + features].dropna().copy()
+    splits = purged_chronological_splits(base["timestamp"])
 
-        train = base[
-            (base["date"] >= splits["train_start"])
-            & (base["date"] <= splits["train_end"])
-        ].copy()
-        validation = base[
-            (base["date"] >= splits["validation_start"])
-            & (base["date"] <= splits["validation_end"])
-        ].copy()
-        test = base[
-            (base["date"] >= splits["test_start"])
-            & (base["date"] <= splits["test_end"])
-        ].copy()
+    train = base[
+        (base["timestamp"] >= splits["train_start"])
+        & (base["timestamp"] <= splits["train_end"])
+    ].copy()
+    validation = base[
+        (base["timestamp"] >= splits["validation_start"])
+        & (base["timestamp"] <= splits["validation_end"])
+    ].copy()
+    test = base[
+        (base["timestamp"] >= splits["test_start"])
+        & (base["timestamp"] <= splits["test_end"])
+    ].copy()
 
-        train_x, valid_x, kept = fit_transform(train, validation, features)
-        _, test_x, _ = fit_transform(train, test, kept)
+    train_x, valid_x, kept = fit_transform(train, validation, features)
+    _, test_x, _ = fit_transform(train, test, kept)
+    y_train = train[target].to_numpy()
 
-        y_train = train[target].to_numpy()
+    model_specs = [("ols", None), ("ridge_fixed_alpha", RIDGE_ALPHA)]
 
-        model_specs = [
-            ("ols", None),
-            ("ridge_fixed_alpha", RIDGE_ALPHA),
-        ]
+    for split_name, frame in (("validation", validation), ("development_test", test)):
+        zero = pd.Series(0.0, index=frame.index)
+        model_rows.append(
+            {
+                "horizon_bars": HORIZON_BARS,
+                "horizon_minutes": HORIZON_BARS * BAR_MINUTES,
+                "model": "zero_baseline",
+                "split": split_name,
+                "purged": True,
+                **score_predictions(frame, zero, target),
+            }
+        )
 
-        for split_name, frame in (("validation", validation), ("development_test", test)):
-            zero = pd.Series(0.0, index=frame.index)
+    for model_name, alpha in model_specs:
+        beta = fit_linear(train_x, y_train, ridge_alpha=alpha)
+        valid_pred = pd.Series(
+            np.column_stack([np.ones(len(valid_x)), valid_x]) @ beta,
+            index=validation.index,
+        )
+        test_pred = pd.Series(
+            np.column_stack([np.ones(len(test_x)), test_x]) @ beta,
+            index=test.index,
+        )
+
+        for split_name, frame, prediction in (
+            ("validation", validation, valid_pred),
+            ("development_test", test, test_pred),
+        ):
             model_rows.append(
                 {
-                    "horizon_days": horizon,
-                    "model": "zero_baseline",
+                    "horizon_bars": HORIZON_BARS,
+                    "horizon_minutes": HORIZON_BARS * BAR_MINUTES,
+                    "model": model_name,
                     "split": split_name,
-                    **score_predictions(frame, zero, target),
+                    "purged": True,
+                    **score_predictions(frame, prediction, target),
                 }
             )
 
-        for model_name, alpha in model_specs:
-            beta = fit_linear(train_x, y_train, ridge_alpha=alpha)
-            valid_pred = pd.Series(
-                np.column_stack([np.ones(len(valid_x)), valid_x]) @ beta,
-                index=validation.index,
-            )
-            test_pred = pd.Series(
-                np.column_stack([np.ones(len(test_x)), test_x]) @ beta,
-                index=test.index,
-            )
-
-            for split_name, frame, prediction in (
-                ("validation", validation, valid_pred),
-                ("development_test", test, test_pred),
-            ):
-                model_rows.append(
-                    {
-                        "horizon_days": horizon,
-                        "model": model_name,
-                        "split": split_name,
-                        **score_predictions(frame, prediction, target),
-                    }
-                )
-
-                if split_name == "development_test":
-                    diagnostic = frame[["date", "symbol", target]].copy()
-                    diagnostic["prediction"] = prediction.to_numpy()
-                    diagnostic["prediction_pct_rank"] = diagnostic.groupby("date")[
-                        "prediction"
-                    ].rank(method="first", pct=True)
-                    q = (
-                        diagnostic.groupby("date")
-                        .apply(
-                            lambda g: pd.Series(
-                                {
-                                    "high_q_bps": g.loc[
-                                        g["prediction_pct_rank"] > 0.8, target
-                                    ].mean()
-                                    * 1e4,
-                                    "low_q_bps": g.loc[
-                                        g["prediction_pct_rank"] <= 0.2, target
-                                    ].mean()
-                                    * 1e4,
-                                }
-                            ),
-                            include_groups=False,
-                        )
-                        .reset_index()
+            if split_name == "development_test":
+                diagnostic = frame[["timestamp", "symbol", target]].copy()
+                diagnostic["prediction"] = prediction.to_numpy()
+                diagnostic["prediction_pct_rank"] = diagnostic.groupby(
+                    "timestamp"
+                )["prediction"].rank(method="first", pct=True)
+                q = (
+                    diagnostic.groupby("timestamp")
+                    .apply(
+                        lambda g: pd.Series(
+                            {
+                                "high_q_bps": g.loc[
+                                    g["prediction_pct_rank"] > 0.8, target
+                                ].mean()
+                                * 1e4,
+                                "low_q_bps": g.loc[
+                                    g["prediction_pct_rank"] <= 0.2, target
+                                ].mean()
+                                * 1e4,
+                            }
+                        ),
+                        include_groups=False,
                     )
-                    q["spread_bps"] = q["high_q_bps"] - q["low_q_bps"]
-                    q["horizon_days"] = horizon
-                    q["model"] = model_name
-                    quintile_rows.extend(q.to_dict("records"))
+                    .reset_index()
+                )
+                q["spread_bps"] = q["high_q_bps"] - q["low_q_bps"]
+                q["horizon_bars"] = HORIZON_BARS
+                q["horizon_minutes"] = HORIZON_BARS * BAR_MINUTES
+                q["model"] = model_name
+                quintile_rows.extend(q.to_dict("records"))
 
     return pd.DataFrame(model_rows), pd.DataFrame(quintile_rows)
 
@@ -629,12 +627,9 @@ def main() -> None:
     market_path = args.directory / "NSE_NIFTYBEES_5minute.csv"
     if not market_path.exists():
         raise SystemExit(f"Missing required market proxy data file: {market_path}")
+    market = load_intraday(market_path)
 
-    market = daily_ohlcv(load_intraday(market_path))
-    # Lock the decision/outcome panel before creating forward targets so the
-    # 5-day target cannot cross into the protected validation period.
     panel = locked_exploratory_slice(build_panel(frames, market))
-    panel = add_targets(panel)
     features = feature_columns(panel)
 
     ic = univariate_ic(panel, features)
@@ -646,35 +641,54 @@ def main() -> None:
     quintiles.to_csv(args.output_dir / "quintile_diagnostics.csv", index=False)
     metadata.to_csv(args.output_dir / "feature_metadata.csv", index=False)
 
-    splits = chronological_splits(panel["date"])
+    splits = purged_chronological_splits(panel["timestamp"])
     manifest = {
         "strategy_id": "003",
-        "analysis": "prediction_discovery",
+        "analysis": "intraday_prediction_discovery",
         "status": "discovery_only",
+        "research_scope": "intraday_only",
+        "decision_bar_minutes": BAR_MINUTES,
+        "horizon_bars": HORIZON_BARS,
+        "horizon_minutes": HORIZON_BARS * BAR_MINUTES,
         "exploratory_start": str(EXPLORATORY_START.date()),
         "exploratory_end": str(EXPLORATORY_END.date()),
         "validation_start": str(VALIDATION_START.date()),
         "holdout_start": str(HOLDOUT_START.date()),
-        "prediction_horizons_days": list(HORIZONS),
         "equity_symbols": sorted(frames),
         "market_proxy": "NIFTYBEES",
         "feature_count": len(features),
+        "features_include_signed_return_direction": False,
+        "excluded_mechanisms": [
+            "Strategy 001 short-horizon continuation",
+            "Strategy 002 short-horizon cross-sectional residual reversal",
+        ],
         "models": ["zero_baseline", "ols", "ridge_fixed_alpha"],
         "ridge_alpha": RIDGE_ALPHA,
         "quintiles": QUINTILES,
-        "internal_split": {k: str(v.date()) for k, v in splits.items()},
+        "internal_split": {
+            k: str(v) if isinstance(v, pd.Timestamp) else v
+            for k, v in splits.items()
+        },
         "holdout_used": False,
         "strategy_pnl_calculated": False,
         "parameter_search": False,
+        "dependency_warning": (
+            "5-minute observations are serially dependent; timestamp-level IC IR "
+            "is descriptive only."
+        ),
     }
     (args.output_dir / "run_manifest.json").write_text(
-        json.dumps(manifest, indent=2), encoding="utf-8"
+        json.dumps(manifest, indent=2, default=str), encoding="utf-8"
     )
 
-    print("Strategy 003 discovery complete")
+    print("Strategy 003 intraday prediction discovery complete")
     print(f"Eligible equity symbols: {len(frames)}")
     print(f"Feature count: {len(features)}")
-    print(f"Exploratory window: {EXPLORATORY_START.date()} -> {EXPLORATORY_END.date()}")
+    print(f"Horizon: {HORIZON_BARS} bar ({HORIZON_BARS * BAR_MINUTES} minutes)")
+    print(
+        f"Exploratory window: {EXPLORATORY_START.date()} -> "
+        f"{EXPLORATORY_END.date()}"
+    )
     print(f"Protected validation starts: {VALIDATION_START.date()}")
     print(f"Protected holdout starts: {HOLDOUT_START.date()}")
     print(f"Outputs: {args.output_dir}")
