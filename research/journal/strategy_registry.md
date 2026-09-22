@@ -24,7 +24,7 @@ No two promoted strategies should be materially the same economic mechanism appl
 |---|---|---|---|---|
 | 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
 | 002 | Indian equities | Short-horizon cross-sectional residual reversal: unusually negative peer-relative returns are followed by positive relative returns, and vice versa | Initial audit → locked split → pattern discovery → pattern characterization → reversal mechanism decomposition → cross-sectional residual investigation → leave-one-out residual mechanism decomposition → temporal stability characterization → fixed-baseline validation → cost-resilience gate failed → turnover/execution decomposition → H2/H3/H6 turnover-reduction development | **Closed; no candidate frozen** |
-| 003 | Indian equities | Intraday prediction-driven discovery using liquidity/activity, volatility/state, bar-shape/intraday-state and market context; first pass excludes 001/002 signed-return mechanisms | Revised next-5-minute prediction discovery | **Active discovery; no candidate frozen** |
+| 003 | Indian equities | Intraday prediction-driven discovery using liquidity/activity, volatility/state, bar-shape/intraday-state and market context; first pass excludes 001/002 signed-return mechanisms | Next-5-minute discovery → frozen-model characterization | **Active characterization; no candidate frozen** |
 ## Strategy 003 — intraday prediction-driven alpha discovery
 
 Strategy 003 is a **research program**, not a frozen trading strategy. The original draft used 1-day and 5-day daily targets as a broad prediction-discovery experiment. It is now superseded because the project objective is intraday strategy research. A 5-trading-day target is a multi-day close-to-close prediction, not an intraday prediction target.
@@ -35,9 +35,19 @@ The revised program uses the existing 5-minute equity data, predicts the next 5-
 
 The model ladder remains zero baseline → OLS → fixed Ridge. Chronological development is purged by one decision timestamp because the target is the next 5-minute bar. Protected validation and final holdout remain untouched.
 
+The first discovery run established a stable-looking development-test predictive relationship: OLS mean IC was +0.0696 with mean rank IC +0.0826 and mean top-bottom quintile spread +2.22 bps; fixed Ridge was essentially identical. This is discovery evidence, not validated alpha or strategy P&L.
+
+The active next stage is characterization of the frozen model only: spread distribution/tail sensitivity, quintile monotonicity, time-of-day stability, stock-level stability, feature-family ablations, coefficient decomposition, and OLS-vs-Ridge score agreement. No protected validation or final holdout data are used.
+
 Protocol: `research/journal/003_prediction_discovery_protocol.md`.
 
-Runner: `scripts/run_strategy_003_prediction_discovery.py`.
+Discovery results: `research/journal/003_prediction_discovery_results.md`.
+
+Characterization protocol: `research/journal/003_prediction_discovery_characterization_protocol.md`.
+
+Discovery runner: `scripts/run_strategy_003_prediction_discovery.py`.
+
+Characterization runner: `scripts/run_strategy_003_prediction_characterization.py`.
 
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
