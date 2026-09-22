@@ -98,11 +98,11 @@ def test_long_feature_window_fits_within_indian_equity_session() -> None:
     frame = pd.DataFrame(
         {
             "timestamp": timestamps,
-            "open": 100.0,
-            "high": 101.0,
-            "low": 99.0,
-            "close": 100.0,
-            "volume": 1000.0,
+            "open": 100.0 + 0.01 * pd.Series(range(75)),
+            "high": 101.0 + 0.01 * pd.Series(range(75)),
+            "low": 99.0 + 0.01 * pd.Series(range(75)),
+            "close": 100.0 + 0.02 * pd.Series(range(75)),
+            "volume": 1000.0 + 10.0 * pd.Series(range(75)),
         }
     )
 
