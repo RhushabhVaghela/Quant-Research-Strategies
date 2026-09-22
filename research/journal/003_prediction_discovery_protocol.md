@@ -32,7 +32,7 @@ ML is an extraction tool, not the hypothesis.
 - NIFTYBEES is used only as a market reference/proxy, not as an equity prediction observation.
 - Do not add/remove/rank securities using future outcomes.
 
-The first experiment aggregates the existing 5-minute OHLCV to daily observations. This intentionally moves the prediction horizon away from the 5-minute execution problem that dominated Strategies 001/002.
+The primary experiment stays at the existing 5-minute decision frequency. A multi-day target is not part of the primary intraday program.
 
 The current broker-native universe has a known survivorship/PIT limitation. It is acceptable for discovery only and must be disclosed; it is not automatically eligible for final promotion.
 
@@ -44,18 +44,16 @@ The current broker-native universe has a known survivorship/PIT limitation. It i
 
 The holdout remains protected even if development results are disappointing.
 
-## 5. Prediction targets
+## 5. Prediction target
 
-Fixed horizons:
+The superseded first draft used 1-day and 5-day close-to-close targets. A 5-trading-day target means predicting the close-to-close return five trading days later, which is a multi-day holding-period outcome rather than an intraday target.
 
-- 1 trading day
-- 5 trading days
+The primary Strategy 003 target is now the next 5-minute bar return:
 
-For stock i at date t, future return is Close(t+h) / Close(t) − 1. The primary target is cross-sectional excess return: the stock's future return minus the equal-weight cross-sectional mean future return at the same horizon.
+`Close(t+1 bar) / Close(t) - 1`
 
-This asks: which stocks will do better or worse than the contemporaneous cross-section?
+The target is converted to cross-sectional excess return by subtracting the equal-weight mean next-bar return across the eligible contemporaneous cross-section. The final bar of each session has no target because the next observation would be the following session.
 
-No intraday target, exit threshold, stop, take-profit, or trade-frequency target is part of the first discovery experiment.
 
 ## 6. Initial feature families
 
