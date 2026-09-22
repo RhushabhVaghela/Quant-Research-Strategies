@@ -177,7 +177,7 @@ def test_model_diagnostics_ignores_structurally_undefined_registered_features() 
 
     timestamps = pd.date_range(
         "2026-01-01 09:15",
-        periods=30,
+        periods=300,
         freq="5min",
         tz="Asia/Kolkata",
     )
