@@ -195,7 +195,7 @@ def test_feature_ic_handles_structurally_undefined_feature_transforms() -> None:
         ["useful_feature", "market_context", "market_context_cs_z"],
     )
 
-    assert set(result["feature"]) == {"useful_feature", "market_context"}
+    assert set(result["feature"]) == {"useful_feature"}
     assert result["usable_dates"].min() > 0
 
 
@@ -217,12 +217,14 @@ def test_model_diagnostics_ignores_structurally_undefined_registered_features() 
                     "symbol": f"S{j:02d}",
                     "target_excess_1bar": float(j - 4.5) * (1 + i / 100),
                     "feature_a": float(j) + i / 10,
+                    "feature_b": float((j % 3) - 1) + i / 20,
+                    "feature_c": float(j * j) + i / 30,
                     "feature_b_cs_z": float("nan"),
                 }
             )
     panel = pd.DataFrame(rows)
 
-    models, quintiles = model_diagnostics(panel, ["feature_a", "feature_b_cs_z"])
+    models, quintiles = model_diagnostics(panel, ["feature_a", "feature_b", "feature_c", "feature_b_cs_z"])
 
     assert not models.empty
     assert set(models["model"]) == {"zero_baseline", "ols", "ridge_fixed_alpha"}
