@@ -41,3 +41,25 @@ def test_constants_are_chronological() -> None:
     assert EXPLORATORY_START < EXPLORATORY_END
     assert EXPLORATORY_END < VALIDATION_START
     assert VALIDATION_START < HOLDOUT_START
+
+
+def test_trailing_features_market_beta_has_one_value_per_stock_day() -> None:
+    from scripts.run_strategy_003_prediction_discovery import (
+        daily_ohlcv,
+        load_intraday,
+        trailing_features,
+    )
+    from pathlib import Path
+
+    data_dir = Path("data/raw/strategy_002_universe")
+    stock = daily_ohlcv(
+        load_intraday(data_dir / "NSE_RELIANCE_5minute.csv")
+    )
+    market = daily_ohlcv(
+        load_intraday(data_dir / "NSE_NIFTYBEES_5minute.csv")
+    )
+
+    enriched = trailing_features(stock, market)
+
+    assert len(enriched) == len(stock)
+    assert enriched["market_beta_20d"].index.equals(enriched.index)
