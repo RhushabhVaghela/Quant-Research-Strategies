@@ -3,6 +3,7 @@
   "status": "discovery_only",
   "research_scope": "intraday_only",
   "research_question": "Can point-in-time intraday market information predict cross-sectional differences in the next 5-minute return strongly and consistently enough to justify a distinct, cost-resilient intraday hypothesis?",
+  "horizon_decision": "The first 003 draft tested 1-day and 5-day prediction as a broad prediction-discovery experiment; it was superseded because the project's primary objective is intraday research, not because of the observed 5-day result.",
   "data_source": "Existing Strategy 002 5-minute OHLCV universe",
   "universe_manifest": "research/universe_candidates.csv",
   "audit_report": "data/reports/strategy_002_universe_audit.csv",
