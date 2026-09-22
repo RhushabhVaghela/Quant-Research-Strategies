@@ -535,14 +535,12 @@ def feature_metadata(features: list[str]) -> pd.DataFrame:
         elif feature.endswith("_cs_z"):
             base = feature[:-5]
             transform = "cross-sectional z-score"
-        rows.append(
-            {
-                "feature": feature,
-                "base_feature": base,
-                "transform": transform,
-                "description": descriptions.get(base, "Derived cross-sectional feature"),
-            }
-        )
+        rows.append({
+            "feature": feature,
+            "base_feature": base,
+            "transform": transform,
+            "description": descriptions.get(base, "Derived cross-sectional feature"),
+        })
     return pd.DataFrame(rows)
 
 
