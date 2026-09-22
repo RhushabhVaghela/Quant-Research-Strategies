@@ -1,46 +1,40 @@
 feature,base_feature,transform,description
-ret_1d,ret_1d,raw trailing feature,Prior 1-day close-to-close return
-ret_5d,ret_5d,raw trailing feature,Prior 5-day close-to-close return
-ret_20d,ret_20d,raw trailing feature,Prior 20-day close-to-close return
-ma_gap_5d,ma_gap_5d,raw trailing feature,Close relative to trailing 5-day moving average
-ma_gap_20d,ma_gap_20d,raw trailing feature,Close relative to trailing 20-day moving average
-vol_5d,vol_5d,raw trailing feature,Annualized trailing 5-day realized volatility
-vol_20d,vol_20d,raw trailing feature,Annualized trailing 20-day realized volatility
-range_1d,range_1d,raw trailing feature,Daily high-low range divided by close
-log_volume,log_volume,raw trailing feature,Log(1 + daily volume)
-volume_mean_5d,volume_mean_5d,raw trailing feature,Trailing 5-day mean log volume
-volume_z_20d,volume_z_20d,raw trailing feature,Trailing 20-day z-score of log volume
-market_rel_1d,market_rel_1d,raw trailing feature,1-day return relative to NIFTYBEES
-market_rel_5d,market_rel_5d,raw trailing feature,5-day return relative to NIFTYBEES
-market_rel_20d,market_rel_20d,raw trailing feature,20-day return relative to NIFTYBEES
-market_beta_20d,market_beta_20d,raw trailing feature,Trailing 20-day beta to NIFTYBEES
-ret_1d_rank,ret_1d,cross-sectional percentile rank,Prior 1-day close-to-close return
-ret_1d_cs_z,ret_1d,cross-sectional z-score,Prior 1-day close-to-close return
-ret_5d_rank,ret_5d,cross-sectional percentile rank,Prior 5-day close-to-close return
-ret_5d_cs_z,ret_5d,cross-sectional z-score,Prior 5-day close-to-close return
-ret_20d_rank,ret_20d,cross-sectional percentile rank,Prior 20-day close-to-close return
-ret_20d_cs_z,ret_20d,cross-sectional z-score,Prior 20-day close-to-close return
-ma_gap_5d_rank,ma_gap_5d,cross-sectional percentile rank,Close relative to trailing 5-day moving average
-ma_gap_5d_cs_z,ma_gap_5d,cross-sectional z-score,Close relative to trailing 5-day moving average
-ma_gap_20d_rank,ma_gap_20d,cross-sectional percentile rank,Close relative to trailing 20-day moving average
-ma_gap_20d_cs_z,ma_gap_20d,cross-sectional z-score,Close relative to trailing 20-day moving average
-vol_5d_rank,vol_5d,cross-sectional percentile rank,Annualized trailing 5-day realized volatility
-vol_5d_cs_z,vol_5d,cross-sectional z-score,Annualized trailing 5-day realized volatility
-vol_20d_rank,vol_20d,cross-sectional percentile rank,Annualized trailing 20-day realized volatility
-vol_20d_cs_z,vol_20d,cross-sectional z-score,Annualized trailing 20-day realized volatility
-range_1d_rank,range_1d,cross-sectional percentile rank,Daily high-low range divided by close
-range_1d_cs_z,range_1d,cross-sectional z-score,Daily high-low range divided by close
-log_volume_rank,log_volume,cross-sectional percentile rank,Log(1 + daily volume)
-log_volume_cs_z,log_volume,cross-sectional z-score,Log(1 + daily volume)
-volume_mean_5d_rank,volume_mean_5d,cross-sectional percentile rank,Trailing 5-day mean log volume
-volume_mean_5d_cs_z,volume_mean_5d,cross-sectional z-score,Trailing 5-day mean log volume
-volume_z_20d_rank,volume_z_20d,cross-sectional percentile rank,Trailing 20-day z-score of log volume
-volume_z_20d_cs_z,volume_z_20d,cross-sectional z-score,Trailing 20-day z-score of log volume
-market_rel_1d_rank,market_rel_1d,cross-sectional percentile rank,1-day return relative to NIFTYBEES
-market_rel_1d_cs_z,market_rel_1d,cross-sectional z-score,1-day return relative to NIFTYBEES
-market_rel_5d_rank,market_rel_5d,cross-sectional percentile rank,5-day return relative to NIFTYBEES
-market_rel_5d_cs_z,market_rel_5d,cross-sectional z-score,5-day return relative to NIFTYBEES
-market_rel_20d_rank,market_rel_20d,cross-sectional percentile rank,20-day return relative to NIFTYBEES
-market_rel_20d_cs_z,market_rel_20d,cross-sectional z-score,20-day return relative to NIFTYBEES
-market_beta_20d_rank,market_beta_20d,cross-sectional percentile rank,Trailing 20-day beta to NIFTYBEES
-market_beta_20d_cs_z,market_beta_20d,cross-sectional z-score,Trailing 20-day beta to NIFTYBEES
+log_volume,log_volume,raw intraday feature,Log(1 + current 5-minute volume)
+volume_change_1bar,volume_change_1bar,raw intraday feature,Current 5-minute volume change versus previous bar
+volume_z_12bar,volume_z_12bar,raw intraday feature,Trailing 12-bar z-score of log volume within session
+volume_z_60bar,volume_z_60bar,raw intraday feature,Trailing 60-bar z-score of log volume within session
+realized_vol_12bar,realized_vol_12bar,raw intraday feature,Trailing 12-bar realized volatility within session
+realized_vol_60bar,realized_vol_60bar,raw intraday feature,Trailing 60-bar realized volatility within session
+range_1bar,range_1bar,raw intraday feature,Current 5-minute high-low range divided by close
+range_z_60bar,range_z_60bar,raw intraday feature,Current range relative to trailing 60-bar range distribution
+close_location_1bar,close_location_1bar,raw intraday feature,Current close location inside the current 5-minute bar
+intraday_position_60bar,intraday_position_60bar,raw intraday feature,Current close relative to trailing 60-bar mean close
+bars_since_session_open,bars_since_session_open,raw intraday feature,Bars elapsed since session open
+market_return_1bar,market_return_1bar,raw intraday feature,NIFTYBEES return over the current 5-minute interval
+market_vol_60bar,market_vol_60bar,raw intraday feature,Trailing 60-bar realized volatility of NIFTYBEES
+log_volume_rank,log_volume,cross-sectional percentile rank,Log(1 + current 5-minute volume)
+log_volume_cs_z,log_volume,cross-sectional z-score,Log(1 + current 5-minute volume)
+volume_change_1bar_rank,volume_change_1bar,cross-sectional percentile rank,Current 5-minute volume change versus previous bar
+volume_change_1bar_cs_z,volume_change_1bar,cross-sectional z-score,Current 5-minute volume change versus previous bar
+volume_z_12bar_rank,volume_z_12bar,cross-sectional percentile rank,Trailing 12-bar z-score of log volume within session
+volume_z_12bar_cs_z,volume_z_12bar,cross-sectional z-score,Trailing 12-bar z-score of log volume within session
+volume_z_60bar_rank,volume_z_60bar,cross-sectional percentile rank,Trailing 60-bar z-score of log volume within session
+volume_z_60bar_cs_z,volume_z_60bar,cross-sectional z-score,Trailing 60-bar z-score of log volume within session
+realized_vol_12bar_rank,realized_vol_12bar,cross-sectional percentile rank,Trailing 12-bar realized volatility within session
+realized_vol_12bar_cs_z,realized_vol_12bar,cross-sectional z-score,Trailing 12-bar realized volatility within session
+realized_vol_60bar_rank,realized_vol_60bar,cross-sectional percentile rank,Trailing 60-bar realized volatility within session
+realized_vol_60bar_cs_z,realized_vol_60bar,cross-sectional z-score,Trailing 60-bar realized volatility within session
+range_1bar_rank,range_1bar,cross-sectional percentile rank,Current 5-minute high-low range divided by close
+range_1bar_cs_z,range_1bar,cross-sectional z-score,Current 5-minute high-low range divided by close
+range_z_60bar_rank,range_z_60bar,cross-sectional percentile rank,Current range relative to trailing 60-bar range distribution
+range_z_60bar_cs_z,range_z_60bar,cross-sectional z-score,Current range relative to trailing 60-bar range distribution
+close_location_1bar_rank,close_location_1bar,cross-sectional percentile rank,Current close location inside the current 5-minute bar
+close_location_1bar_cs_z,close_location_1bar,cross-sectional z-score,Current close location inside the current 5-minute bar
+intraday_position_60bar_rank,intraday_position_60bar,cross-sectional percentile rank,Current close relative to trailing 60-bar mean close
+intraday_position_60bar_cs_z,intraday_position_60bar,cross-sectional z-score,Current close relative to trailing 60-bar mean close
+bars_since_session_open_rank,bars_since_session_open,cross-sectional percentile rank,Bars elapsed since session open
+bars_since_session_open_cs_z,bars_since_session_open,cross-sectional z-score,Bars elapsed since session open
+market_return_1bar_rank,market_return_1bar,cross-sectional percentile rank,NIFTYBEES return over the current 5-minute interval
+market_return_1bar_cs_z,market_return_1bar,cross-sectional z-score,NIFTYBEES return over the current 5-minute interval
+market_vol_60bar_rank,market_vol_60bar,cross-sectional percentile rank,Trailing 60-bar realized volatility of NIFTYBEES
+market_vol_60bar_cs_z,market_vol_60bar,cross-sectional z-score,Trailing 60-bar realized volatility of NIFTYBEES

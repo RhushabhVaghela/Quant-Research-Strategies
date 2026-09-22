@@ -1,15 +1,15 @@
 {
   "strategy_id": "003",
-  "analysis": "prediction_discovery",
+  "analysis": "intraday_prediction_discovery",
   "status": "discovery_only",
+  "research_scope": "intraday_only",
+  "decision_bar_minutes": 5,
+  "horizon_bars": 1,
+  "horizon_minutes": 5,
   "exploratory_start": "2025-09-18",
   "exploratory_end": "2026-06-09",
   "validation_start": "2026-06-10",
   "holdout_start": "2026-08-20",
-  "prediction_horizons_days": [
-    1,
-    5
-  ],
   "equity_symbols": [
     "AXISBANK",
     "BHARTIARTL",
@@ -28,7 +28,12 @@
     "TATASTEEL"
   ],
   "market_proxy": "NIFTYBEES",
-  "feature_count": 45,
+  "feature_count": 39,
+  "features_include_signed_return_direction": false,
+  "excluded_mechanisms": [
+    "Strategy 001 short-horizon continuation",
+    "Strategy 002 short-horizon cross-sectional residual reversal"
+  ],
   "models": [
     "zero_baseline",
     "ols",
@@ -37,14 +42,21 @@
   "ridge_alpha": 1.0,
   "quintiles": 5,
   "internal_split": {
-    "train_start": "2025-09-18",
-    "train_end": "2026-02-19",
-    "validation_start": "2026-02-20",
-    "validation_end": "2026-04-16",
-    "test_start": "2026-04-17",
-    "test_end": "2026-06-09"
+    "train_start": "2025-09-18 09:15:00+05:30",
+    "train_end": "2026-02-20 12:25:00+05:30",
+    "validation_start": "2026-02-20 12:35:00+05:30",
+    "validation_end": "2026-04-17 13:50:00+05:30",
+    "test_start": "2026-04-17 14:00:00+05:30",
+    "test_end": "2026-06-09 15:25:00+05:30",
+    "train_end_unpurged": "2026-02-20 12:30:00+05:30",
+    "validation_end_unpurged": "2026-04-17 13:55:00+05:30",
+    "train_purge_count": 1,
+    "validation_purge_count": 1,
+    "purge_unit": "decision_timestamp",
+    "horizon_bars": 1
   },
   "holdout_used": false,
   "strategy_pnl_calculated": false,
-  "parameter_search": false
+  "parameter_search": false,
+  "dependency_warning": "5-minute observations are serially dependent; timestamp-level IC IR is descriptive only."
 }
