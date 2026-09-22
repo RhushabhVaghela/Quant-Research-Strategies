@@ -171,23 +171,164 @@ def _fit_frozen_model(
     return pd.concat(outputs, ignore_index=True), test
 
 
-def _quintile_distribution(scored: pd.DataFrame) -> pd.DataFrame:
+def _quintile_table(scored: pd.DataFrame) -> pd.DataFrame:
+    """Return realized excess returns for every prediction quintile.
+
+    Quintiles are formed independently at each timestamp from the frozen
+    model score. A minimum cross-section of 10 names is required so each
+    quintile has at least two observations. This is descriptive only.
+    """
     rows = []
     for model, frame in scored.groupby("model"):
         for ts, group in frame.groupby("timestamp"):
             if len(group) < 10:
                 continue
-            rank = group["prediction"].rank(method="first", pct=True)
-            high = group.loc[rank > 0.8, "target_excess_1bar"].mean() * 1e4
-            low = group.loc[rank <= 0.2, "target_excess_1bar"].mean() * 1e4
-            rows.append(
+            ordered = group.assign(
+                score_rank=group["prediction"].rank(method="first", ascending=True)
+            )
+            ordered["quintile"] = (
+                np.floor((ordered["score_rank"] - 1) * 5 / len(ordered)).astype(int) + 1
+            )
+            for quintile, qgroup in ordered.groupby("quintile"):
+                rows.append(
+                    {
+                        "model": model,
+                        "timestamp": ts,
+                        "quintile": int(quintile),
+                        "n": int(len(qgroup)),
+                        "mean_target_excess_bps": float(
+                            qgroup["target_excess_1bar"].mean() * 1e4
+                        ),
+                        "median_target_excess_bps": float(
+                            qgroup["target_excess_1bar"].median() * 1e4
+                        ),
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
+def _quintile_distribution(quintiles: pd.DataFrame) -> pd.DataFrame:
+    """Summarize Q5 minus Q1 from the full quintile table."""
+    if quintiles.empty:
+        return pd.DataFrame(columns=["model", "timestamp", "spread_bps"])
+    wide = quintiles.pivot_table(
+        index=["model", "timestamp"],
+        columns="quintile",
+        values="mean_target_excess_bps",
+    ).reset_index()
+    if 1 not in wide.columns or 5 not in wide.columns:
+        return pd.DataFrame(columns=["model", "timestamp", "spread_bps"])
+    return wide.dropna(subset=[1, 5]).assign(
+        spread_bps=lambda x: x[5] - x[1]
+    )[["model", "timestamp", "spread_bps"]]
+
+
+def _quintile_summary(quintiles: pd.DataFrame) -> pd.DataFrame:
+    if quintiles.empty:
+        return pd.DataFrame(
+            columns=[
+                "model",
+                "quintile",
+                "timestamps",
+                "mean_return_bps",
+                "median_return_bps",
+                "std_return_bps",
+                "positive_fraction",
+            ]
+        )
+    grouped = (
+        quintiles.groupby(["model", "quintile"])["mean_target_excess_bps"]
+        .agg(["count", "mean", "median", "std"])
+        .reset_index()
+        .rename(
+            columns={
+                "count": "timestamps",
+                "mean": "mean_return_bps",
+                "median": "median_return_bps",
+                "std": "std_return_bps",
+            }
+        )
+    )
+    positive = (
+        quintiles.groupby(["model", "quintile"])["mean_target_excess_bps"]
+        .apply(lambda x: float((x > 0).mean()))
+        .reset_index(name="positive_fraction")
+    )
+    return grouped.merge(positive, on=["model", "quintile"], how="left")
+
+
+def _time_of_day_tables(
+    scored: pd.DataFrame,
+    panel: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Report all registered buckets and distinguish frozen-feature warm-up."""
+    buckets = ["09:15-09:59", "10:00-11:59", "12:00-13:59", "14:00-15:30"]
+    test_start = scored["timestamp"].min()
+    test_end = scored["timestamp"].max()
+    raw = panel[
+        (panel["timestamp"] >= test_start)
+        & (panel["timestamp"] <= test_end)
+        & panel["target_excess_1bar"].notna()
+    ].copy()
+    raw["time_bucket"] = _time_bucket(raw["timestamp"])
+    scored_local = scored.copy()
+    scored_local["time_bucket"] = _time_bucket(scored_local["timestamp"])
+
+    stability_rows = []
+    coverage_rows = []
+    for model in sorted(scored["model"].unique()):
+        model_scored = scored_local[scored_local["model"] == model]
+        for bucket in buckets:
+            group = model_scored[model_scored["time_bucket"] == bucket]
+            spreads = []
+            for _, ts_group in group.groupby("timestamp"):
+                if len(ts_group) < 10:
+                    continue
+                rank = ts_group["prediction"].rank(method="first", pct=True)
+                high = ts_group.loc[rank > 0.8, "target_excess_1bar"].mean()
+                low = ts_group.loc[rank <= 0.2, "target_excess_1bar"].mean()
+                if pd.notna(high) and pd.notna(low):
+                    spreads.append((high - low) * 1e4)
+            values = pd.Series(spreads, dtype=float)
+            stability_rows.append(
                 {
                     "model": model,
-                    "timestamp": ts,
-                    "spread_bps": high - low,
+                    "time_bucket": bucket,
+                    "count": int(len(values)),
+                    "mean_spread_bps": float(values.mean()) if len(values) else np.nan,
+                    "median_spread_bps": float(values.median()) if len(values) else np.nan,
+                    "std": float(values.std(ddof=1)) if len(values) > 1 else np.nan,
+                    "status": (
+                        "scored"
+                        if len(values)
+                        else "no_usable_scored_observations"
+                    ),
                 }
             )
-    return pd.DataFrame(rows)
+            raw_count = int((raw["time_bucket"] == bucket).sum())
+            scored_count = int((model_scored["time_bucket"] == bucket).shape[0])
+            coverage_rows.append(
+                {
+                    "model": model,
+                    "time_bucket": bucket,
+                    "raw_target_rows": raw_count,
+                    "scored_rows": scored_count,
+                    "raw_to_scored_row_ratio": (
+                        float(scored_count / raw_count) if raw_count else np.nan
+                    ),
+                    "coverage_note": (
+                        "No raw target rows in this bucket."
+                        if raw_count == 0
+                        else (
+                            "Raw targets exist but frozen 60-bar feature warm-up "
+                            "or complete-case requirements removed all rows."
+                            if scored_count == 0
+                            else "Scored observations available."
+                        )
+                    ),
+                }
+            )
+    return pd.DataFrame(stability_rows), pd.DataFrame(coverage_rows)
 
 
 def _summary_stats(values: pd.Series, prefix: str = "") -> dict[str, float]:
@@ -235,7 +376,13 @@ def main() -> None:
     all_features = _model_features(panel, all_bases)
     scored, _ = _fit_frozen_model(panel, all_features)
 
-    distribution = _quintile_distribution(scored)
+    quintiles = _quintile_table(scored)
+    quintiles.to_csv(args.output_dir / "quintile_returns.csv", index=False)
+    _quintile_summary(quintiles).to_csv(
+        args.output_dir / "quintile_summary.csv", index=False
+    )
+
+    distribution = _quintile_distribution(quintiles)
 
     distribution_rows = []
     for model, frame in distribution.groupby("model"):
@@ -254,31 +401,13 @@ def main() -> None:
         args.output_dir / "spread_distribution.csv", index=False
     )
 
-    scored["time_bucket"] = _time_bucket(scored["timestamp"])
-    tod_rows = []
-    for (model, bucket, ts), group in scored.groupby(
-        ["model", "time_bucket", "timestamp"]
-    ):
-        rank = group["prediction"].rank(method="first", pct=True)
-        high = group.loc[rank > 0.8, "target_excess_1bar"].mean()
-        low = group.loc[rank <= 0.2, "target_excess_1bar"].mean()
-        if pd.notna(high) and pd.notna(low):
-            tod_rows.append(
-                {
-                    "model": model,
-                    "time_bucket": bucket,
-                    "timestamp": ts,
-                    "spread_bps": (high - low) * 1e4,
-                }
-            )
-    tod = pd.DataFrame(tod_rows)
-    tod_summary = (
-        tod.groupby(["model", "time_bucket"])["spread_bps"]
-        .agg(["count", "mean", "median", "std"])
-        .reset_index()
-        .rename(columns={"mean": "mean_spread_bps"})
+    tod_summary, tod_coverage = _time_of_day_tables(scored, panel)
+    tod_summary.to_csv(
+        args.output_dir / "time_of_day_stability.csv", index=False
     )
-    tod_summary.to_csv(args.output_dir / "time_of_day_stability.csv", index=False)
+    tod_coverage.to_csv(
+        args.output_dir / "time_of_day_coverage.csv", index=False
+    )
 
     stock_rows = []
     for model, frame in scored.groupby("model"):
@@ -373,7 +502,8 @@ def main() -> None:
         "frozen_discovery_models": ["ols", "ridge_fixed_alpha"],
         "characterizations": [
             "spread distribution and winsor sensitivity",
-            "time-of-day stability",
+            "quintile-by-quintile monotonicity",
+            "time-of-day stability and frozen-feature coverage",
             "stock stability",
             "base feature-family ablations",
             "standardized model coefficient decomposition",
