@@ -14,6 +14,9 @@ Prediction horizon and trading holding period are related but not identical. A n
 
 For intraday experiments, horizon definitions must be expressed in decision bars/minutes, and chronological train/validation boundaries must be purged by the number of future decision observations used by the target.
 
+The project's current 003 starting resolution is one 5-minute bar because the source data and existing intraday research are 5-minute. This is a discovery resolution, not a permanent five-minute holding-period assumption. If the signal survives, a pre-registered small set of adjacent horizons can be characterized later.
+
+
 ## Lifecycle
 
 Data → data audit → pattern discovery → pattern characterization → economic interpretation → hypothesis → strategy definition → development → candidate freeze → untouched chronological holdout → prospective paper/shadow → controlled live validation.
