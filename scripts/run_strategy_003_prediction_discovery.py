@@ -241,12 +241,18 @@ def univariate_ic(panel: pd.DataFrame, features: list[str]) -> pd.DataFrame:
             for _, group in day.groupby("timestamp"):
                 if len(group) < 5:
                     continue
-                timestamp_ics.append(group[feature].corr(group[target]))
-                timestamp_rank_ics.append(
-                    group[feature].rank(method="average").corr(
-                        group[target].rank(method="average")
-                    )
+                x = group[feature]
+                y = group[target]
+                if x.nunique(dropna=True) < 2 or y.nunique(dropna=True) < 2:
+                    continue
+                pearson_ic = x.corr(y)
+                rank_ic = x.rank(method="average").corr(
+                    y.rank(method="average")
                 )
+                if np.isfinite(pearson_ic):
+                    timestamp_ics.append(pearson_ic)
+                if np.isfinite(rank_ic):
+                    timestamp_rank_ics.append(rank_ic)
             if timestamp_ics:
                 daily_pearson.append(np.nanmean(timestamp_ics))
                 daily_rank.append(np.nanmean(timestamp_rank_ics))
