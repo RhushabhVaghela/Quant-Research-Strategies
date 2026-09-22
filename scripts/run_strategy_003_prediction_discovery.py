@@ -104,7 +104,15 @@ def load_intraday(path: Path) -> pd.DataFrame:
 
 def daily_ohlcv(df: pd.DataFrame) -> pd.DataFrame:
     work = df.copy()
-    work["date"] = work["timestamp"].dt.tz_convert("Asia/Kolkata").dt.normalize()
+    # `date` is the local trading calendar date, not an instant in time.
+    # Keep it timezone-naive so it can be compared safely with the locked
+    # research-window boundaries and used consistently as a join/group key.
+    work["date"] = (
+        work["timestamp"]
+        .dt.tz_convert("Asia/Kolkata")
+        .dt.normalize()
+        .dt.tz_localize(None)
+    )
     return (
         work.groupby("date", sort=True)
         .agg(
