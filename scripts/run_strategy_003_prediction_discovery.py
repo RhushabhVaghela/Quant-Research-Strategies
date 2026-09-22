@@ -446,11 +446,15 @@ def model_diagnostics(
         & (base["timestamp"] <= splits["test_end"])
     ].copy()
 
-    train_model = train.dropna(subset=features).copy()
-    validation_model = validation.dropna(subset=features).copy()
-    test_model = test.dropna(subset=features).copy()
+    usable_features = [feature for feature in features if train[feature].notna().any()]
+    if len(usable_features) < 3:
+        raise ValueError("Too few features with usable training observations")
 
-    train_x, valid_x, kept = fit_transform(train_model, validation_model, features)
+    train_model = train.dropna(subset=usable_features).copy()
+    validation_model = validation.dropna(subset=usable_features).copy()
+    test_model = test.dropna(subset=usable_features).copy()
+
+    train_x, valid_x, kept = fit_transform(train_model, validation_model, usable_features)
     _, test_x, _ = fit_transform(train_model, test_model, kept)
     y_train = train_model[target].to_numpy()
 
