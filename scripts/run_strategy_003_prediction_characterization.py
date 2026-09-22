@@ -510,6 +510,17 @@ def main() -> None:
             "standardized model coefficient decomposition",
             "OLS-vs-Ridge score correlation",
         ],
+        "outputs": [
+            "quintile_returns.csv",
+            "quintile_summary.csv",
+            "spread_distribution.csv",
+            "time_of_day_stability.csv",
+            "time_of_day_coverage.csv",
+            "stock_stability.csv",
+            "feature_family_ablation.csv",
+            "model_coefficients.csv",
+            "run_manifest.json",
+        ],
         "repository_resources_consulted": [
             "research/journal/repository_resource_policy.md",
             "trading_resources/Concepts/Data-and-Feature-Engineering-for-Trading.md",
