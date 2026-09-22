@@ -263,11 +263,12 @@ def _time_of_day_tables(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Report all registered buckets and distinguish frozen-feature warm-up."""
     buckets = ["09:15-09:59", "10:00-11:59", "12:00-13:59", "14:00-15:30"]
-    test_start = scored["timestamp"].min()
-    test_end = scored["timestamp"].max()
+    splits = purged_chronological_splits(
+        panel.loc[panel["target_excess_1bar"].notna(), "timestamp"]
+    )
     raw = panel[
-        (panel["timestamp"] >= test_start)
-        & (panel["timestamp"] <= test_end)
+        (panel["timestamp"] >= splits["test_start"])
+        & (panel["timestamp"] <= splits["test_end"])
         & panel["target_excess_1bar"].notna()
     ].copy()
     raw["time_bucket"] = _time_bucket(raw["timestamp"])
