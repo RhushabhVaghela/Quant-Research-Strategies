@@ -193,4 +193,23 @@ If the only stable information is the already-closed Strategy 002 reversal mecha
 
 ## Research principle
 
-> We are not searching directly for profitable trading rules. We are searching for stable, economically interpretable predictive information, and only then asking whether that information can be converted into a profitable portfolio after risk, execution and transaction costs.
+> We are not searching directly for profitable trading rules. We are searching for stable, economically interpretable predictive information, and only then asking whether that information can be converted into a profitable portfolio after risk, execution and transaction costs
+## 2A. Why the research horizon was changed
+
+The first 003 draft began with 1-day and 5-day targets because Strategy 003 was intentionally designed as a broader prediction-discovery program rather than another hand-written intraday rule. A multi-day target can be useful when the research question is medium-horizon stock selection, and the existing daily aggregation made that experiment straightforward.
+
+However, the project's actual objective is to discover and develop **intraday strategies**. A 5-trading-day target answers a different economic question: which stocks will outperform over the following week? It does not directly establish predictive information at the time scale at which an intraday strategy must make decisions. It also introduces overlapping forward labels, making dependence and leakage control more complicated.
+
+Therefore the change was not made because the 5-day result was weak. It was made because the target was misaligned with the primary research objective. Continuing to optimize the 5-day model would increase research scope without directly answering the intraday question.
+
+The change should not be interpreted as discarding the daily research. The superseded experiment remains documented as historical evidence and as a methodological lesson. If the project later decides to pursue a separate swing/medium-horizon strategy, that work should receive its own registered research line rather than competing with the intraday program.
+
+### Why one 5-minute bar rather than 15 minutes?
+
+The repository's underlying research and execution data are 5-minute OHLCV bars, and Strategies 001 and 002 already established that as the project's intraday decision resolution. Starting at one bar preserves the maximum available intraday information without assuming that a 15-minute aggregation is economically superior.
+
+The 5-minute target is a **discovery horizon**, not a commitment to hold every eventual trade for exactly five minutes. If a stable signal is found, later characterization can test a small, pre-registered set of economically motivated holding horizons such as 5, 10, and 15 minutes. That should happen after predictive information is established, not by choosing the horizon that produces the best historical result.
+
+A 15-minute target is therefore a legitimate future experiment, but starting at 15 minutes would throw away intermediate information before we know whether the signal operates at 5, 10, or 15 minutes. The current choice is the more conservative discovery starting point for a 5-minute data/execution environment.
+
+.
