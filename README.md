@@ -137,11 +137,13 @@ See `research/journal/003_prediction_discovery_protocol.md` and `scripts/run_str
 
 The first Strategy 003 intraday discovery run is now complete. OLS and fixed Ridge showed similar predictive separation across the internal validation and development-test periods, so the research has advanced only to frozen-model characterization. No protected validation or final holdout data have been used.
 
+The characterization runner now has a controlled second diagnostic pass that preserves full Q1–Q5 realized-return information and reports all four pre-registered time-of-day buckets with explicit raw-target/scored-row coverage. The frozen 60-bar feature set is unchanged.
+
 Current characterization runner: `scripts/run_strategy_003_prediction_characterization.py`.
 
 Characterization protocol: `research/journal/003_prediction_discovery_characterization_protocol.md`.
 
-Discovery results record: `research/journal/003_prediction_discovery_results.md`.
+Discovery/characterization results record: `research/journal/003_prediction_discovery_results.md`.
 
 
 ## Strategy portfolio architecture
