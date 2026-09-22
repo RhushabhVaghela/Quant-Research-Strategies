@@ -346,14 +346,14 @@ def score_predictions(
     prediction: pd.Series,
     target_col: str,
 ) -> dict[str, float]:
-    work = frame[["date", target_col]].copy()
+    work = frame[["timestamp", target_col]].copy()
     work["prediction"] = prediction.to_numpy()
 
-    daily_ic = []
-    daily_rank_ic = []
+    timestamp_ic = []
+    timestamp_rank_ic = []
     spreads = []
 
-    for _, group in work.dropna().groupby("date"):
+    for _, group in work.dropna().groupby("timestamp"):
         if len(group) < 10:
             continue
 
@@ -370,18 +370,18 @@ def score_predictions(
             rank_ic_value = prediction_rank.corr(target_rank)
 
             if np.isfinite(ic_value):
-                daily_ic.append(ic_value)
+                timestamp_ic.append(ic_value)
             if np.isfinite(rank_ic_value):
-                daily_rank_ic.append(rank_ic_value)
+                timestamp_rank_ic.append(rank_ic_value)
 
         rank = prediction.rank(method="first", pct=True)
         high = group.loc[rank > 0.8, target_col].mean()
         low = group.loc[rank <= 0.2, target_col].mean()
         spreads.append(high - low)
 
-    if not daily_ic:
+    if not timestamp_ic:
         return {
-            "usable_dates": 0,
+            "usable_timestamps": 0,
             "mean_ic": np.nan,
             "mean_rank_ic": np.nan,
             "ic_ir": np.nan,
@@ -389,15 +389,16 @@ def score_predictions(
             "mean_top_bottom_spread_bps": np.nan,
         }
 
-    ic = np.asarray(daily_ic, dtype=float)
-    rank_ic = np.asarray(daily_rank_ic, dtype=float)
+    ic = np.asarray(timestamp_ic, dtype=float)
+    rank_ic = np.asarray(timestamp_rank_ic, dtype=float)
     spread = np.asarray(spreads, dtype=float)
     ic_std = np.nanstd(ic, ddof=1) if len(ic) > 1 else np.nan
 
     return {
-        "usable_dates": int(len(ic)),
+        "usable_timestamps": int(len(ic)),
         "mean_ic": float(np.nanmean(ic)),
         "mean_rank_ic": float(np.nanmean(rank_ic)),
+        # Descriptive only: adjacent 5-minute timestamps are dependent.
         "ic_ir": float(np.nanmean(ic) / ic_std * np.sqrt(len(ic)))
         if np.isfinite(ic_std) and ic_std > 0
         else np.nan,
