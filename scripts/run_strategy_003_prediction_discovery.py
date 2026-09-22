@@ -24,24 +24,25 @@ HORIZON_BARS = 1
 BAR_MINUTES = 5
 RIDGE_ALPHA = 1.0
 QUINTILES = 5
+LONG_WINDOW_BARS = 60
 
 BASE_FEATURES = [
     "log_volume",
     "volume_change_1bar",
     "volume_z_12bar",
-    "volume_z_78bar",
+    "volume_z_60bar",
     "realized_vol_12bar",
-    "realized_vol_78bar",
+    "realized_vol_60bar",
     "range_1bar",
-    "range_z_78bar",
+    "range_z_60bar",
     "close_location_1bar",
-    "intraday_position_78bar",
+    "intraday_position_60bar",
     "bars_since_session_open",
 ]
 
 CONTEXT_FEATURES = [
     "market_return_1bar",
-    "market_vol_78bar",
+    "market_vol_60bar",
 ]
 
 
@@ -138,30 +139,30 @@ def session_bar_features(intraday: pd.DataFrame) -> pd.DataFrame:
     work["volume_z_12bar"] = work.groupby("date")["log_volume"].transform(
         lambda s: (s - s.rolling(12).mean()) / s.rolling(12).std(ddof=1).replace(0, np.nan)
     )
-    work["volume_z_78bar"] = work.groupby("date")["log_volume"].transform(
-        lambda s: (s - s.rolling(78).mean()) / s.rolling(78).std(ddof=1).replace(0, np.nan)
+    work["volume_z_60bar"] = work.groupby("date")["log_volume"].transform(
+        lambda s: (s - s.rolling(LONG_WINDOW_BARS).mean()) / s.rolling(LONG_WINDOW_BARS).std(ddof=1).replace(0, np.nan)
     )
     work["realized_vol_12bar"] = ret1.groupby(work["date"]).transform(
         lambda s: s.rolling(12).std(ddof=1)
     )
-    work["realized_vol_78bar"] = ret1.groupby(work["date"]).transform(
-        lambda s: s.rolling(78).std(ddof=1)
+    work["realized_vol_60bar"] = ret1.groupby(work["date"]).transform(
+        lambda s: s.rolling(LONG_WINDOW_BARS).std(ddof=1)
     )
     work["range_1bar"] = (work["high"] - work["low"]) / close
     range_mean = work.groupby("date")["range_1bar"].transform(
-        lambda s: s.rolling(78).mean()
+        lambda s: s.rolling(LONG_WINDOW_BARS).mean()
     )
     range_std = work.groupby("date")["range_1bar"].transform(
-        lambda s: s.rolling(78).std(ddof=1)
+        lambda s: s.rolling(LONG_WINDOW_BARS).std(ddof=1)
     )
-    work["range_z_78bar"] = (
+    work["range_z_60bar"] = (
         (work["range_1bar"] - range_mean) / range_std.replace(0, np.nan)
     )
     work["close_location_1bar"] = (
         (close - work["low"]) / (work["high"] - work["low"]).replace(0, np.nan)
     )
-    work["intraday_position_78bar"] = (
-        close / work.groupby("date")["close"].transform(lambda s: s.rolling(78).mean()) - 1.0
+    work["intraday_position_60bar"] = (
+        close / work.groupby("date")["close"].transform(lambda s: s.rolling(LONG_WINDOW_BARS).mean()) - 1.0
     )
     return work
 
@@ -169,10 +170,10 @@ def session_bar_features(intraday: pd.DataFrame) -> pd.DataFrame:
 def add_market_context(stock: pd.DataFrame, market: pd.DataFrame) -> pd.DataFrame:
     market_work = session_bar_features(market)
     market_work["market_return_1bar"] = market_work.groupby("date")["close"].pct_change()
-    market_work["market_vol_78bar"] = market_work.groupby("date")["market_return_1bar"].transform(
-        lambda s: s.rolling(78).std(ddof=1)
+    market_work["market_vol_60bar"] = market_work.groupby("date")["market_return_1bar"].transform(
+        lambda s: s.rolling(LONG_WINDOW_BARS).std(ddof=1)
     )
-    context = market_work[["timestamp", "market_return_1bar", "market_vol_78bar"]].drop_duplicates("timestamp")
+    context = market_work[["timestamp", "market_return_1bar", "market_vol_60bar"]].drop_duplicates("timestamp")
     return stock.merge(context, on="timestamp", how="left", validate="one_to_one")
 
 
@@ -265,7 +266,14 @@ def univariate_ic(panel: pd.DataFrame, features: list[str]) -> pd.DataFrame:
             "mean_rank_ic": float(np.nanmean(rank)),
             "rank_ic_std": float(np.nanstd(rank, ddof=1)) if len(rank) > 1 else np.nan,
         })
-    return pd.DataFrame(rows).sort_values(["mean_rank_ic", "mean_ic"], ascending=[False, False])
+    if not rows:
+        raise ValueError(
+            "No usable univariate IC observations remain. "
+            "Check feature warm-up windows and session length."
+        )
+    return pd.DataFrame(rows).sort_values(
+        ["mean_rank_ic", "mean_ic"], ascending=[False, False]
+    )
 
 
 def chronological_splits(timestamps: pd.Series | pd.DatetimeIndex) -> dict[str, pd.Timestamp]:
@@ -515,16 +523,16 @@ def feature_metadata(features: list[str]) -> pd.DataFrame:
         "log_volume": "Log(1 + current 5-minute volume)",
         "volume_change_1bar": "Current 5-minute volume change versus previous bar",
         "volume_z_12bar": "Trailing 12-bar z-score of log volume within session",
-        "volume_z_78bar": "Trailing 78-bar z-score of log volume within session",
+        "volume_z_60bar": "Trailing 78-bar z-score of log volume within session",
         "realized_vol_12bar": "Trailing 12-bar realized volatility within session",
-        "realized_vol_78bar": "Trailing 78-bar realized volatility within session",
+        "realized_vol_60bar": "Trailing 78-bar realized volatility within session",
         "range_1bar": "Current 5-minute high-low range divided by close",
-        "range_z_78bar": "Current range relative to trailing 78-bar range distribution",
+        "range_z_60bar": "Current range relative to trailing 78-bar range distribution",
         "close_location_1bar": "Current close location inside the current 5-minute bar",
-        "intraday_position_78bar": "Current close relative to trailing 78-bar mean close",
+        "intraday_position_60bar": "Current close relative to trailing 78-bar mean close",
         "bars_since_session_open": "Bars elapsed since session open",
         "market_return_1bar": "NIFTYBEES return over the current 5-minute interval",
-        "market_vol_78bar": "Trailing 78-bar realized volatility of NIFTYBEES",
+        "market_vol_60bar": "Trailing 78-bar realized volatility of NIFTYBEES",
     }
     rows = []
     for feature in features:
