@@ -126,6 +126,12 @@ Existing resources are references and building blocks, not automatically validat
 
 This is a standing project rule: **when making a GitHub research request, first remind ourselves to inspect the repository resources and use the relevant ones where appropriate.**
 
+## 9A. Feature-wise missing-data handling in prediction diagnostics
+
+Prediction-discovery diagnostics must avoid dataset-wide `dropna()` across unrelated registered features when a transform can be structurally undefined for one feature. Univariate IC is computed using the target and the individual feature only. Multivariate model samples are constructed from the registered feature set after explicit feature-availability filtering; undefined observations are excluded from fitting/scoring rather than silently changing their economic interpretation through arbitrary imputation.
+
+A cross-sectional standardization can legitimately be undefined when cross-sectional dispersion is zero. That condition must not invalidate unrelated features or observations. This is an implementation/data-quality control and does not change the preregistered target, horizon, validation boundaries or holdout protection.
+
 ## 10. Strategy lineage
 
 A genuinely different economic mechanism receives a new strategy ID. Parameter variants, universe variants, and implementation experiments under the same mechanism remain experiments under the parent strategy.
