@@ -111,6 +111,16 @@ No large hyperparameter grid is permitted in the discovery pass.
 
 Predictions are converted only for diagnostics into a simple cross-sectional top-minus-bottom quintile spread. This is not yet a trading strategy. It tests whether predictive information produces economically visible separation before costs.
 
+## 7A. Feature-wise missing-data handling
+
+Feature diagnostics are evaluated **one feature at a time**. A feature that is undefined for a particular observation is excluded only from that feature's IC calculation; it must not cause unrelated features to lose the same observation.
+
+This matters for registered cross-sectional transforms. A feature such as a market-wide return can be identical across the whole cross-section at a timestamp, making its cross-sectional standard deviation zero and therefore its cross-sectional z-score undefined. That is a property of the transform, not evidence that the underlying market-context feature is missing.
+
+For multivariate models, the model-fitting sample is formed after selecting the registered features that have usable training observations. Missing feature rows are excluded from model fitting/scoring rather than being silently imputed into a different economic quantity. The existing train-only standardization and fixed model ladder remain unchanged.
+
+This handling is an implementation control only. It does **not** change the registered feature families, target, horizon, model ladder, protected validation boundary, or holdout protection.
+
 ## 8. Chronological development split
 
 Inside the locked exploratory period:
