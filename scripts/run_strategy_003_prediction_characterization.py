@@ -255,19 +255,23 @@ def main() -> None:
     )
 
     scored["time_bucket"] = _time_bucket(scored["timestamp"])
-    tod = (
-        scored.groupby(["model", "time_bucket", "timestamp"], as_index=False)
-        .apply(
-            lambda g: pd.Series({
-                "spread_bps": (
-                    g.loc[g["prediction"].rank(method="first", pct=True) > 0.8, "target_excess_1bar"].mean()
-                    - g.loc[g["prediction"].rank(method="first", pct=True) <= 0.2, "target_excess_1bar"].mean()
-                ) * 1e4
-            }),
-            include_groups=False,
-        )
-        .reset_index(drop=True)
-    )
+    tod_rows = []
+    for (model, bucket, ts), group in scored.groupby(
+        ["model", "time_bucket", "timestamp"]
+    ):
+        rank = group["prediction"].rank(method="first", pct=True)
+        high = group.loc[rank > 0.8, "target_excess_1bar"].mean()
+        low = group.loc[rank <= 0.2, "target_excess_1bar"].mean()
+        if pd.notna(high) and pd.notna(low):
+            tod_rows.append(
+                {
+                    "model": model,
+                    "time_bucket": bucket,
+                    "timestamp": ts,
+                    "spread_bps": (high - low) * 1e4,
+                }
+            )
+    tod = pd.DataFrame(tod_rows)
     tod_summary = (
         tod.groupby(["model", "time_bucket"])["spread_bps"]
         .agg(["count", "mean", "median", "std"])
