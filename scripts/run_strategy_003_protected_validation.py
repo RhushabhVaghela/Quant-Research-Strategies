@@ -26,10 +26,10 @@ from scripts.run_strategy_003_prediction_discovery import (
 )
 
 FEATURES = ["close_location_1bar", "intraday_position_60bar"]
-DEVELOPMENT_END = pd.Timestamp("2026-06-09 23:59:59+05:30")
-VALIDATION_START = pd.Timestamp("2026-06-10 00:00:00+05:30")
-VALIDATION_END = pd.Timestamp("2026-08-19 23:59:59+05:30")
-HOLDOUT_START = pd.Timestamp("2026-08-20 00:00:00+05:30")
+DEVELOPMENT_END = pd.Timestamp("2026-06-09 23:59:59", tz="Asia/Kolkata")
+VALIDATION_START = pd.Timestamp("2026-06-10 00:00:00", tz="Asia/Kolkata")
+VALIDATION_END = pd.Timestamp("2026-08-19 23:59:59", tz="Asia/Kolkata")
+HOLDOUT_START = pd.Timestamp("2026-08-20 00:00:00", tz="Asia/Kolkata")
 HORIZON_BARS = 1
 
 
