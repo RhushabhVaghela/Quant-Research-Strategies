@@ -128,3 +128,11 @@ A failure to distinguish the mechanism means 003H remains evidence about the old
 003H does not select a feature subset because it produces the highest historical spread. It asks whether the small registered intraday-state family is sufficient to explain the predictive structure in an interpretable way.
 
 Advance only if the simplified model retains a materially positive predictive ordering and the mechanism remains distinct from 001/002. Otherwise keep Strategy 003 at characterization or close the line.
+
+## 8. Implementation
+
+The registered runner is `scripts/run_strategy_003_hypothesis_003h_mechanism.py`.
+
+Its outputs are written to `data/reports/strategy_003_hypothesis_003h/` and include mechanism-versus-full-model metrics, Q1–Q5 summaries, stock stability, time-of-day diagnostics, lineage audit, and a run manifest. Unit tests are in `tests/test_strategy_003_hypothesis_003h_mechanism.py`.
+
+The implementation is intentionally development-only and does not read the protected validation or final holdout periods.
