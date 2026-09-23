@@ -194,3 +194,27 @@ The next controlled experiment is **economic-form decomposition of the two-varia
 Protocol: `research/journal/003h_lineage_separation_protocol.md`.
 Runner: `scripts/run_strategy_003h_lineage_separation.py`.
 Outputs: `data/reports/strategy_003h_lineage_separation/`.
+
+
+## Learning curriculum
+
+The repository now has a separate educational layer that turns the cumulative Strategy 001–003 research process into reusable quant-research lessons rather than treating each experiment as an isolated backtest.
+
+See:
+
+- research/journal/research_learning_path.md — module index and strategy-to-module map.
+- research/journal/research_learning_modules.md — detailed lessons covering hypothesis formation, leakage, chronological validation, holdout protection, cross-sectional prediction, IC/rank IC/quintiles, attribution, common support, mechanism decomposition, transaction costs, lineage testing, negative results, branch closure, strategy construction, and research decision-making.
+
+These modules are educational summaries derived from the actual project record; they do not override any experiment's original protocol or evidence boundary.
+
+## Strategy 003 final exploratory gate
+
+The lineage-separation result left the 003H two-variable core distinct from the frozen 001/002 representations within the registered comparison. The final authorized development-stage question is now economic-form decomposition of the same two variables.
+
+Registered experiment: research/journal/003h_economic_form_decomposition_protocol.md.
+Implementation: scripts/run_strategy_003h_economic_form_decomposition.py.
+Tests: tests/test_strategy_003h_economic_form_decomposition.py.
+
+The experiment evaluates exactly four fixed specifications on common support: close-location only, intraday-position only, the additive two-variable core, and one pre-registered close-location × intraday-position interaction. It is development-only; protected validation and final holdout remain untouched.
+
+After this gate, no new exploratory feature family, transform, threshold, holding-period search, cost optimization, nonlinear escalation, or portfolio work is authorized. The next decision must be either to close Strategy 003 or to freeze one clearly defined explanatory form for a separately controlled protected-validation experiment.
