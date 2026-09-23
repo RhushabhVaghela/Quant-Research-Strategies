@@ -150,3 +150,23 @@ The next test is **003H — Mechanism decomposition**:
 5. do not change the protected validation or holdout boundaries.
 
 Only if that mechanism remains coherent should the program consider strategy definition and later controlled validation.
+
+
+## Residual decomposition — 2026-09-23
+
+The preregistered one-family decomposition was completed on the development-only sample.
+
+Development-test diagnostics:
+
+| Model | Mean IC | Mean rank IC | Q1–Q5 spread |
+|---|---:|---:|---:|
+| 003H mechanism | +0.05849 | +0.07272 | +1.784 bps |
+| + activity | +0.05580 | +0.07166 | +1.630 bps |
+| + volatility | +0.05036 | +0.06587 | +1.524 bps |
+| + market context | +0.06685 | +0.08006 | +1.872 bps |
+
+The apparent increments relative to the mechanism were −0.155 bps for activity, −0.261 bps for volatility, and +0.087 bps for market context in Q1–Q5 spread.
+
+However, the mechanism/activity models have 540 usable timestamps while volatility/market-context models have 504. Therefore these differences are not yet clean nested comparisons. The current result supports no conclusion that market context adds genuine incremental predictive information. A common-support nested comparison is required before interpreting the residual component.
+
+No protected validation or final holdout data were used.
