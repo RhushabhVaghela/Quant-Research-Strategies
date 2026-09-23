@@ -24,7 +24,7 @@ No two promoted strategies should be materially the same economic mechanism appl
 |---|---|---|---|---|
 | 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
 | 002 | Indian equities | Short-horizon cross-sectional residual reversal: unusually negative peer-relative returns are followed by positive relative returns, and vice versa | Initial audit → locked split → pattern discovery → pattern characterization → reversal mechanism decomposition → cross-sectional residual investigation → leave-one-out residual mechanism decomposition → temporal stability characterization → fixed-baseline validation → cost-resilience gate failed → turnover/execution decomposition → H2/H3/H6 turnover-reduction development | **Closed; no candidate frozen** |
-| 003 | Indian equities | Intraday prediction-driven discovery using liquidity/activity, volatility/state, bar-shape/intraday-state and market context; first pass excludes 001/002 signed-return mechanisms | Next-5-minute discovery → frozen-model characterization → provisional mechanism test 003H | **Exploratory gates complete; promotion/closure decision pending** |
+| 003 | Indian equities | Intraday prediction-driven discovery using liquidity/activity, volatility/state, bar-shape/intraday-state and market context; first pass excludes 001/002 signed-return mechanisms | Development gates complete → frozen 003H candidate → protected validation → economic viability gate | **Protected validation authorized; not yet executed** |
 ## Strategy 003 — intraday prediction-driven alpha discovery
 
 ### Strategy 003H mechanism decomposition — result
@@ -243,3 +243,38 @@ The final holdout beginning 2026-08-20 remains untouched.
 ### Cost-basis decision gate — 2026-09-23
 
 A current-source review of NSE cash-equity intraday trading costs is now recorded in `research/journal/003_execution_cost_basis_research_20260923.md`. The review finds that the historical 5-bps round-trip sensitivity is not a universal all-in current cost basis: brokerage/statutory charges alone can exceed 5 bps at ordinary retail notionals, while spread and impact are additional. This does not by itself reject Strategy 003 because the current Q1–Q5 diagnostic is not strategy P&L, but it materially raises the economic bar for any subsequent executable test.
+
+
+## Strategy 003 — current decision gate (23 September 2026)
+
+The development-stage exploratory program is complete. The additive two-variable 003H form is frozen for one protected predictive test:
+
+- close_location_1bar + intraday_position_60bar;
+- additive OLS;
+- training-only standardization;
+- next 5-minute cross-sectional excess return;
+- same 15 eligible equities;
+- validation window 2026-06-10 through 2026-08-19.
+
+The protected validation runner is `scripts/run_strategy_003_protected_validation.py`. The final holdout beginning 2026-08-20 must not be inspected by this gate.
+
+If protected prediction survives, the next permitted work is the preregistered economic execution viability test. If prediction fails, close Strategy 003. No further feature discovery is authorized.
+
+Economic protocol: `research/journal/003_economic_execution_viability_protocol.md`.
+
+Current cost basis: `research/journal/003_execution_cost_basis_research_20260923.md`.
+
+## Current published NSE/broker economics
+
+The current fee-only reference used by the project is approximately:
+
+| Round-trip notional | Broker + statutory cost |
+|---:|---:|
+| ₹50k | **10.6 bps** |
+| ₹1 lakh | **8.3 bps** |
+| ₹2.5 lakh | **5.4 bps** |
+| ₹5 lakh | **4.5 bps** |
+| ₹10 lakh | **4.0 bps** |
+| ₹50 lakh | **3.6 bps** |
+
+These values are before spread, slippage and market impact. The historical 5-bps sensitivity is not treated as a universal current all-in cost basis.
