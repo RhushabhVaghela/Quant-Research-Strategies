@@ -278,3 +278,20 @@ The current fee-only reference used by the project is approximately:
 | ₹50 lakh | **3.6 bps** |
 
 These values are before spread, slippage and market impact. The historical 5-bps sensitivity is not treated as a universal current all-in cost basis.
+
+## Strategy 003 — protected prediction result (23 September 2026)
+
+The frozen additive 003H candidate passed protected chronological prediction validation:
+
+- protected mean IC: **+0.08136**
+- protected mean rank IC: **+0.10082**
+- protected Q1–Q5 spread: **+1.6870 bps**
+- 711 timestamps / 10,665 observations / 15 equities
+- validation: 2026-06-10 through 2026-08-19
+- final holdout: untouched
+
+The protected spread retains approximately 76% of the development-test spread (+2.2168 bps) while preserving direction.
+
+**Current status: protected prediction gate passed; economic execution viability testing authorized.**
+
+The next test is fixed Q5-long/Q1-short equal-notional one-bar implementation with current published brokerage/statutory charges and frozen low/base/stress execution-friction scenarios. No further prediction search is authorized.
