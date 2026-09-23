@@ -203,3 +203,10 @@ The next controlled experiment should therefore isolate the **residual predictiv
 
 The protected validation beginning **2026-06-10** and final holdout beginning **2026-08-20** remain untouched.
 
+
+
+## 10. Common-support residual-family control — result and closure (2026-09-23)
+
+The common-support nested comparison was completed on identical complete-case observations within each feature-family block. The development-test incremental results were: activity **−0.00270 mean IC**, **−0.00106 rank IC**, **−0.155 bps Q1–Q5 spread**; volatility **−0.01602 mean IC**, **−0.01294 rank IC**, **−0.349 bps**; market context **+0.00047 mean IC**, **+0.00125 rank IC**, **−0.001 bps**. The earlier apparent market-context increment therefore does not survive common-support control.
+
+**Decision:** close these three residual-family branches under the current specification. Strategy 003 remains active because the locked 003H mechanism itself retains positive development-test ordering. The next experiment is restricted to component attribution within the three 003H raw variables, with no new features, transforms, or performance-based subset selection.
