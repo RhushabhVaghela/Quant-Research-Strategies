@@ -71,6 +71,7 @@ def parse_args() -> argparse.Namespace:
 def fit_score(
     panel: pd.DataFrame,
     features: list[str],
+    model_name: str,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     target = "target_excess_1bar"
     base = panel[["timestamp", "symbol", target] + features].dropna(subset=[target]).copy()
@@ -115,7 +116,7 @@ def fit_score(
     ):
         metrics = score_predictions(frame, prediction, target)
         rows.append({
-            "model": "mechanism_ols",
+            "model": model_name,
             "split": split_name,
             "feature_count": len(kept),
             "features": ";".join(kept),
@@ -249,8 +250,8 @@ def main() -> None:
 
     panel = locked_exploratory_slice(build_panel(frames, market))
 
-    mechanism_metrics, mechanism_scored = fit_score(panel, MECHANISM_FEATURES)
-    full_metrics, full_scored = fit_score(panel, feature_columns(panel))
+    mechanism_metrics, mechanism_scored = fit_score(panel, MECHANISM_FEATURES, "mechanism_ols")
+    full_metrics, full_scored = fit_score(panel, feature_columns(panel), "full_ols")
 
     mechanism_q = quintile_table(mechanism_scored)
     full_q = quintile_table(full_scored)
@@ -270,18 +271,12 @@ def main() -> None:
     lineage_audit().to_csv(args.output_dir / "lineage_audit.csv", index=False)
 
     comparison = pd.DataFrame([
-        {
-            "model": "mechanism_ols",
-            **mechanism_metrics.loc[
-                mechanism_metrics["split"] == "development_test"
-            ].iloc[0].to_dict(),
-        },
-        {
-            "model": "full_ols",
-            **full_metrics.loc[
-                full_metrics["split"] == "development_test"
-            ].iloc[0].to_dict(),
-        },
+        mechanism_metrics.loc[
+            mechanism_metrics["split"] == "development_test"
+        ].iloc[0].to_dict(),
+        full_metrics.loc[
+            full_metrics["split"] == "development_test"
+        ].iloc[0].to_dict(),
     ])
     comparison.to_csv(args.output_dir / "model_comparison.csv", index=False)
 
