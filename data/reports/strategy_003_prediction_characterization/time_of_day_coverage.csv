@@ -1,9 +1,9 @@
 model,time_bucket,raw_target_rows,scored_rows,raw_to_scored_row_ratio,coverage_note
-ols,09:15-09:59,4725,7560,1.6,Scored observations available.
-ols,10:00-11:59,12600,7560,0.6,Scored observations available.
-ols,12:00-13:59,12600,7560,0.6,Scored observations available.
+ols,09:15-09:59,4725,0,0.0,Raw targets exist but frozen 60-bar feature warm-up or complete-case requirements removed all rows.
+ols,10:00-11:59,12600,0,0.0,Raw targets exist but frozen 60-bar feature warm-up or complete-case requirements removed all rows.
+ols,12:00-13:59,12600,0,0.0,Raw targets exist but frozen 60-bar feature warm-up or complete-case requirements removed all rows.
 ols,14:00-15:30,9180,7560,0.8235294117647058,Scored observations available.
-ridge_fixed_alpha,09:15-09:59,4725,7560,1.6,Scored observations available.
-ridge_fixed_alpha,10:00-11:59,12600,7560,0.6,Scored observations available.
-ridge_fixed_alpha,12:00-13:59,12600,7560,0.6,Scored observations available.
+ridge_fixed_alpha,09:15-09:59,4725,0,0.0,Raw targets exist but frozen 60-bar feature warm-up or complete-case requirements removed all rows.
+ridge_fixed_alpha,10:00-11:59,12600,0,0.0,Raw targets exist but frozen 60-bar feature warm-up or complete-case requirements removed all rows.
+ridge_fixed_alpha,12:00-13:59,12600,0,0.0,Raw targets exist but frozen 60-bar feature warm-up or complete-case requirements removed all rows.
 ridge_fixed_alpha,14:00-15:30,9180,7560,0.8235294117647058,Scored observations available.
