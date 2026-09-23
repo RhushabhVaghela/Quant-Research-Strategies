@@ -179,3 +179,18 @@ The preregistered comparison uses exactly five fixed specifications: 003H core; 
 The experiment asks whether 003H retains predictive information conditional on the old mechanisms. It is a falsification/lineage test, not feature selection. Validation and final holdout remain protected.
 
 Implementation: `scripts/run_strategy_003h_lineage_separation.py`; protocol: `research/journal/003h_lineage_separation_protocol.md`; tests: `tests/test_strategy_003h_lineage_separation.py`.
+
+
+### Strategy 003H lineage separation — result and closure (2026-09-23)
+
+The lineage-separation experiment was completed with five fixed specifications, no parameter/feature search, 155 local tests passing, and 15 eligible equities. The generated outputs were uploaded to the repository.
+
+On the common 003H support, the standalone core produced **+0.05849 mean IC / +0.07274 rank IC / +1.787 bps spread**, while the combined 003H+001+002 model produced **+0.05577 / +0.06774 / +1.848 bps**. The frozen 001 and 002 lineage proxies therefore did not remove the 003H ordering.
+
+**Decision:** Strategy 003 remains active as a distinct but unvalidated intraday prediction hypothesis. The current 001/002-overlap branch is closed under the frozen definitions; Strategies 001 and 002 remain closed and no 003H candidate is frozen.
+
+The next controlled experiment is **economic-form decomposition of the two-variable 003H core**, using a finite preregistered representation set with common-support control. No unrestricted feature search, holding-period search, cost optimization, nonlinear escalation, portfolio construction, protected validation, or holdout use is authorized by the lineage result.
+
+Protocol: `research/journal/003h_lineage_separation_protocol.md`.
+Runner: `scripts/run_strategy_003h_lineage_separation.py`.
+Outputs: `data/reports/strategy_003h_lineage_separation/`.
