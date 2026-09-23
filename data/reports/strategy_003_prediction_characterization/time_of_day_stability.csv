@@ -1,3 +1,9 @@
-model,time_bucket,count,mean_spread_bps,median,std
-ols,14:00-15:30,504,2.2167760199321935,2.6082808049075292,10.861503176021914
-ridge_fixed_alpha,14:00-15:30,504,2.1981408369882423,2.534597910460179,10.861302556897115
+model,time_bucket,count,mean_spread_bps,median_spread_bps,std,status
+ols,09:15-09:59,0,,,,no_usable_scored_observations
+ols,10:00-11:59,0,,,,no_usable_scored_observations
+ols,12:00-13:59,0,,,,no_usable_scored_observations
+ols,14:00-15:30,504,2.216776019932194,2.6082808049075292,10.861503176021913,scored
+ridge_fixed_alpha,09:15-09:59,0,,,,no_usable_scored_observations
+ridge_fixed_alpha,10:00-11:59,0,,,,no_usable_scored_observations
+ridge_fixed_alpha,12:00-13:59,0,,,,no_usable_scored_observations
+ridge_fixed_alpha,14:00-15:30,504,2.1981408369882423,2.534597910460179,10.861302556897114,scored
