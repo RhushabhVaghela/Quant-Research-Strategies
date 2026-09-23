@@ -1,0 +1,61 @@
+{
+  "experiment": "003H_lineage_separation",
+  "core": [
+    "close_location_1bar",
+    "intraday_position_60bar"
+  ],
+  "lineage_features": [
+    "strategy_001_event",
+    "strategy_002_prior_loo_residual"
+  ],
+  "specifications": {
+    "003h_core": [
+      "close_location_1bar",
+      "intraday_position_60bar"
+    ],
+    "001_lineage": [
+      "strategy_001_event"
+    ],
+    "002_lineage": [
+      "strategy_002_prior_loo_residual"
+    ],
+    "001_plus_002_lineage": [
+      "strategy_001_event",
+      "strategy_002_prior_loo_residual"
+    ],
+    "003h_plus_001_plus_002": [
+      "close_location_1bar",
+      "intraday_position_60bar",
+      "strategy_001_event",
+      "strategy_002_prior_loo_residual"
+    ]
+  },
+  "strategy_001_event_definition": "z_score >= 2.0 and prior_return_6bar > 0",
+  "strategy_002_definition": "one-bar close-to-close return minus timestamp-level mean of other eligible equities",
+  "exploratory_start": "2025-09-18",
+  "exploratory_end": "2026-06-09",
+  "project_validation_start": "2026-06-10",
+  "final_holdout_start": "2026-08-20",
+  "holdout_used": false,
+  "protected_validation_used": false,
+  "parameter_search": false,
+  "feature_selection": false,
+  "new_features": false,
+  "new_transforms": false,
+  "common_complete_case_support": true,
+  "decision_rule": "Lineage falsification only; do not select the highest-performing specification as a trading model.",
+  "splits": {
+    "train_start": "2025-09-18 09:15:00+05:30",
+    "train_end": "2026-02-20 12:25:00+05:30",
+    "validation_start": "2026-02-20 12:35:00+05:30",
+    "validation_end": "2026-04-17 13:50:00+05:30",
+    "test_start": "2026-04-17 14:00:00+05:30",
+    "test_end": "2026-06-09 15:25:00+05:30",
+    "train_end_unpurged": "2026-02-20 12:30:00+05:30",
+    "validation_end_unpurged": "2026-04-17 13:55:00+05:30",
+    "train_purge_count": 1,
+    "validation_purge_count": 1,
+    "purge_unit": "decision_timestamp",
+    "horizon_bars": 1
+  }
+}
