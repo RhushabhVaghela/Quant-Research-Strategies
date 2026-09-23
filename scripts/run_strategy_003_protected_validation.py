@@ -84,17 +84,15 @@ def main() -> None:
     if "NIFTYBEES" not in eligible:
         raise SystemExit("NIFTYBEES is required as the market reference")
 
-    frames = {
-        symbol: load_intraday(args.directory / f"NSE_{symbol}_5minute.csv")
-        for symbol in sorted(symbols)
-    }
+    frames = {}
+    for symbol in sorted(symbols):
+        frame = load_intraday(args.directory / f"NSE_{symbol}_5minute.csv")
+        frames[symbol] = frame.loc[frame.index < HOLDOUT_START].copy()
     market = load_intraday(args.directory / "NSE_NIFTYBEES_5minute.csv")
+    market = market.loc[market.index < HOLDOUT_START].copy()
+    # Hard stop: raw inputs are truncated before the final holdout is passed to build_panel.
     panel = locked_exploratory_slice(build_panel(frames, market))
     panel = panel.dropna(subset=FEATURES + ["target_excess_1bar"]).copy()
-
-    # Hard stop: never inspect the final holdout.
-    if panel.timestamp.max() >= HOLDOUT_START:
-        panel = panel.loc[panel.timestamp < HOLDOUT_START].copy()
 
     train = panel.loc[
         (panel.timestamp >= EXPLORATORY_START) & (panel.timestamp <= DEVELOPMENT_END)
@@ -131,6 +129,16 @@ def main() -> None:
     }
 
     pd.DataFrame([row]).to_csv(args.output_dir / "protected_validation_metrics.csv", index=False)
+    development_reference = pd.DataFrame([{
+        "metric": "mean_ic", "development_test_reference": 0.0696,
+    }, {
+        "metric": "mean_rank_ic", "development_test_reference": 0.0826,
+    }, {
+        "metric": "mean_top_bottom_spread_bps", "development_test_reference": 2.2168,
+    }])
+    development_reference.to_csv(
+        args.output_dir / "development_reference_comparison.csv", index=False
+    )
     quintiles(scored).to_csv(args.output_dir / "protected_validation_quintiles.csv", index=False)
     scored.to_csv(args.output_dir / "protected_validation_scored_observations.csv", index=False)
 
@@ -167,6 +175,7 @@ def main() -> None:
         "cost_optimization": False,
         "portfolio_construction": False,
         "rescue_tuning": False,
+        "raw_inputs_truncated_before_holdout": True,
     }
     (args.output_dir / "run_manifest.json").write_text(
         json.dumps(manifest, indent=2), encoding="utf-8"
