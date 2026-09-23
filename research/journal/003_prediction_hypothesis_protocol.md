@@ -242,3 +242,7 @@ On the common 003H support, adding both old-mechanism proxies changes mean IC on
 **Decision:** keep Strategy 003 active as a distinct but unvalidated intraday prediction hypothesis; close the current 001/002-overlap branch; do not reopen 001/002; do not promote 003H to a strategy candidate.
 
 The next gate is a finite, preregistered **economic-form decomposition** of the two-variable core, still development-only and common-support controlled.
+
+## Current status correction — 2026-09-23
+
+The lineage-separation and economic-form decomposition gates described as future work in earlier sections are now complete. Those sections remain historical protocol records. The current status is: exploratory/development gates complete; interaction branch closed; protected validation not executed; final holdout untouched. See `003h_economic_form_decomposition_protocol.md`, `003_protected_validation_protocol.md`, and `003_execution_cost_basis_research_20260923.md`.
