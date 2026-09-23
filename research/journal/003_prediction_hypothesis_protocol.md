@@ -246,3 +246,11 @@ The next gate is a finite, preregistered **economic-form decomposition** of the 
 ## Current status correction — 2026-09-23
 
 The lineage-separation and economic-form decomposition gates described as future work in earlier sections are now complete. Those sections remain historical protocol records. The current status is: exploratory/development gates complete; interaction branch closed; protected validation not executed; final holdout untouched. See `003h_economic_form_decomposition_protocol.md`, `003_protected_validation_protocol.md`, and `003_execution_cost_basis_research_20260923.md`.
+
+## Current status — 23 September 2026
+
+Historical next-step language above is preserved as protocol history. The economic-form decomposition is complete and the protected-validation gate is now frozen.
+
+The current candidate is the additive OLS model using close_location_1bar and intraday_position_60bar only. Protected validation is authorized for 2026-06-10 through 2026-08-19. No feature, interaction, threshold, holding-period, universe or cost rescue is permitted after results are observed.
+
+If protected prediction survives, use `003_economic_execution_viability_protocol.md`. If it fails, close the research line.
