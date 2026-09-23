@@ -139,6 +139,18 @@ This phase does not:
 - choose a winning feature subset;
 - optimize costs or execution assumptions.
 
+## Decision from controlled characterization
+
+The regenerated development-test outputs support moving to a provisional economic-mechanism test rather than additional descriptive fishing.
+
+The evidence is directionally coherent at the endpoints (Q1 about -1.12 bps, Q5 about +1.09 bps; Q1-Q5 about +2.22 bps), survives 1% winsorization, and is not materially changed by fixed Ridge. The middle quintiles are not strictly monotonic, so the pattern should not be described as strict monotonicity.
+
+The feature-family ablation points toward bar-shape/intraday-state variables as the largest registered descriptive component, with volatility secondary. This motivates a mechanism decomposition, not immediate feature selection.
+
+The frozen 60-bar features leave the early-session scored sample unavailable. This is recorded as a feature-availability limitation and is not to be repaired by changing the frozen discovery feature set.
+
+The next registered step is 003H — Mechanism decomposition, documented in research/journal/003_prediction_hypothesis_protocol.md.
+
 ## Exit criteria
 
 ### Advance to economic-hypothesis formulation only if
