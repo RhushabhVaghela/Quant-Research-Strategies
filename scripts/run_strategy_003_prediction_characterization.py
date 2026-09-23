@@ -359,9 +359,12 @@ def _winsorized(values: pd.Series, lower: float = 0.01, upper: float = 0.99) -> 
 def _time_bucket(ts: pd.Series) -> pd.Series:
     local = pd.DatetimeIndex(ts).tz_convert("Asia/Kolkata")
     minutes = local.hour * 60 + local.minute
+    # pd.cut is right-closed by default. Use the final minute of each
+    # bucket as the boundary so 10:00 belongs to the second bucket,
+    # 12:00 to the third, and 14:00 to the fourth.
     labels = pd.cut(
         minutes,
-        bins=[-1, 10 * 60, 12 * 60, 14 * 60, 15 * 60 + 30],
+        bins=[-1, 10 * 60 - 1, 12 * 60 - 1, 14 * 60 - 1, 15 * 60 + 30],
         labels=["09:15-09:59", "10:00-11:59", "12:00-13:59", "14:00-15:30"],
     )
     return pd.Series(labels.astype(str), index=ts.index)
