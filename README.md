@@ -108,7 +108,7 @@ The final holdout (**2026-08-20 through 2026-09-17**) remained untouched. The tu
 
 Detailed findings: research/journal/002_turnover_reduction_development_findings.md.
 
-## Strategy 003 — Intraday prediction-driven alpha discovery — PROTECTED VALIDATION AUTHORIZED
+## Strategy 003 — Intraday prediction-driven alpha discovery — ECONOMIC EXECUTION GATE
 
 After Strategies 001 and 002, Strategy 003 changes the discovery layer rather than simply trying another narrow trading rule.
 
