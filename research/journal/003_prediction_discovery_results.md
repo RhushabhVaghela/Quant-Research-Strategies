@@ -303,3 +303,15 @@ Protected validation beginning 2026-06-10 and final holdout beginning 2026-08-20
 The next step is a hard promotion/closure decision: either freeze a narrowly specified explanatory form and register a protected-validation experiment, or close Strategy 003 as insufficient for further work. This decision must be made before reading or using the protected validation period.
 
 Protocol: `research/journal/003h_economic_form_decomposition_protocol.md`.
+
+## 15. Current gate after exploratory closure — 23 September 2026
+
+The development-stage exploratory sequence is complete. The next experiment is now **protected validation of the frozen additive 003H form**, not another decomposition.
+
+Frozen form: close_location_1bar + intraday_position_60bar, additive OLS, training-only standardization, same 15-stock universe, next 5-minute cross-sectional excess return.
+
+Protected validation window: 2026-06-10 through 2026-08-19. Final holdout: 2026-08-20 onward, untouched.
+
+If prediction survives, proceed to the preregistered economic execution viability protocol. If prediction fails, close Strategy 003 without rescue tuning.
+
+The historical 5-bps sensitivity is no longer described as a universal realistic cost. Current published NSE/broker fees can already exceed 5 bps at ordinary retail notionals before spread, slippage and market impact. See `003_execution_cost_basis_research_20260923.md`.
