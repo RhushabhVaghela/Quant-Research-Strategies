@@ -233,3 +233,17 @@ pytest -q
 ```
 
 Strategy 002 is now closed for the current capital-pursuit/candidate-selection program: the fixed one-bar baseline failed cost resilience, and the pre-registered H2/H3/H6 turnover-reduction development variants did not produce a cost-resilient candidate. The final holdout remained protected. Strategy 003 is the current active discovery program and is deliberately prediction-driven rather than another narrow hand-written rule.
+
+---
+
+## Quant Research Learning Layer
+The repository now includes a separate learning curriculum built from the actual Strategy 001–003 research path. It captures reusable skills such as hypothesis formation, leakage control, chronological validation, holdout protection, cross-sectional prediction, IC/rank IC, quintile analysis, attribution, common-support controls, mechanism decomposition, transaction-cost reasoning, lineage testing, negative results, and disciplined branch closure.
+
+See `research/journal/research_learning_path.md` and `research/journal/research_learning_modules.md`.
+
+### Strategy 003 final development gate
+
+The 003H lineage test is complete and the remaining authorized exploratory step is economic-form decomposition of the locked two-variable core (`close_location_1bar` + `intraday_position_60bar`). This compares exactly four preregistered forms on common support and does not use protected validation or the final holdout.
+
+Protocol: `research/journal/003h_economic_form_decomposition_protocol.md`.
+Runner: `scripts/run_strategy_003h_economic_form_decomposition.py`.
