@@ -7,6 +7,7 @@ import pandas as pd
 from scripts.run_strategy_003_prediction_characterization import (
     _quintile_table,
     _quintile_summary,
+    _quintile_distribution,
     _time_bucket,
 )
 
@@ -52,6 +53,20 @@ def test_quintile_summary_retains_intermediate_quintiles() -> None:
 
     assert summary["quintile"].tolist() == [1, 2, 3, 4, 5]
     assert summary["mean_return_bps"].tolist() == [0.5, 2.5, 4.5, 6.5, 8.5]
+
+
+def test_quintile_distribution_consumes_quintile_table() -> None:
+    timestamp = pd.Timestamp("2026-06-10 14:00", tz="Asia/Kolkata")
+    table = pd.DataFrame(
+        [
+            {"model": "ols", "timestamp": timestamp, "quintile": 1, "mean_target_excess_bps": -1.0},
+            {"model": "ols", "timestamp": timestamp, "quintile": 5, "mean_target_excess_bps": 2.0},
+        ]
+    )
+
+    out = _quintile_distribution(table)
+
+    assert out["spread_bps"].tolist() == [3.0]
 
 
 def test_time_bucket_registers_all_four_clock_segments() -> None:
