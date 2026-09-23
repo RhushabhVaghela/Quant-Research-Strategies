@@ -315,3 +315,26 @@ Protected validation window: 2026-06-10 through 2026-08-19. Final holdout: 2026-
 If prediction survives, proceed to the preregistered economic execution viability protocol. If prediction fails, close Strategy 003 without rescue tuning.
 
 The historical 5-bps sensitivity is no longer described as a universal realistic cost. Current published NSE/broker fees can already exceed 5 bps at ordinary retail notionals before spread, slippage and market impact. See `003_execution_cost_basis_research_20260923.md`.
+
+## 16. Protected validation — result and promotion to economic testing (2026-09-23)
+
+The frozen additive 003H candidate was executed once on the protected period **2026-06-10 through 2026-08-19**.
+
+| Metric | Development reference | Protected validation |
+|---|---:|---:|
+| Mean IC | +0.0696 | **+0.08136** |
+| Mean rank IC | +0.0826 | **+0.10082** |
+| Q1–Q5 spread | +2.2168 bps | **+1.6870 bps** |
+| Positive IC fraction | — | **60.76%** |
+| Timestamps | — | **711** |
+| Observations | — | **10,665** |
+
+Protected Q1–Q5 returns were Q1 **−0.8952**, Q2 **−0.3388**, Q3 **−0.1837**, Q4 **+0.6259**, Q5 **+0.7918 bps**.
+
+The protected spread retains about **76%** of the development-test magnitude and direction is preserved. Mean IC and rank IC are also above their development references. Under the preregistered decision rule, this advances the research from predictive validation to economic execution testing.
+
+A major limitation remains: all protected scored timestamps are late-session, approximately **14:10–15:20 IST**, because of the frozen 60-bar warm-up. This is not interpreted as an intrinsic afternoon effect and is not used to select a narrower trading window.
+
+**Current decision: Strategy 003 passes the protected prediction gate. The next authorized stage is the frozen economic execution viability test.**
+
+No final-holdout data were used.
