@@ -87,9 +87,9 @@ def main() -> None:
     frames = {}
     for symbol in sorted(symbols):
         frame = load_intraday(args.directory / f"NSE_{symbol}_5minute.csv")
-        frames[symbol] = frame.loc[frame.index < HOLDOUT_START].copy()
+        frames[symbol] = frame.loc[frame["timestamp"] < HOLDOUT_START].copy()
     market = load_intraday(args.directory / "NSE_NIFTYBEES_5minute.csv")
-    market = market.loc[market.index < HOLDOUT_START].copy()
+    market = market.loc[market["timestamp"] < HOLDOUT_START].copy()
     # Hard stop: raw inputs are truncated before the final holdout is passed to build_panel.
     panel = locked_exploratory_slice(build_panel(frames, market))
     panel = panel.dropna(subset=FEATURES + ["target_excess_1bar"]).copy()
