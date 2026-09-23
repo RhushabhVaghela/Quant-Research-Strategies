@@ -35,6 +35,10 @@ The lineage audit found no direct encoding of Strategy 001 signed-return events 
 
 **Current decision:** keep Strategy 003 active as an unresolved intraday prediction hypothesis. Do not construct a portfolio, optimize thresholds/holding periods, escalate to nonlinear ML, or use protected validation yet. The next registered step is a finite residual-mechanism decomposition: test the existing locked mechanism with one additional pre-existing feature-family block at a time (activity, volatility, market context), without parameter tuning or selecting the best family from development performance.
 
+Protocol: `research/journal/003_residual_mechanism_decomposition_protocol.md`.
+
+Runner: `scripts/run_strategy_003_residual_mechanism_decomposition.py`.
+
 
 Strategy 003 is a **research program**, not a frozen trading strategy. The original draft used 1-day and 5-day daily targets as a broad prediction-discovery experiment. It is now superseded because the project objective is intraday strategy research. A 5-trading-day target is a multi-day close-to-close prediction, not an intraday prediction target.
 
