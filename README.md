@@ -108,7 +108,7 @@ The final holdout (**2026-08-20 through 2026-09-17**) remained untouched. The tu
 
 Detailed findings: research/journal/002_turnover_reduction_development_findings.md.
 
-## Strategy 003 — Intraday prediction-driven alpha discovery — DEVELOPMENT GATES COMPLETE
+## Strategy 003 — Intraday prediction-driven alpha discovery — PROTECTED VALIDATION AUTHORIZED
 
 After Strategies 001 and 002, Strategy 003 changes the discovery layer rather than simply trying another narrow trading rule.
 
@@ -234,7 +234,7 @@ Run the complete test suite:
 pytest -q
 ```
 
-Strategy 002 is closed for the current capital-pursuit/candidate-selection program. Strategy 003 has completed its authorized exploratory development gates. The next action is a hard decision: either freeze the registered additive 003H form and execute protected validation, or close Strategy 003. No further exploratory feature search is authorized.
+Strategy 002 is closed for the current capital-pursuit/candidate-selection program. Strategy 003 has completed its authorized exploratory development gates. The registered additive 003H form is now frozen and protected validation is authorized. No further exploratory feature search is authorized.
 
 ---
 
@@ -254,3 +254,53 @@ Cost research: `research/journal/003_execution_cost_basis_research_20260923.md`.
 Protected validation protocol: `research/journal/003_protected_validation_protocol.md`.
 
 The final holdout remains untouched.
+
+
+## Current published NSE/broker economics — 23 September 2026
+
+For NSE equity intraday, the current published cost schedule used by this research program is:
+
+- STT = **2.5 bps**, sell side.
+- NSE transaction charge = about **0.307 bps per side**.
+- Stamp duty = **0.3 bps**, buy side.
+- SEBI turnover fee = very small.
+- GST = **18%** on applicable brokerage/exchange/SEBI charges.
+- Zerodha brokerage = **₹20 or 0.03%, whichever is lower, per executed order**.
+- Upstox and Angel One publish broadly similar **₹20-or-percentage** intraday structures.
+- Groww also publishes a **₹20/percentage-based** intraday brokerage structure.
+
+These rates are documented from current official NSE and broker schedules in `research/journal/003_execution_cost_basis_research_20260923.md`.
+
+### Fee-only round-trip reference
+
+| Round-trip notional | Approx. broker + statutory cost |
+|---:|---:|
+| ₹50k | **10.6 bps** |
+| ₹1 lakh | **8.3 bps** |
+| ₹2.5 lakh | **5.4 bps** |
+| ₹5 lakh | **4.5 bps** |
+| ₹10 lakh | **4.0 bps** |
+| ₹50 lakh | **3.6 bps** |
+
+These figures are **before spread, slippage and market impact**. They are a fee-only reference calculation, not a historical execution estimate. Exact costs vary with broker, order count, turnover and account-specific terms.
+
+The historical **5-bps round-trip sensitivity remains a stress-test threshold, not a universal current all-in cost estimate**.
+
+### Strategy 003 — current gate
+
+The frozen candidate is:
+
+- `close_location_1bar + intraday_position_60bar`;
+- additive OLS;
+- training-only standardization;
+- next 5-minute cross-sectional excess return;
+- same 15-stock eligible universe.
+
+Protected validation is the next and final predictive gate. It must use 2026-06-10 through 2026-08-19 only. The final holdout beginning 2026-08-20 remains untouched.
+
+If protected prediction survives, the next step is the preregistered economic execution viability test using current statutory/broker costs plus separately frozen spread/slippage/impact scenarios. If prediction fails, Strategy 003 closes without a rescue search.
+
+Protocols:
+- `research/journal/003_protected_validation_protocol.md`
+- `research/journal/003_economic_execution_viability_protocol.md`
+- `research/journal/003_execution_cost_basis_research_20260923.md`
