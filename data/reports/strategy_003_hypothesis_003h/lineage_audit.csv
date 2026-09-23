@@ -1,0 +1,4 @@
+strategy,feature,directly_encodes_001_signed_return,directly_encodes_002_peer_residual_return,interpretation
+003H,close_location_1bar,False,False,Current close position within current bar; no explicit lagged return sign or peer residual.
+003H,intraday_position_60bar,False,False,Current close relative to trailing 60-bar session mean; state variable rather than explicit signed-return event.
+003H,bars_since_session_open,False,False,Session-clock state; no return or peer-residual information.
