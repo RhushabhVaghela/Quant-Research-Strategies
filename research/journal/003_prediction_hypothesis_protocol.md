@@ -75,3 +75,56 @@ No portfolio construction, turnover optimization, transaction-cost grid, holding
 ## 6. Evidence boundary
 
 All evidence in this protocol is from the exploratory/development-test sample ending **2026-06-09**. The project validation period beginning **2026-06-10** and final holdout beginning **2026-08-20** remain protected.
+
+## 7. 003H implementation contract
+
+The mechanism test must remain explanatory rather than become a second feature search.
+
+### Locked feature set
+
+Use exactly the registered base variables already belonging to the bar-shape/intraday-state family:
+
+- close_location_1bar
+- intraday_position_60bar
+- bars_since_session_open
+
+Use their existing raw representations first. Do not introduce new transforms, lookback lengths, thresholds, interactions, market regimes or nonlinear terms in 003H.
+
+### Fixed model comparison
+
+Use:
+
+1. zero baseline;
+2. OLS on the three locked base features.
+
+Ridge is not necessary for the first mechanism test because the characterization already established near-perfect OLS/Ridge score agreement. Adding another model would not answer a new economic question.
+
+### Evaluation
+
+Fit on the same chronological training segment used by the frozen discovery model and evaluate on the same development-test segment. Preserve the one-bar purge.
+
+Report:
+
+- mean IC and mean rank IC;
+- Q1–Q5 realized excess returns;
+- Q1-to-Q5 spread;
+- stock-level prediction/target correlation;
+- four registered time buckets plus explicit coverage;
+- comparison with the frozen full-model OLS result.
+
+### Lineage test
+
+The interpretation must explicitly address whether the three features are merely proxies for the closed Strategy 001/002 mechanisms.
+
+The test should inspect the existing Strategy 001/002 feature definitions and document whether any of the locked 003H variables directly encode:
+
+- prior signed-return direction or abnormal-move continuation;
+- peer-relative lagged returns or residual reversal.
+
+A failure to distinguish the mechanism means 003H remains evidence about the old research line rather than a promoted 003 mechanism.
+
+### Decision rule
+
+003H does not select a feature subset because it produces the highest historical spread. It asks whether the small registered intraday-state family is sufficient to explain the predictive structure in an interpretable way.
+
+Advance only if the simplified model retains a materially positive predictive ordering and the mechanism remains distinct from 001/002. Otherwise keep Strategy 003 at characterization or close the line.
