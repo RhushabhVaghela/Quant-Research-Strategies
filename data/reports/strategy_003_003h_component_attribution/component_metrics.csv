@@ -1,0 +1,15 @@
+model,split,feature_count,features,usable_timestamps,purged,horizon_bars,horizon_minutes,mean_ic,mean_rank_ic,ic_ir,positive_ic_fraction,mean_top_bottom_spread_bps
+close_location,validation,1,close_location_1bar,2606,True,1,5,0.04760910610238084,0.05506900674232186,8.616462148662498,0.56792018419033,1.4835193389132582
+close_location,development_test,1,close_location_1bar,2607,True,1,5,0.04107215364727667,0.04799276629047629,7.229241707509292,0.5596471039509014,0.9304660551142158
+intraday_position,validation,1,intraday_position_60bar,525,True,1,5,0.037359980299769675,0.0385799134930714,2.818976920962244,0.5466666666666666,1.3790710248941587
+intraday_position,development_test,1,intraday_position_60bar,540,True,1,5,0.00265396279667112,0.026675371097759238,0.18906996283345961,0.5166666666666667,0.18373684215012553
+session_clock,validation,1,bars_since_session_open,0,True,1,5,,,,,
+session_clock,development_test,1,bars_since_session_open,0,True,1,5,,,,,
+close_location__intraday_position,validation,2,close_location_1bar;intraday_position_60bar,525,True,1,5,0.07058673306128245,0.06806214215272323,5.45153071762648,0.580952380952381,1.9139481906160816
+close_location__intraday_position,development_test,2,close_location_1bar;intraday_position_60bar,540,True,1,5,0.05848752561442876,0.07273622723429485,4.311741931413176,0.5666666666666667,1.7873972444752362
+close_location__session_clock,validation,2,close_location_1bar;bars_since_session_open,2606,True,1,5,0.04760910610238084,0.05506900674232186,8.616462148662498,0.56792018419033,1.4835193389132582
+close_location__session_clock,development_test,2,close_location_1bar;bars_since_session_open,2607,True,1,5,0.04107215364727667,0.04799276629047629,7.229241707509292,0.5596471039509014,0.9304660551142158
+intraday_position__session_clock,validation,2,intraday_position_60bar;bars_since_session_open,525,True,1,5,0.037359980299769675,0.0385799134930714,2.818976920962244,0.5466666666666666,1.3790710248941587
+intraday_position__session_clock,development_test,2,intraday_position_60bar;bars_since_session_open,540,True,1,5,0.0026539627966711164,0.026675371097759238,0.18906996283345937,0.5166666666666667,0.18373684215012553
+all_three,validation,3,close_location_1bar;intraday_position_60bar;bars_since_session_open,525,True,1,5,0.07058809421492471,0.06806214215272323,5.451661066620189,0.580952380952381,1.9139481906160816
+all_three,development_test,3,close_location_1bar;intraday_position_60bar;bars_since_session_open,540,True,1,5,0.0584910161276745,0.07271638596445358,4.312027108491573,0.5666666666666667,1.7843609994433292
