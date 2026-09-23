@@ -304,3 +304,27 @@ Protocols:
 - `research/journal/003_protected_validation_protocol.md`
 - `research/journal/003_economic_execution_viability_protocol.md`
 - `research/journal/003_execution_cost_basis_research_20260923.md`
+
+## Strategy 003 — protected prediction gate passed
+
+The frozen additive 003H candidate passed protected chronological validation for **2026-06-10 through 2026-08-19**:
+
+| Metric | Protected result |
+|---|---:|
+| Mean IC | **+0.08136** |
+| Mean rank IC | **+0.10082** |
+| Q1–Q5 spread | **+1.6870 bps** |
+| Positive IC fraction | **60.76%** |
+| Timestamps | **711** |
+| Observations | **10,665** |
+| Equities | **15** |
+
+The development references were +0.0696 mean IC, +0.0826 rank IC and +2.2168 bps spread. The protected spread retains approximately 76% of the development magnitude and preserves direction.
+
+A coverage limitation is recorded: the frozen 60-bar feature warm-up means scored observations occur approximately 14:10–15:20 IST. This does not establish all-day stability and was not repaired after validation.
+
+**Strategy 003 now advances to the frozen economic execution viability test.** No further alpha discovery or prediction tuning is authorized. The final holdout beginning 2026-08-20 remains untouched.
+
+Economic runner: scripts/run_strategy_003_economic_execution.py.
+
+Economic protocol: research/journal/003_economic_execution_viability_protocol.md.
