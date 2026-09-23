@@ -62,9 +62,8 @@ def test_time_bucket_registers_all_four_clock_segments() -> None:
                 "2026-06-10 10:00",
                 "2026-06-10 12:00",
                 "2026-06-10 14:00",
-            ],
-            utc=True,
-        ).tz_convert("Asia/Kolkata")
+            ]
+        ).tz_localize("Asia/Kolkata")
     )
 
     out = _time_bucket(timestamps)
