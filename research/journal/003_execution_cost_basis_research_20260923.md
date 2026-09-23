@@ -167,3 +167,31 @@ The next cost model should be execution-aware and tied to notional, turnover, sp
 For the current Strategy 003 effect size, that distinction matters: the observed ~1.8–2.4 bps diagnostic separation is already small relative to the current fee floor for many practical order sizes, before liquidity costs.
 
 Therefore, **continue only into the frozen protected-validation + economic-viability gate. Do not continue searching for more features.**
+
+
+## 9. Current published economics — verified 23 September 2026
+
+The current official schedules were rechecked on 23 September 2026. NSE publishes STT of 0.025% on intraday equity sales, stamp duty of 0.003% on non-delivery security transactions on the buy side, SEBI turnover fees of ₹10/crore, and 18% GST on broker services. Zerodha publishes NSE equity transaction charges of 0.00307% and intraday brokerage of ₹20 or 0.03%, whichever is lower. Upstox publishes the same 0.00307% NSE transaction charge and ₹20-or-0.1% intraday brokerage. Angel One publishes ₹20-or-0.1% intraday brokerage (minimum ₹5), and Groww publishes ₹20-or-0.1% intraday brokerage subject to its published minimum-brokerage rules.
+
+The fee-only round-trip reference remains:
+
+| Round-trip notional | Approx. broker + statutory cost |
+|---:|---:|
+| ₹50,000 | **10.6 bps** |
+| ₹1,00,000 | **8.3 bps** |
+| ₹2,50,000 | **5.4 bps** |
+| ₹5,00,000 | **4.5 bps** |
+| ₹10,00,000 | **4.0 bps** |
+| ₹50,00,000 | **3.6 bps** |
+
+These are before spread, slippage and market impact. They are a reference calculation, not a historical execution estimate.
+
+### Official sources
+
+- NSE — SEBI turnover fees, STT and other levies: https://www.nseindia.com/static/invest/first-time-investor-sebi-turnover-fees-stt-other-levies
+- Zerodha — charges: https://zerodha.com/charges
+- Upstox — brokerage charges: https://upstox.com/brokerage-charges/
+- Groww — pricing: https://groww.in/pricing
+- Angel One — transaction charges: https://www.angelone.in/exchange-transaction-charges
+
+The research terminology remains: **5 bps round-trip sensitivity — historical stress-test threshold, not a broker-fee or all-in execution-cost estimate.**
