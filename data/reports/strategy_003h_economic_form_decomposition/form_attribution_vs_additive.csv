@@ -1,0 +1,5 @@
+model,delta_mean_ic_vs_additive,delta_rank_ic_vs_additive,delta_spread_bps_vs_additive,usable_timestamps
+close_location_only,0.02491457239448204,0.018502429793056288,0.577994681390154,528
+intraday_position_only,-0.05619247574084552,-0.04586986910067764,-1.5610050164845077,528
+additive_core,0.0,0.0,0.0,528
+joint_interaction,0.0014242525702078263,-0.0009707884013319262,0.09043709405721279,528

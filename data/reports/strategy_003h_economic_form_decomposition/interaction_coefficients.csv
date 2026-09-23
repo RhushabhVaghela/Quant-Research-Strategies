@@ -1,0 +1,5 @@
+model,interaction_coefficient_standardized
+close_location_only,
+intraday_position_only,
+additive_core,
+joint_interaction,1.961579915266969e-05
