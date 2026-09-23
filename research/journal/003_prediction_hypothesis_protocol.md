@@ -221,3 +221,24 @@ Use exactly five fixed specifications: 003H core; 001 event proxy; 002 leave-one
 The question is conditional predictive information, not historical performance optimization. No thresholds, new features, transforms, holding periods, costs, nonlinear models, portfolio construction, protected validation or holdout access are permitted.
 
 Advance only if the evidence shows the 003H core retains meaningful predictive information conditional on the old mechanisms and remains interpretable as a distinct information source. Otherwise retain it as overlapping lineage or unresolved research evidence.
+
+
+## 11. Lineage separation result and decision (2026-09-23)
+
+The preregistered lineage-separation experiment was completed with 155 local tests passing and 15 eligible equities.
+
+Development-test results:
+
+| Model | Mean IC | Rank IC | Q1–Q5 spread |
+|---|---:|---:|---:|
+| 003H core | +0.05849 | +0.07274 | +1.787 bps |
+| 001 lineage | +0.00991 | +0.01842 | +0.013 bps |
+| 002 lineage | +0.02801 | +0.04038 | +0.644 bps |
+| 001 + 002 lineage | +0.02815 | +0.04059 | +0.638 bps |
+| 003H + 001 + 002 | +0.05577 | +0.06774 | +1.848 bps |
+
+On the common 003H support, adding both old-mechanism proxies changes mean IC only modestly and leaves the cross-sectional ordering intact. The result therefore supports **representational distinctness under the registered definitions**, not causal independence.
+
+**Decision:** keep Strategy 003 active as a distinct but unvalidated intraday prediction hypothesis; close the current 001/002-overlap branch; do not reopen 001/002; do not promote 003H to a strategy candidate.
+
+The next gate is a finite, preregistered **economic-form decomposition** of the two-variable core, still development-only and common-support controlled.
