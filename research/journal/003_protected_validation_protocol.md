@@ -101,3 +101,26 @@ The current cost basis is documented in research/journal/003_execution_cost_basi
 ## 8. Evidence boundary
 
 This protocol authorizes one protected predictive test. It does **not** claim that the validation has been run. The final holdout remains protected until a later, separately justified decision.
+## 9. Protected-validation result — 23 September 2026
+
+| Metric | Development reference | Protected validation |
+|---|---:|---:|
+| Mean IC | +0.0696 | **+0.08136** |
+| Mean rank IC | +0.0826 | **+0.10082** |
+| Q1–Q5 spread | +2.2168 bps | **+1.6870 bps** |
+| Positive timestamp IC fraction | — | **60.76%** |
+| Usable timestamps | — | **711** |
+| Observations | — | **10,665** |
+| Stocks | 15 | **15** |
+
+Protected Q1–Q5 mean next-bar excess returns were **−0.8952, −0.3388, −0.1837, +0.6259, +0.7918 bps**. The ordering is directionally coherent.
+
+The protected Q1–Q5 spread retains approximately **76%** of the development-test magnitude while preserving direction. Mean IC and rank IC are higher than the development reference.
+
+**Decision:** the frozen predictive relationship passes the preregistered prediction gate. Strategy 003 advances to the separately registered economic-execution test.
+
+### Coverage caveat
+
+The 711 protected timestamps occur only from approximately **14:10 through 15:20 IST** because of the frozen 60-bar within-session warm-up. The sample covers **50 trading dates**, but it does not establish all-day stability. This limitation is recorded rather than repaired after seeing the result.
+
+The final holdout beginning **2026-08-20 remains untouched**.
