@@ -294,3 +294,7 @@ Read this module alongside the individual strategy records:
 - Strategy 001: hypothesis rejection, continuation attribution, frozen execution, cost sensitivity, chronological/OOS discipline, prospective testing, closure.
 - Strategy 002: residual-reversal discovery, leave-one-out construction, fixed executable baseline, turnover/cost gate, closure.
 - Strategy 003: predictive-information discovery, IC/rank IC/quintiles, attribution, common support, mechanism decomposition, lineage testing, final economic-form gate.
+
+## Current status update — 2026-09-23
+
+The curriculum's earlier Strategy 003 stopping example has now been completed: economic-form decomposition is finished, the interaction branch is closed, and the project is at the protected-validation-or-closure gate. Module 10's cost lesson is expanded by `003_execution_cost_basis_research_20260923.md`: the historical 5-bps sensitivity is not a universal current all-in NSE intraday cost basis. The current research must distinguish statutory/broker costs from spread, slippage, and impact.
