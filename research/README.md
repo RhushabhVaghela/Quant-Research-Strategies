@@ -50,7 +50,7 @@ The candidate manifest is defined independently of strategy performance.
 
 ## Strategy 003 — Intraday prediction-driven alpha discovery
 
-Strategy 003 has completed its authorized exploratory/development research gates and is now at the promotion-or-closure decision gate. It remains explicitly intraday.
+Strategy 003 has completed its authorized exploratory/development research gates and has now passed the protected predictive gate; it is at the economic execution viability gate. It remains explicitly intraday.
 
 The original draft used daily 1-day and 5-day targets. That draft is superseded because a 5-day close-to-close target is a multi-day prediction, not the project's intraday research objective.
 
