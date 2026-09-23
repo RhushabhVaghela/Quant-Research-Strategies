@@ -45,6 +45,8 @@ Discovery results: `research/journal/003_prediction_discovery_results.md`.
 
 Characterization protocol: `research/journal/003_prediction_discovery_characterization_protocol.md`.
 
+Provisional hypothesis protocol: `research/journal/003_prediction_hypothesis_protocol.md`.
+
 Discovery runner: `scripts/run_strategy_003_prediction_discovery.py`.
 
 Characterization runner: `scripts/run_strategy_003_prediction_characterization.py`.
