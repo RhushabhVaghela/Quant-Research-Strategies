@@ -1,0 +1,2 @@
+block,common_support_timestamps,mechanism_mean_ic,extended_mean_ic,incremental_mean_ic,mechanism_mean_rank_ic,extended_mean_rank_ic,incremental_mean_rank_ic,mechanism_spread_bps,extended_spread_bps,incremental_spread_bps
+volatility,2464,0.06637809564917455,0.05035864026719313,-0.016019455381981414,0.07880994483669872,0.06586794581020301,-0.012941999026495704,1.8726830984679448,1.5236336475124883,-0.3490494509554565
