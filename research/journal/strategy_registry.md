@@ -27,6 +27,15 @@ No two promoted strategies should be materially the same economic mechanism appl
 | 003 | Indian equities | Intraday prediction-driven discovery using liquidity/activity, volatility/state, bar-shape/intraday-state and market context; first pass excludes 001/002 signed-return mechanisms | Next-5-minute discovery → frozen-model characterization → provisional mechanism test 003H | **Active hypothesis test; no candidate frozen** |
 ## Strategy 003 — intraday prediction-driven alpha discovery
 
+### Strategy 003H mechanism decomposition — result
+
+003H tested the preregistered bar-shape/intraday-state mechanism using exactly three locked raw features: `close_location_1bar`, `intraday_position_60bar`, and `bars_since_session_open`. The development-test result retained positive cross-sectional ordering (mean IC **+0.0585**, mean rank IC **+0.0727**, mean top-bottom spread **+1.78 bps**) but did not explain the entire frozen full-model separation (**+2.22 bps**). The simple mechanism is therefore treated as a meaningful component, not a complete explanation and not a promoted strategy.
+
+The lineage audit found no direct encoding of Strategy 001 signed-return events or Strategy 002 peer-residual returns in the locked feature definitions. However, the mechanism models have zero scored observations before 14:00 because of the frozen 60-bar warm-up, so time-of-day generality remains unresolved.
+
+**Current decision:** keep Strategy 003 active as an unresolved intraday prediction hypothesis. Do not construct a portfolio, optimize thresholds/holding periods, escalate to nonlinear ML, or use protected validation yet. The next registered step is a finite residual-mechanism decomposition: test the existing locked mechanism with one additional pre-existing feature-family block at a time (activity, volatility, market context), without parameter tuning or selecting the best family from development performance.
+
+
 Strategy 003 is a **research program**, not a frozen trading strategy. The original draft used 1-day and 5-day daily targets as a broad prediction-discovery experiment. It is now superseded because the project objective is intraday strategy research. A 5-trading-day target is a multi-day close-to-close prediction, not an intraday prediction target.
 
 The initial daily experiment is preserved rather than rewritten. It was a legitimate medium-horizon prediction question, but continuing to optimize it would have created scope drift. The pivot to intraday was an objective-alignment decision, not a reaction to an unfavorable result.
