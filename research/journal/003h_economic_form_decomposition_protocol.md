@@ -153,3 +153,46 @@ This experiment also serves as an explicit learning module in the project's educ
 It therefore reinforces the project's recurring lessons:
 
 **simple model → interpretable mechanism → controlled comparison → common support → chronological evidence → hard decision gate.**
+
+## 11. Completed experiment — result and decision (2026-09-23)
+
+The preregistered economic-form decomposition was completed on the development-only sample. The user ran the runner successfully for **15 eligible equities** and uploaded the generated outputs to the repository. The manifest confirms common support, one-bar horizon, no parameter/feature search, no protected validation, and no final-holdout use.
+
+### Development-test results
+
+| Specification | Mean IC | Rank IC | IC IR | Q1–Q5 spread |
+|---|---:|---:|---:|---:|
+| Close-location only | **+0.08419** | **+0.09205** | **6.59** | **+2.358 bps** |
+| Intraday-position only | **+0.00309** | **+0.02768** | **0.22** | **+0.219 bps** |
+| Additive two-variable core | **+0.05928** | **+0.07355** | **4.33** | **+1.780 bps** |
+| Joint interaction | **+0.06070** | **+0.07258** | **4.43** | **+1.871 bps** |
+
+The internal chronological validation gives the same qualitative picture: close-location-only remains positive (**+0.06598 mean IC / +2.400 bps spread**), intraday-position-only is positive but weaker (**+0.03321 / +1.262 bps**), the additive core is **+0.06656 / +1.859 bps**, and the interaction model is **+0.06625 / +1.931 bps**.
+
+### Interaction comparison
+
+On the common development-test support, adding the preregistered interaction changes the additive model by only:
+
+- **+0.00142 mean IC**;
+- **−0.00097 rank IC**;
+- **+0.090 bps Q1–Q5 spread**.
+
+The interaction coefficient on standardized inputs is approximately **+1.96e-05**, effectively negligible in this decomposition. The quintile ordering also remains broadly the same: additive Q1→Q5 is approximately **−0.617 to +1.163 bps**, while the interaction form is approximately **−0.742 to +1.129 bps**. The interaction changes the ordering only modestly and does not create a qualitatively different predictive structure.
+
+### Economic-form interpretation
+
+The result does **not** support a distinct nonlinear/joint interaction mechanism as the explanation for the 003H relationship under the preregistered form. The interaction contributes only a small incremental development diagnostic while the additive model already captures the main ordering.
+
+The stronger result is the standalone `close_location_1bar` relationship: it has a larger development-test mean IC and Q1–Q5 spread than the additive two-variable model. This must **not** be used as post-hoc feature selection or as permission to replace the preregistered 003H core with close-location-only and claim fresh validation. It is explanatory evidence within the registered decomposition.
+
+The intraday-position-only specification is weak on the development-test sample, despite positive internal-validation diagnostics. That instability reduces confidence that the 60-bar state variable is an independent dominant driver rather than a complementary/contextual component.
+
+### Decision
+
+**Decision: the joint-interaction branch is closed. The current 003H economic-form evidence is best represented by a simple additive/close-location-dominant interpretation, but no final trading feature set is selected from this development comparison.**
+
+This completes the final authorized exploratory decomposition under the current Strategy 003 lineage.
+
+The project should now move to a hard decision gate. No additional feature-family search, nonlinear model search, alternative interaction search, threshold search, holding-period search, cost optimization, portfolio construction, Strategy 001/002 reopening, protected-validation browsing, or final-holdout use is authorized.
+
+The only next research action is to **freeze a narrowly specified 003H explanatory form and preregister a protected-validation test, or close Strategy 003 if the project judges the remaining gross magnitude insufficient to justify that validation effort**. The protected validation period beginning 2026-06-10 and final holdout beginning 2026-08-20 remain untouched.
