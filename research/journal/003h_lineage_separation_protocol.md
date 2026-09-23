@@ -166,3 +166,7 @@ This does **not** establish causal independence, tradability, cost resilience, r
 Strategies 001 and 002 remain closed and are not reopened. No 003H candidate is frozen, and no portfolio, threshold, holding-period, cost, nonlinear-model, protected-validation, or holdout work is authorized by this experiment alone.
 
 The next research question is economic-form decomposition of the two-variable 003H core, using a finite preregistered representation set with common-support control.
+
+## Current status correction — 2026-09-23
+
+This protocol's historical 'next step' language is superseded by the completed economic-form decomposition. The lineage experiment is complete and its overlap branch is closed. Strategy 003 has now completed the authorized exploratory sequence. The next permitted action is the protected-validation decision or closure; no further exploratory feature search is authorized.
