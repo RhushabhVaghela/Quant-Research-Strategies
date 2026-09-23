@@ -71,3 +71,8 @@ The attribution question is sufficiently answered to simplify the provisional 00
 This remains attribution, not feature selection. The two-variable pair is therefore **not** promoted to a trading strategy, and no protected validation, holdout, threshold search, holding-period search, nonlinear escalation, cost optimization, or portfolio construction is authorized by this result.
 
 The next registered work should test whether this two-variable explanatory core is economically distinct from the previously closed Strategy 001 and Strategy 002 mechanisms. That follow-up must be preregistered and remain development-only unless a later gate explicitly authorizes protected validation.
+
+
+## Current status correction — 2026-09-23
+
+The historical next-step language in this attribution record is superseded by the completed lineage-separation and economic-form decomposition experiments. Attribution remains a historical explanatory result. The current Strategy 003 decision gate is documented in `003_protected_validation_protocol.md`; protected validation has not been executed.
