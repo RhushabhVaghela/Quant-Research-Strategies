@@ -93,8 +93,8 @@ def main() -> None:
     for name, extra in BLOCKS.items():
         features = BASE + extra
         common = common_base(panel, features)
-        metrics, scored = fit_model(common, BASE, "mechanism")
-        ext_metrics, ext_scored = fit_model(common, features, name)
+        metrics, scored = fit_model(common, BASE, "mechanism", splits)
+        ext_metrics, ext_scored = fit_model(common, features, name, splits)
         all_rows.extend([metrics, ext_metrics])
         q = quintiles(scored).merge(quintiles(ext_scored), on="quintile", suffixes=("_mechanism","_extended"))
         q.to_csv(a.output_dir / f"{name}_quintiles_common_support.csv", index=False)
