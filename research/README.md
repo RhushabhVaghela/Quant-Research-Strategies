@@ -255,3 +255,37 @@ The final economic-form decomposition is complete. The interaction branch is clo
 Before deciding whether to continue, the project completed a current NSE cash-equity execution-cost basis review in `journal/003_execution_cost_basis_research_20260923.md`. The review concludes that the historical 5-bps round-trip sensitivity should be treated as a lower-bound/stress sensitivity, not a universal all-in retail execution-cost estimate.
 
 The next permitted action is either to freeze the registered additive 003H form and execute the protected-validation protocol (`journal/003_protected_validation_protocol.md`) or close Strategy 003. No further exploratory feature search is authorized.
+
+
+## Current Strategy 003 gate — 23 September 2026
+
+The exploratory/development program is complete. The frozen candidate is now authorized for protected chronological validation:
+
+- next 5-minute cross-sectional excess return;
+- same 15 eligible equities;
+- close_location_1bar + intraday_position_60bar;
+- additive OLS with training-only standardization;
+- no interaction, thresholds, holding-period search, feature search, universe changes or cost tuning.
+
+Protected validation covers 2026-06-10 through 2026-08-19. The final holdout begins 2026-08-20 and remains untouched.
+
+If prediction survives, use the preregistered economic execution viability protocol rather than opening another alpha-discovery cycle.
+
+## Current published NSE/broker economics
+
+The research cost basis has been updated using current official NSE/broker schedules. Intraday cash-equity costs include STT 2.5 bps on the sell side, NSE transaction charges about 0.307 bps per side, stamp duty 0.3 bps on the buy side, SEBI turnover fees, and 18% GST on applicable brokerage/exchange/SEBI charges. Zerodha publishes ₹20 or 0.03% per executed intraday order; Upstox and Angel One publish ₹20-or-percentage structures; Groww publishes ₹20/percentage-based intraday brokerage.
+
+The current fee-only reference is approximately:
+
+| Round-trip notional | Approx. broker + statutory cost |
+|---:|---:|
+| ₹50k | **10.6 bps** |
+| ₹1 lakh | **8.3 bps** |
+| ₹2.5 lakh | **5.4 bps** |
+| ₹5 lakh | **4.5 bps** |
+| ₹10 lakh | **4.0 bps** |
+| ₹50 lakh | **3.6 bps** |
+
+These figures are **before spread, slippage and market impact**. The historical 5-bps sensitivity is therefore retained only as a historical stress threshold, not as a universal all-in current cost estimate.
+
+See `research/journal/003_execution_cost_basis_research_20260923.md`.
