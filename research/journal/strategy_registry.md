@@ -69,6 +69,33 @@ Characterization runner: `scripts/run_strategy_003_prediction_characterization.p
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
 
+
+### Strategy 003H component attribution — result and closure (2026-09-23)
+
+The preregistered seven-specification attribution experiment was completed on the development-only sample. All specifications used the same next-5-minute cross-sectional excess-return target, one-decision-timestamp purge, and raw registered 003H variables. The protected validation period and final holdout were untouched.
+
+The key development-test results were:
+
+| Specification | Mean IC | Rank IC | Q1–Q5 spread |
+|---|---:|---:|---:|
+| close_location_1bar | +0.04107 | +0.04799 | +0.930 bps |
+| intraday_position_60bar | +0.00265 | +0.02668 | +0.184 bps |
+| bars_since_session_open | not scored | not scored | not scored |
+| close_location + intraday_position | +0.05849 | +0.07274 | +1.787 bps |
+| close_location + session_clock | +0.04107 | +0.04799 | +0.930 bps |
+| intraday_position + session_clock | +0.00265 | +0.02668 | +0.184 bps |
+| all three | +0.05849 | +0.07272 | +1.784 bps |
+
+The important result is that the **close_location + intraday_position pair reproduces the all-three 003H reference almost exactly** on the shared 540-timestamp support. Relative to all-three, its development-test mean-IC difference is about **−0.0000035**, rank-IC difference about **+0.0000198**, and Q1–Q5 spread difference about **+0.003 bps**. The session-clock variable adds no measurable incremental contribution in this controlled attribution; moreover, the singleton session-clock specification has zero scored timestamps under the frozen data-availability design and therefore cannot be interpreted as evidence about a general time-of-day effect.
+
+The close-location singleton itself retains a positive and economically nontrivial portion of the ordering (**+0.93 bps** spread), while intraday-position alone is much weaker on the development-test sample (**+0.18 bps**). The pair's recovery of the full reference indicates that the predictive ordering in 003H is primarily attributable to the combination of current-bar price location and 60-bar intraday position, with no observed need for the registered session-clock variable.
+
+This is an **attribution result, not permission to select the pair as a final feature set**. The pair should not be re-labelled as a newly optimized strategy. The experiment has answered the explanatory question well enough to simplify the economic interpretation, but it has not established tradability, cost resilience, causal mechanism, or protected out-of-sample persistence.
+
+**Current decision:** keep Strategy 003 active, close the session-clock branch under the current specification, and treat `close_location_1bar + intraday_position_60bar` as the **provisional explanatory core of 003H**. Do not yet use protected validation, final holdout, threshold/holding-period search, nonlinear model escalation, transaction-cost optimization, or portfolio construction.
+
+The next registered question should therefore move from component attribution to **mechanism falsification and lineage separation of the two-variable core**, while preserving the development-only evidence boundary. In particular, test whether the two-variable core is merely an alternate representation of already-closed Strategy 001 continuation or Strategy 002 residual reversal, and whether its relationship survives a pre-registered decomposition that separates the current-bar state from prior-return information without opening a general feature search.
+
 ## Strategy 001 closure
 
 Strategy 001 is closed for the current capital-pursuit/candidate-selection program. The tested implementations did not establish sufficiently strong cost-resilient economics. This is **not** a statistical rejection of the broader continuation phenomenon. 001I was too sparse for rejection, while 001J's development results remained only a few basis points gross and did not satisfy the project's economic/cost requirements.
