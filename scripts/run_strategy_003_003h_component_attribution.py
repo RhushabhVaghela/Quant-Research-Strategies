@@ -55,6 +55,27 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--audit-report", type=Path, default=Path("data/reports/strategy_002_universe_audit.csv"))
     p.add_argument("--universe", type=Path, default=Path("research/universe_candidates.csv"))
     return p.parse_args()
+\n\ndef fit_component_transform(
+    train: pd.DataFrame,
+    other: pd.DataFrame,
+    features: list[str],
+) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    """Standardize a singleton/pair/component block without the discovery
+    runner's >=3-feature guard.
+
+    The discovery guard is appropriate for the full model, but this
+    attribution experiment intentionally evaluates one- and two-feature
+    blocks. We therefore retain only non-constant training features while
+    requiring at least one usable feature.
+    """
+    means = train[features].mean()
+    stds = train[features].std(ddof=1)
+    keep = stds[(stds > 0) & stds.notna()].index.tolist()
+    if not keep:
+        raise ValueError("No non-constant features after training fit")
+    train_x = ((train[keep] - means[keep]) / stds[keep]).fillna(0.0).to_numpy()
+    other_x = ((other[keep] - means[keep]) / stds[keep]).fillna(0.0).to_numpy()
+    return train_x, other_x, keep
 
 def fit_score(panel: pd.DataFrame, features: list[str], model_name: str, splits: dict[str, pd.Timestamp]):
     target = "target_excess_1bar"
@@ -65,8 +86,8 @@ def fit_score(panel: pd.DataFrame, features: list[str], model_name: str, splits:
     train = train.dropna(subset=features)
     valid = valid.dropna(subset=features)
     test = test.dropna(subset=features)
-    train_x, valid_x, kept = fit_transform(train, valid, features)
-    _, test_x, _ = fit_transform(train, test, kept)
+    train_x, valid_x, kept = fit_component_transform(train, valid, features)
+    _, test_x, _ = fit_component_transform(train, test, kept)
     beta = fit_linear(train_x, train[target].to_numpy())
     rows = []
     scored = None
