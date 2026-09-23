@@ -133,3 +133,11 @@ A strategy is promoted only after the project's methodology gates are satisfied:
 ### Strategy 003 common-support control
 
 The residual-family decomposition showed different usable timestamp counts across blocks. A common-support nested control is therefore preregistered before any interpretation of incremental family information. It evaluates the locked 003H mechanism and each one-family extension on identical complete-case observations. Protocol: `research/journal/003_common_support_nested_mechanism_protocol.md`; runner: `scripts/run_strategy_003_common_support.py`. This remains development-only with validation and holdout protected.
+
+### Strategy 003 component-attribution control
+
+The common-support residual-family control is complete. Activity, volatility and market context did not demonstrate incremental information beyond 003H on identical support; the earlier apparent market-context increment is treated as support-composition artifact. The corresponding family branches are closed under the current specification.
+
+The next registered experiment is finite attribution within the locked 003H variables only. Protocol: `research/journal/003_003h_component_attribution_protocol.md`; runner: `scripts/run_strategy_003_003h_component_attribution.py`.
+
+This experiment compares the three singletons, three pairwise combinations, and all-three 003H reference for interpretation only. It does not authorize performance-based feature selection or any protected validation/holdout use.
