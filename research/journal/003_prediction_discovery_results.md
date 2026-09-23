@@ -177,3 +177,47 @@ No protected validation or final holdout data were used.
 The common-support nested comparison was completed on identical complete-case observations within each feature-family block. The development-test incremental results were: activity **−0.00270 mean IC**, **−0.00106 rank IC**, **−0.155 bps Q1–Q5 spread**; volatility **−0.01602 mean IC**, **−0.01294 rank IC**, **−0.349 bps**; market context **+0.00047 mean IC**, **+0.00125 rank IC**, **−0.001 bps**. The earlier apparent market-context increment therefore does not survive common-support control.
 
 **Decision:** close these three residual-family branches under the current specification. Strategy 003 remains active because the locked 003H mechanism itself retains positive development-test ordering. The next experiment is restricted to component attribution within the three 003H raw variables, with no new features, transforms, or performance-based subset selection.
+
+
+## 11. 003H component attribution — result and closure (2026-09-23)
+
+The preregistered seven-specification component attribution experiment was completed on the development-only sample. The test compared the three locked 003H variables individually, in all pairwise combinations, and together as the fixed all-three reference. No protected validation or final holdout observations were used.
+
+### Development-test attribution
+
+| Specification | Mean IC | Mean rank IC | Q1–Q5 spread |
+|---|---:|---:|---:|
+| `close_location_1bar` | +0.04107 | +0.04799 | +0.930 bps |
+| `intraday_position_60bar` | +0.00265 | +0.02668 | +0.184 bps |
+| `bars_since_session_open` | not scored | not scored | not scored |
+| close location + intraday position | +0.05849 | +0.07274 | +1.787 bps |
+| close location + session clock | +0.04107 | +0.04799 | +0.930 bps |
+| intraday position + session clock | +0.00265 | +0.02668 | +0.184 bps |
+| all three | +0.05849 | +0.07272 | +1.784 bps |
+
+The central attribution result is that the **close-location + intraday-position pair reproduces the all-three 003H reference essentially exactly** on the 540-timestamp common support used by the pair/all-three specifications. Relative to the all-three reference, the pair differs by about −0.0000035 mean IC, +0.0000198 rank IC and +0.003 bps in Q1–Q5 spread.
+
+The `close_location_1bar` singleton already carries a substantial part of the development-test ordering (+0.930 bps spread). `intraday_position_60bar` alone is much weaker (+0.184 bps spread). Adding the session-clock variable produces no measurable incremental change in either pair containing it. The session-clock singleton itself has zero scored timestamps because the frozen within-session 60-bar availability constraints leave no usable variation/support for that specification; this must not be interpreted as evidence that time-of-day is economically irrelevant in general.
+
+### Interpretation
+
+The attribution experiment therefore simplifies the provisional 003H economic interpretation: the observed development-test predictive structure is primarily concentrated in the combination of **current-bar close location** and **recent 60-bar intraday position**. The registered session-clock feature is not needed to reproduce the frozen 003H diagnostic on the tested support.
+
+This is an explanatory attribution result, **not feature-selection evidence**. The pair is not promoted simply because it matches the all-three development result. The result does not establish causality, tradability, transaction-cost resilience, or protected out-of-sample persistence.
+
+### Decision
+
+**Decision: keep Strategy 003 active; close the session-clock branch under the current frozen specification; treat the two-variable close-location/intraday-position pair as the provisional explanatory core of 003H.**
+
+The project should not yet:
+
+- select the pair as a final trading model;
+- use the protected validation period;
+- use the final holdout;
+- optimize thresholds or holding periods;
+- run nonlinear model escalation;
+- optimize transaction costs or execution;
+- construct a portfolio.
+
+The next controlled question should be **mechanism falsification and lineage separation of the two-variable core**: determine whether its predictive information is economically distinct from the previously closed Strategy 001 continuation and Strategy 002 residual-reversal mechanisms, without reopening an unrestricted feature search. The development-only evidence boundary remains unchanged.
+
