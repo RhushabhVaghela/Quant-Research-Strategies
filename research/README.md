@@ -239,3 +239,10 @@ The first intraday discovery run is complete. The frozen model relationship is n
 Runner: `../scripts/run_strategy_003_prediction_characterization.py`.
 
 Protocol: `journal/003_prediction_discovery_characterization_protocol.md`.
+
+
+## Learning curriculum
+
+A separate learning layer now maps the actual research history of Strategies 001–003 into reusable quant-research lessons. Start with `journal/research_learning_path.md`, then use `journal/research_learning_modules.md` as the detailed curriculum.
+
+The active Strategy 003 work is currently at the final authorized development gate: economic-form decomposition of the locked 003H two-variable core. See `journal/003h_economic_form_decomposition_protocol.md`.
