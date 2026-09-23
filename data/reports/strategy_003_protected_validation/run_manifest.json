@@ -1,0 +1,26 @@
+{
+  "experiment": "003_protected_validation",
+  "status": "executed_prediction_only",
+  "frozen_features": [
+    "close_location_1bar",
+    "intraday_position_60bar"
+  ],
+  "model": "additive_OLS_training_only_standardization",
+  "development_start": "2025-09-18 00:00:00+05:30",
+  "development_end": "2026-06-09 23:59:59+05:30",
+  "validation_start": "2026-06-10 00:00:00+05:30",
+  "validation_end": "2026-08-19 23:59:59+05:30",
+  "final_holdout_start": "2026-08-20 00:00:00+05:30",
+  "horizon_bars": 1,
+  "horizon_minutes": 5,
+  "protected_validation_used": true,
+  "final_holdout_used": false,
+  "feature_search": false,
+  "model_search": false,
+  "threshold_search": false,
+  "holding_period_search": false,
+  "cost_optimization": false,
+  "portfolio_construction": false,
+  "rescue_tuning": false,
+  "raw_inputs_truncated_before_holdout": true
+}

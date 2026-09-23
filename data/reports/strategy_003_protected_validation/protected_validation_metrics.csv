@@ -1,0 +1,2 @@
+split,mean_ic,mean_rank_ic,descriptive_ic_ir,mean_top_bottom_spread_bps,positive_ic_fraction,timestamps,observations,symbols,validation_start,validation_end
+protected_validation,0.08136041758273523,0.1008173818580335,,1.687041960846611,0.6075949367088608,711,10665,15,2026-06-10 00:00:00+05:30,2026-08-19 23:59:59+05:30

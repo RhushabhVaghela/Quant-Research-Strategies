@@ -1,0 +1,4 @@
+metric,development_test_reference
+mean_ic,0.0696
+mean_rank_ic,0.0826
+mean_top_bottom_spread_bps,2.2168
