@@ -1,6 +1,6 @@
 # Strategy 003 — Protected Validation Protocol
 
-**Status:** 🟢 Preregistered and frozen — validation not yet executed.
+**Status:** 🟢 Executed once; protected prediction gate passed. Economic execution test now frozen.
 
 ## 1. Purpose
 
