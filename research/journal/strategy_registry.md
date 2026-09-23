@@ -128,3 +128,8 @@ Trade frequency is an operational constraint, not the economic objective. The pr
 ## Promotion gates
 
 A strategy is promoted only after the project's methodology gates are satisfied: reproducible data, point-in-time correctness or an explicitly disclosed alternative limitation, economic rationale, statistical evidence, chronological validation, realistic costs, execution feasibility, and explicit risk controls. A profitable backtest alone is not sufficient.
+
+
+### Strategy 003 common-support control
+
+The residual-family decomposition showed different usable timestamp counts across blocks. A common-support nested control is therefore preregistered before any interpretation of incremental family information. It evaluates the locked 003H mechanism and each one-family extension on identical complete-case observations. Protocol: `research/journal/003_common_support_nested_mechanism_protocol.md`; runner: `scripts/run_strategy_003_common_support.py`. This remains development-only with validation and holdout protected.
