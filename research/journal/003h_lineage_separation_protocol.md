@@ -129,3 +129,40 @@ These are reused as methodological references, not as strategy candidates.
 ## 9. Evidence boundary
 
 The experiment is development-only. The project validation period beginning 2026-06-10 and final holdout beginning 2026-08-20 remain protected.
+
+
+## 10. Completed experiment — result and decision (2026-09-23)
+
+The preregistered lineage-separation experiment was completed on the development-only sample using exactly the five fixed specifications. The user reran the repository locally after pulling the implementation: **155 tests passed**, the lineage runner completed for **15 eligible equities**, and the generated outputs were uploaded to the repository.
+
+### Development-test result
+
+| Model | Mean IC | Rank IC | Q1–Q5 spread |
+|---|---:|---:|---:|
+| 003H core | **+0.05849** | **+0.07274** | **+1.787 bps** |
+| 001 lineage | **+0.00991** | **+0.01842** | **+0.013 bps** |
+| 002 lineage | **+0.02801** | **+0.04038** | **+0.644 bps** |
+| 001 + 002 lineage | **+0.02815** | **+0.04059** | **+0.638 bps** |
+| 003H + 001 + 002 | **+0.05577** | **+0.06774** | **+1.848 bps** |
+
+The decisive comparison is on the common 003H support: both the standalone core and combined model have **540 development-test timestamps and 8,100 observations**. Adding the two frozen lineage proxies changes mean IC only from **+0.05849 to +0.05577** and does not remove the positive cross-sectional ordering.
+
+The lineage-only models have broader support because they do not require the frozen 60-bar 003H warm-up. Their raw Q1–Q5 spreads should therefore not be treated as identical-support nested comparisons.
+
+### Internal chronological validation diagnostic
+
+On the experiment's internal chronological validation split, 003H core has mean IC **+0.07059**, while the combined model has **+0.05852** and retains a **+1.871 bps** Q1–Q5 spread. This remains an internal development diagnostic, not the project-level protected validation period.
+
+### Interpretation
+
+The result provides evidence **against direct representational duplication** of the frozen Strategy 001 and Strategy 002 mechanisms. Within the registered representations, those old mechanisms do not explain away the 003H predictive relationship.
+
+This does **not** establish causal independence, tradability, cost resilience, robustness to other return-based mechanisms, or protected out-of-sample persistence.
+
+### Decision
+
+**Decision: keep Strategy 003 active as a distinct but still unvalidated intraday prediction hypothesis; close the current 001/002-overlap branch under the frozen definitions.**
+
+Strategies 001 and 002 remain closed and are not reopened. No 003H candidate is frozen, and no portfolio, threshold, holding-period, cost, nonlinear-model, protected-validation, or holdout work is authorized by this experiment alone.
+
+The next research question is economic-form decomposition of the two-variable 003H core, using a finite preregistered representation set with common-support control.
