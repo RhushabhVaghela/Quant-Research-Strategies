@@ -21,7 +21,6 @@ from scripts.run_strategy_003_prediction_discovery import (
     load_audit,
     load_candidates,
     load_intraday,
-    locked_exploratory_slice,
     score_predictions,
 )
 
@@ -92,7 +91,10 @@ def main() -> None:
     market = load_intraday(args.directory / "NSE_NIFTYBEES_5minute.csv")
     market = market.loc[market["timestamp"] < HOLDOUT_START].copy()
     # Hard stop: raw inputs are truncated before the final holdout is passed to build_panel.
-    panel = locked_exploratory_slice(build_panel(frames, market))
+    # Do not use locked_exploratory_slice(): that helper intentionally stops at
+    # the development boundary. Protected validation must build the full
+    # pre-holdout panel, then select the frozen development/validation windows.
+    panel = build_panel(frames, market)
     panel = panel.dropna(subset=FEATURES + ["target_excess_1bar"]).copy()
 
     train = panel.loc[
