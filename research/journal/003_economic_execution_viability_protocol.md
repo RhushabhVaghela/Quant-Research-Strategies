@@ -1,75 +1,80 @@
 # Strategy 003 — Economic Execution Viability Protocol
 
-**Status:** 🟢 Preregistered next gate — execute only after protected prediction validation is reviewed.
+**Status:** 🟢 Protected prediction gate passed; economic test frozen for execution.
 
-## Purpose
+## 1. Protected-validation decision
 
-If the frozen 003H prediction relationship survives protected validation, the next question is economic rather than predictive:
+Protected validation used the frozen additive 003H model on 2026-06-10 through 2026-08-19 without feature/model/threshold/holding-period/cost tuning.
 
-> Can a fixed executable portfolio implementation convert the protected next-5-minute cross-sectional information into gross return that survives current NSE cash-equity implementation costs?
+- mean IC: **+0.08136**
+- mean rank IC: **+0.10082**
+- Q1–Q5 spread: **+1.6870 bps**
+- positive timestamp IC fraction: **60.76%**
+- 711 usable timestamps / 10,665 stock-timestamp observations / 15 equities
 
-This is not another alpha-discovery experiment.
+Development references were +0.0696 mean IC, +0.0826 rank IC and +2.2168 bps Q1–Q5 spread. The protected spread retains about 76% of development magnitude and preserves direction. The Q1–Q5 ordering is also present.
 
-## Frozen prediction input
+**Decision: the predictive relationship passes the preregistered protected-prediction gate. Strategy 003 advances to economic execution testing.** This is not a profitability claim.
 
-Use only the protected-validation candidate: close_location_1bar, intraday_position_60bar, additive OLS, training-only standardization, the same 15-stock eligible universe, and the next 5-minute cross-sectional excess-return target.
+## 2. Coverage limitation
 
-No post-validation feature replacement is allowed.
+The protected scored observations occur only from approximately 14:10 through 15:20 IST because the frozen 60-bar within-session feature requires a warm-up. There are 50 trading dates and 711 timestamps. This does not establish all-day stability. The economic test must use the complete frozen protected sample rather than selecting a more convenient time window.
 
-## Portfolio construction
+## 3. Frozen executable baseline
 
-Before reading economic results, pre-register signal timestamp, ranking/portfolio formation, long/short selection, gross and net exposure, position sizing, rebalance frequency, turnover definition, entry/exit prices, treatment of unavailable or short-sale-ineligible names, overnight treatment, and partial fills.
+- rank the 15 eligible equities by the frozen prediction at each eligible timestamp;
+- long Q5: top 20% = 3 stocks;
+- short Q1: bottom 20% = 3 stocks;
+- equal notional within each side;
+- 50% gross notional long and 50% gross notional short;
+- net exposure = 0%;
+- hold exactly one 5-minute bar;
+- exit at the next bar close;
+- rebalance every eligible signal timestamp;
+- no leverage, thresholds, volatility scaling, stop-loss/take-profit, symbol selection or time-of-day filtering;
+- no overnight positions.
 
-## Current published NSE/broker economics
+This is a close-to-close execution proxy because the validated target is close(t) to close(t+1). It is not a claim that fills occur exactly at recorded closing prices.
 
-- STT = **2.5 bps**, sell side.
-- NSE equity transaction charge = about **0.307 bps per side**.
-- Stamp duty = **0.3 bps**, buy side.
-- SEBI turnover fee = very small: ₹10/crore.
-- GST = **18%** on applicable brokerage/exchange/SEBI charges.
-- Zerodha equity intraday brokerage = **₹20 or 0.03%, whichever is lower, per executed order**.
-- Upstox equity intraday brokerage = **₹20 or 0.1%, whichever is lower, per executed order**.
-- Angel One equity intraday brokerage = **₹20 or 0.1%, whichever is lower, per executed order**, with a published minimum of ₹5.
-- Groww equity intraday brokerage = **₹20 or 0.1%, whichever is lower**, subject to its published minimum-brokerage rules.
+## 4. Turnover
 
-Primary sources are recorded in research/journal/003_execution_cost_basis_research_20260923.md.
+For a fully refreshed one-bar dollar-neutral portfolio, entry gross turnover is 1.0x and exit gross turnover is 1.0x, giving 2.0x round-trip gross turnover. The implementation must calculate actual order-level turnover from position changes rather than assume a fixed turnover when rankings change.
 
-## Fee-only reference table
+## 5. Current fee model
 
-| Round-trip notional | Approx. broker + statutory cost |
-|---:|---:|
-| ₹50,000 | **10.6 bps** |
-| ₹1 lakh | **8.3 bps** |
-| ₹2.5 lakh | **5.4 bps** |
-| ₹5 lakh | **4.5 bps** |
-| ₹10 lakh | **4.0 bps** |
-| ₹50 lakh | **3.6 bps** |
+Use the current published Zerodha NSE equity intraday schedule: brokerage ₹20 or 0.03%, whichever is lower, per executed order; STT 0.025% on sell turnover; NSE transaction charge 0.00307% on buy and sell turnover; stamp duty 0.003% on buy turnover; SEBI ₹10/crore; GST 18% on brokerage + transaction charges + SEBI charges.
 
-These are **before spread, slippage and market impact**.
+Exact brokerage is calculated per executed order because the ₹20 cap makes the effective percentage depend on order notional.
 
-This is a reference calculation, not a historical execution estimate. Exact charges can vary with broker, order count, turnover, and account-specific terms.
+## 6. Frozen friction scenarios
 
-## Execution-cost scenarios
+| Scenario | Additional execution friction |
+|---|---:|
+| Fee floor | 0 bps/side |
+| Low | 0.5 bps/side |
+| Base | 1.0 bps spread/slippage + 0.5 bps impact per side |
+| Stress | 2.0 bps spread/slippage + 1.0 bps impact per side |
 
-Report at least:
+These assumptions are frozen before economic results and are not to be calibrated to make the strategy pass. They are scenario assumptions, not claims about the historical spread of every constituent.
 
-1. **Fee floor:** statutory/broker charges only.
-2. **Low-friction:** fee floor + pre-registered modest spread/slippage.
-3. **Base:** fee floor + pre-registered spread/slippage + order-size-linked impact.
-4. **Stress:** base + additional adverse execution friction.
+## 7. Late-session execution regime
 
-Spread/slippage and impact parameters must be frozen before reading protected economic results and must not be tuned to make the strategy pass.
+The validated signal is late-session. NSE introduced a 2026 closing-auction framework, so the economic runner must flag bars potentially affected by that regime rather than silently treating every late-session observation as ordinary continuous trading. Those observations must not be removed after seeing profitability.
 
-## Economic decision gate
+## 8. Short-side feasibility
 
-- **Fails prediction:** close Strategy 003 for the current line; do not run an economic rescue search.
-- **Passes prediction, fails economics:** close the current executable form. This is an economically informative negative result, not evidence that the predictive relationship never existed.
-- **Passes prediction and economics:** only then proceed to prospective paper/shadow testing.
+The baseline is dollar-neutral and therefore includes short exposure. Indian securities-market rules permit short selling subject to the applicable framework, while naked short selling is not permitted. The economic test therefore treats short-side execution as an explicit feasibility constraint rather than assuming every theoretical short is automatically executable.
 
-## Prohibited actions
+## 9. Decision gate
 
-Do not change features after protected validation, switch to close-location-only, add the interaction, search holding periods, search thresholds, change universe, change costs to rescue a result, inspect the final holdout to rescue economics, or reopen Strategies 001/002.
+- If the fee floor and predefined base scenario preserve positive economics, advance to prospective paper/shadow testing.
+- If prediction survives but fee floor/base economics eliminate the executable edge, close the current Strategy 003 line.
+- If ambiguous, record ambiguity and stop. No rescue optimization.
 
-## Evidence boundary
+## 10. Prohibited actions
 
-This protocol is registered before protected economic testing. It does not claim that the economic test has been run.
+Do not change Q1/Q5, long/short weights, holding period, time window, closing-auction treatment, universe, cost assumptions, feature set, model, or threshold after economic results are observed. Do not inspect the final holdout or reopen Strategies 001/002.
+
+## 11. Evidence boundary
+
+The final holdout beginning 2026-08-20 remains untouched. The economic test uses only the frozen protected-validation period.
