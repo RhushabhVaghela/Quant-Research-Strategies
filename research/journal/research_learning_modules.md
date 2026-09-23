@@ -298,3 +298,24 @@ Read this module alongside the individual strategy records:
 ## Current status update — 2026-09-23
 
 The curriculum's earlier Strategy 003 stopping example has now been completed: economic-form decomposition is finished, the interaction branch is closed, and the project is at the protected-validation-or-closure gate. Module 10's cost lesson is expanded by `003_execution_cost_basis_research_20260923.md`: the historical 5-bps sensitivity is not a universal current all-in NSE intraday cost basis. The current research must distinguish statutory/broker costs from spread, slippage, and impact.
+
+## Strategy 003 learning update — 23 September 2026
+
+The exploratory learning sequence is now complete. The next lesson is the separation between **protected predictive validation** and **economic execution validation**.
+
+The frozen prediction test asks whether the development relationship survives untouched chronological data. It does not ask whether the effect is profitable.
+
+If predictive validation survives, the economic gate must then model brokerage/statutory fees, spread/slippage and market impact separately. The historical 5-bps sensitivity is not a universal current all-in cost basis.
+
+Current fee-only reference:
+
+| Round-trip notional | Approx. broker + statutory cost |
+|---:|---:|
+| ₹50k | **10.6 bps** |
+| ₹1 lakh | **8.3 bps** |
+| ₹2.5 lakh | **5.4 bps** |
+| ₹5 lakh | **4.5 bps** |
+| ₹10 lakh | **4.0 bps** |
+| ₹50 lakh | **3.6 bps** |
+
+These are before spread, slippage and market impact.
