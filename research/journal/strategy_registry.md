@@ -37,7 +37,7 @@ The model ladder remains zero baseline → OLS → fixed Ridge. Chronological de
 
 The first discovery run established a stable-looking development-test predictive relationship: OLS mean IC was +0.0696 with mean rank IC +0.0826 and mean top-bottom quintile spread +2.22 bps; fixed Ridge was essentially identical. This is discovery evidence, not validated alpha or strategy P&L.
 
-The active stage remains characterization of the frozen model only. A controlled second pass has been registered to expose the full Q1–Q5 realized-return ordering and full four-bucket time-of-day coverage, including raw target rows versus rows lost to the frozen 60-bar feature warm-up. No protected validation or final holdout data are used, and no feature set is changed to improve coverage.
+The characterization pass is complete enough to move to a provisional economic-mechanism test. Q1→Q5 endpoint separation is about +2.22 bps, winsorized spread remains about +2.29 bps, bar-shape/intraday-state is the largest registered family in the descriptive ablation, and OLS/Ridge scores are effectively identical. The middle quintiles are not strictly monotonic, so the result is described as broad directional ordering rather than strict monotonicity. Early-session model coverage remains structurally limited by the frozen 60-bar features. The next registered experiment is 003H mechanism decomposition; protected validation and final holdout remain untouched.
 
 Protocol: `research/journal/003_prediction_discovery_protocol.md`.
 
