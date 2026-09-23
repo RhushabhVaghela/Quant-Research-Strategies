@@ -307,7 +307,7 @@ def _time_of_day_tables(
                 }
             )
             raw_count = int((raw["time_bucket"] == bucket).sum())
-            scored_count = int((model_scored["time_bucket"] == bucket).shape[0])
+            scored_count = int((model_scored["time_bucket"] == bucket).sum())
             coverage_rows.append(
                 {
                     "model": model,
