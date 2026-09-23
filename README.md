@@ -108,7 +108,7 @@ The final holdout (**2026-08-20 through 2026-09-17**) remained untouched. The tu
 
 Detailed findings: research/journal/002_turnover_reduction_development_findings.md.
 
-## Strategy 003 — Intraday prediction-driven alpha discovery — ACTIVE DISCOVERY
+## Strategy 003 — Intraday prediction-driven alpha discovery — DEVELOPMENT GATES COMPLETE
 
 After Strategies 001 and 002, Strategy 003 changes the discovery layer rather than simply trying another narrow trading rule.
 
@@ -135,15 +135,17 @@ Chronological development boundaries are purged by one decision timestamp. No la
 
 See `research/journal/003_prediction_discovery_protocol.md` and `scripts/run_strategy_003_prediction_discovery.py`.
 
-The first Strategy 003 intraday discovery run is now complete. OLS and fixed Ridge showed similar predictive separation across the internal validation and development-test periods, so the research has advanced only to frozen-model characterization. No protected validation or final holdout data have been used.
+The Strategy 003 discovery, characterization, mechanism decomposition, common-support control, component attribution, lineage separation, and economic-form decomposition are now complete. No protected validation or final holdout data have been used.
 
-The characterization runner now has a controlled second diagnostic pass that preserves full Q1–Q5 realized-return information and reports all four pre-registered time-of-day buckets with explicit raw-target/scored-row coverage. The frozen 60-bar feature set is unchanged.
+The final economic-form decomposition found no material evidence for a separate interaction mechanism. Close-location-only was the strongest descriptive component, while the frozen additive 003H core remained the registered explanatory form. This is explanatory evidence, not post-hoc feature selection.
 
-Current characterization runner: `scripts/run_strategy_003_prediction_characterization.py`.
+Final exploratory gate: `research/journal/003h_economic_form_decomposition_protocol.md`.
 
-Characterization protocol: `research/journal/003_prediction_discovery_characterization_protocol.md`.
+Protected-validation protocol: `research/journal/003_protected_validation_protocol.md`.
 
-Discovery/characterization results record: `research/journal/003_prediction_discovery_results.md`.
+Current results record: `research/journal/003_prediction_discovery_results.md`.
+
+Current execution-cost basis research: `research/journal/003_execution_cost_basis_research_20260923.md`.
 
 
 ## Strategy portfolio architecture
@@ -232,7 +234,7 @@ Run the complete test suite:
 pytest -q
 ```
 
-Strategy 002 is now closed for the current capital-pursuit/candidate-selection program: the fixed one-bar baseline failed cost resilience, and the pre-registered H2/H3/H6 turnover-reduction development variants did not produce a cost-resilient candidate. The final holdout remained protected. Strategy 003 is the current active discovery program and is deliberately prediction-driven rather than another narrow hand-written rule.
+Strategy 002 is closed for the current capital-pursuit/candidate-selection program. Strategy 003 has completed its authorized exploratory development gates. The next action is a hard decision: either freeze the registered additive 003H form and execute protected validation, or close Strategy 003. No further exploratory feature search is authorized.
 
 ---
 
@@ -241,9 +243,14 @@ The repository now includes a separate learning curriculum built from the actual
 
 See `research/journal/research_learning_path.md` and `research/journal/research_learning_modules.md`.
 
-### Strategy 003 final development gate
+### Strategy 003 current decision gate
 
-The 003H lineage test is complete and the remaining authorized exploratory step is economic-form decomposition of the locked two-variable core (`close_location_1bar` + `intraday_position_60bar`). This compares exactly four preregistered forms on common support and does not use protected validation or the final holdout.
+The economic-form decomposition is complete. The interaction branch is closed. The current development evidence is most consistent with a simple close-location-dominant/additive interpretation, but no final trading model has been validated.
 
-Protocol: `research/journal/003h_economic_form_decomposition_protocol.md`.
-Runner: `scripts/run_strategy_003h_economic_form_decomposition.py`.
+Current cost research also shows that the historical 5-bps round-trip sensitivity is not a defensible universal all-in NSE intraday cost basis: published brokerage/statutory charges alone can exceed 5 bps at ordinary retail notionals, before spread and market impact.
+
+Cost research: `research/journal/003_execution_cost_basis_research_20260923.md`.
+
+Protected validation protocol: `research/journal/003_protected_validation_protocol.md`.
+
+The final holdout remains untouched.
