@@ -218,3 +218,15 @@ Tests: tests/test_strategy_003h_economic_form_decomposition.py.
 The experiment evaluates exactly four fixed specifications on common support: close-location only, intraday-position only, the additive two-variable core, and one pre-registered close-location × intraday-position interaction. It is development-only; protected validation and final holdout remain untouched.
 
 After this gate, no new exploratory feature family, transform, threshold, holding-period search, cost optimization, nonlinear escalation, or portfolio work is authorized. The next decision must be either to close Strategy 003 or to freeze one clearly defined explanatory form for a separately controlled protected-validation experiment.
+
+### Strategy 003H economic-form decomposition — result and closure (2026-09-23)
+
+The final preregistered development decomposition was completed on common support. Close-location-only produced the strongest descriptive relationship (**+0.08419 mean IC, +0.09205 rank IC, +2.358 bps Q1–Q5 spread** in the development-test sample). The additive two-variable core produced **+0.05928 / +0.07355 / +1.780 bps**, while the fixed interaction produced **+0.06070 / +0.07258 / +1.871 bps**. Intraday-position-only was weak in development test (**+0.00309 / +0.02768 / +0.219 bps**).
+
+The fixed interaction changed the additive result only marginally and was qualitatively similar across the internal validation split. The interaction branch is therefore closed. Close-location dominance is retained as explanatory evidence only; it is not post-hoc feature selection and does not replace the preregistered 003H core as a validated model.
+
+**Decision:** the authorized exploratory decomposition is complete. Strategy 003 remains an unvalidated research hypothesis pending a hard promotion/closure decision. No further exploratory search is authorized under the current lineage. The next permitted action is either to freeze a narrowly specified explanatory form and preregister protected validation, or close Strategy 003 as insufficient for further work. Protected validation and the final holdout remain untouched.
+
+Protocol: `research/journal/003h_economic_form_decomposition_protocol.md`.
+Results: `research/journal/003_prediction_discovery_results.md`.
+Runner: `scripts/run_strategy_003h_economic_form_decomposition.py`.
