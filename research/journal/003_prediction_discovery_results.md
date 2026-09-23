@@ -221,3 +221,24 @@ The project should not yet:
 
 The next controlled question should be **mechanism falsification and lineage separation of the two-variable core**: determine whether its predictive information is economically distinct from the previously closed Strategy 001 continuation and Strategy 002 residual-reversal mechanisms, without reopening an unrestricted feature search. The development-only evidence boundary remains unchanged.
 
+
+
+## 12. 003H lineage separation — preregistered next experiment (2026-09-23)
+
+The component attribution result narrowed the provisional 003H explanatory core to `close_location_1bar + intraday_position_60bar`. The next experiment therefore tests whether this core is economically distinct from the already-closed Strategy 001 continuation and Strategy 002 residual-reversal mechanisms.
+
+This is a **lineage falsification experiment**, not a new feature search. Exactly five fixed specifications are registered:
+
+1. 003H core;
+2. Strategy 001 frozen event proxy;
+3. Strategy 002 leave-one-out prior residual;
+4. both old-mechanism proxies together;
+5. 003H core plus both old-mechanism proxies.
+
+The Strategy 001 proxy uses its frozen event definition (`z_score >= 2.0` and `prior_return_6bar > 0`). The Strategy 002 proxy uses the prior-bar leave-one-out close-to-close residual across the eligible universe. All variables are point-in-time.
+
+The experiment will use the same development-only sample, target, one-bar purge and 003H common-support principle. It must not access the protected validation period or final holdout, and it must not search thresholds, holding periods, new features, costs, nonlinear models or portfolio rules.
+
+The key decision is whether the 003H core retains predictive information conditional on the old mechanisms. If it does, the evidence supports keeping 003H as a distinct information-source hypothesis; if the old mechanisms explain most of the signal, 003H should be treated as overlapping lineage rather than new alpha. Either outcome remains pre-strategy evidence and does not authorize protected validation automatically.
+
+Registered implementation: `scripts/run_strategy_003h_lineage_separation.py`.
