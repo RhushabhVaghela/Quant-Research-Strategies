@@ -289,3 +289,18 @@ The current fee-only reference is approximately:
 These figures are **before spread, slippage and market impact**. The historical 5-bps sensitivity is therefore retained only as a historical stress threshold, not as a universal all-in current cost estimate.
 
 See `research/journal/003_execution_cost_basis_research_20260923.md`.
+
+## Strategy 003 — protected validation result
+
+The frozen additive 003H candidate passed the protected predictive gate on **2026-06-10 through 2026-08-19**:
+
+- mean IC **+0.08136**
+- mean rank IC **+0.10082**
+- Q1–Q5 spread **+1.6870 bps**
+- 711 timestamps / 10,665 observations / 15 equities
+
+The development references were +0.0696 IC, +0.0826 rank IC and +2.2168 bps spread. The protected spread retains about 76% of development magnitude.
+
+The scored protected timestamps are late-session (approximately 14:10–15:20) because of the frozen 60-bar warm-up. This is a coverage limitation, not a post-validation filter.
+
+**Current decision:** Strategy 003 advances to economic execution viability testing. The final holdout remains untouched. Economic protocol: research/journal/003_economic_execution_viability_protocol.md.
