@@ -230,3 +230,11 @@ The fixed interaction changed the additive result only marginally and was qualit
 Protocol: `research/journal/003h_economic_form_decomposition_protocol.md`.
 Results: `research/journal/003_prediction_discovery_results.md`.
 Runner: `scripts/run_strategy_003h_economic_form_decomposition.py`.
+
+### Strategy 003 protected-validation gate — preregistered (2026-09-23)
+
+A protected-validation protocol has been drafted but **not executed**. It freezes the existing two-variable additive OLS form (`close_location_1bar` + `intraday_position_60bar`) before any protected-period results are read. The close-location-only development finding is explicitly not substituted post hoc.
+
+Protocol: `research/journal/003_protected_validation_protocol.md`.
+
+The final holdout beginning 2026-08-20 remains untouched.
