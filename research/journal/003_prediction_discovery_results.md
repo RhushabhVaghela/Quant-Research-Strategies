@@ -242,3 +242,38 @@ The experiment will use the same development-only sample, target, one-bar purge 
 The key decision is whether the 003H core retains predictive information conditional on the old mechanisms. If it does, the evidence supports keeping 003H as a distinct information-source hypothesis; if the old mechanisms explain most of the signal, 003H should be treated as overlapping lineage rather than new alpha. Either outcome remains pre-strategy evidence and does not authorize protected validation automatically.
 
 Registered implementation: `scripts/run_strategy_003h_lineage_separation.py`.
+
+
+## 13. 003H lineage separation — result and decision (2026-09-23)
+
+The preregistered lineage-separation experiment was completed on the development-only sample using exactly five fixed specifications. The user reran the repository locally after pulling the implementation: **155 tests passed**, the runner completed for **15 eligible equities**, and the outputs were uploaded to the repository.
+
+### Development-test result
+
+| Model | Mean IC | Rank IC | Q1–Q5 spread |
+|---|---:|---:|---:|
+| 003H core | **+0.05849** | **+0.07274** | **+1.787 bps** |
+| 001 lineage | **+0.00991** | **+0.01842** | **+0.013 bps** |
+| 002 lineage | **+0.02801** | **+0.04038** | **+0.644 bps** |
+| 001 + 002 lineage | **+0.02815** | **+0.04059** | **+0.638 bps** |
+| 003H + 001 + 002 | **+0.05577** | **+0.06774** | **+1.848 bps** |
+
+Both the standalone 003H core and the combined model use the same **540 development-test timestamps / 8,100 observations**. Adding both old mechanisms changes mean IC only from **+0.05849 to +0.05577**, while the Q1–Q5 spread remains positive (**+1.787 vs +1.848 bps**).
+
+The lineage-only models have different, broader support and are therefore context diagnostics rather than identical-support nested comparators.
+
+### Internal validation diagnostic
+
+The internal chronological validation split gives mean IC **+0.07059** for 003H and **+0.05852** for the combined model, with combined Q1–Q5 spread **+1.871 bps**. This is not the project-level protected validation beginning 2026-06-10.
+
+### Decision
+
+The lineage test provides evidence against **direct representational duplication** of the frozen 001 and 002 mechanisms. The old registered mechanisms do not explain away the 003H relationship.
+
+Accordingly, the 001/002 overlap branch is closed under the frozen definitions; Strategy 003 remains active as a distinct but unvalidated intraday prediction hypothesis; Strategies 001 and 002 remain closed; and no strategy candidate is frozen.
+
+This result does not establish causal independence, profitability, cost resilience, alternative-universe robustness, or protected out-of-sample persistence.
+
+### Next controlled question
+
+Move to **economic-form decomposition of the 003H two-variable core** using a finite preregistered representation set and common-support control. Do not reopen 001/002 or perform unrestricted feature, threshold, holding-period, cost, nonlinear, portfolio, validation, or holdout search.
