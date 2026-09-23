@@ -55,7 +55,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--audit-report", type=Path, default=Path("data/reports/strategy_002_universe_audit.csv"))
     p.add_argument("--universe", type=Path, default=Path("research/universe_candidates.csv"))
     return p.parse_args()
-\n\ndef fit_component_transform(
+
+
+def fit_component_transform(
     train: pd.DataFrame,
     other: pd.DataFrame,
     features: list[str],
