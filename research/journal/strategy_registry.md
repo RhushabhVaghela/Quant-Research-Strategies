@@ -168,3 +168,14 @@ The common-support residual-family control is complete. Activity, volatility and
 The next registered experiment is finite attribution within the locked 003H variables only. Protocol: `research/journal/003_003h_component_attribution_protocol.md`; runner: `scripts/run_strategy_003_003h_component_attribution.py`.
 
 This experiment compares the three singletons, three pairwise combinations, and all-three 003H reference for interpretation only. It does not authorize performance-based feature selection or any protected validation/holdout use.
+
+
+### Strategy 003H lineage separation — preregistered next gate (2026-09-23)
+
+The component attribution experiment identified `close_location_1bar + intraday_position_60bar` as the provisional explanatory core of 003H. Before any protected validation or strategy construction, the next controlled experiment is a development-only lineage-separation test against the two closed mechanisms.
+
+The preregistered comparison uses exactly five fixed specifications: 003H core; Strategy 001 event proxy; Strategy 002 leave-one-out prior residual; 001+002 lineage proxies; and 003H core + both lineage proxies. Strategy 001 is represented by its frozen event definition `z_score >= 2.0 and prior_return_6bar > 0`. Strategy 002 is represented by the point-in-time leave-one-out prior close-to-close residual. No thresholds, horizons, features, transforms, universes, costs, or nonlinear models may be searched.
+
+The experiment asks whether 003H retains predictive information conditional on the old mechanisms. It is a falsification/lineage test, not feature selection. Validation and final holdout remain protected.
+
+Implementation: `scripts/run_strategy_003h_lineage_separation.py`; protocol: `research/journal/003h_lineage_separation_protocol.md`; tests: `tests/test_strategy_003h_lineage_separation.py`.
