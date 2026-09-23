@@ -50,7 +50,7 @@ The candidate manifest is defined independently of strategy performance.
 
 ## Strategy 003 — Intraday prediction-driven alpha discovery
 
-Strategy 003 is the active discovery program and is explicitly intraday.
+Strategy 003 has completed its authorized exploratory/development research gates and is now at the promotion-or-closure decision gate. It remains explicitly intraday.
 
 The original draft used daily 1-day and 5-day targets. That draft is superseded because a 5-day close-to-close target is a multi-day prediction, not the project's intraday research objective.
 
@@ -246,3 +246,12 @@ Protocol: `journal/003_prediction_discovery_characterization_protocol.md`.
 A separate learning layer now maps the actual research history of Strategies 001–003 into reusable quant-research lessons. Start with `journal/research_learning_path.md`, then use `journal/research_learning_modules.md` as the detailed curriculum.
 
 The active Strategy 003 work is currently at the final authorized development gate: economic-form decomposition of the locked 003H two-variable core. See `journal/003h_economic_form_decomposition_protocol.md`.
+
+
+## Strategy 003 current gate
+
+The final economic-form decomposition is complete. The interaction branch is closed, and the current development evidence is most consistent with a close-location-dominant additive interpretation. No protected validation or final holdout has been used.
+
+Before deciding whether to continue, the project completed a current NSE cash-equity execution-cost basis review in `journal/003_execution_cost_basis_research_20260923.md`. The review concludes that the historical 5-bps round-trip sensitivity should be treated as a lower-bound/stress sensitivity, not a universal all-in retail execution-cost estimate.
+
+The next permitted action is either to freeze the registered additive 003H form and execute the protected-validation protocol (`journal/003_protected_validation_protocol.md`) or close Strategy 003. No further exploratory feature search is authorized.
