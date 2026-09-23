@@ -93,3 +93,42 @@ The experiment remains distinct from Strategy 001 signed-return continuation and
 The implementation must preserve the existing data audit, universe, target, split, purge, and transformations already used by Strategy 003.
 
 Outputs must include a manifest documenting that holdout, parameter search, family selection, holding-period search, and cost optimization were not used.
+
+
+## 10. Decomposition result — 2026-09-23
+
+The one-family decomposition was completed successfully.
+
+### Development-test results
+
+| Model | Mean IC | Mean rank IC | Q1–Q5 spread |
+|---|---:|---:|---:|
+| 003H mechanism | +0.05849 | +0.07272 | +1.784 bps |
+| Mechanism + activity | +0.05580 | +0.07166 | +1.630 bps |
+| Mechanism + volatility | +0.05036 | +0.06587 | +1.524 bps |
+| Mechanism + market context | +0.06685 | +0.08006 | +1.872 bps |
+
+On the reported samples, activity and volatility reduced the development-test diagnostic relative to 003H, while market context increased it slightly. The reported incremental differences were:
+
+- activity: mean IC **−0.00270**, rank IC **−0.00106**, spread **−0.155 bps**;
+- volatility: mean IC **−0.00813**, rank IC **−0.00685**, spread **−0.261 bps**;
+- market context: mean IC **+0.00836**, rank IC **+0.00734**, spread **+0.087 bps**.
+
+### Critical comparability limitation
+
+These model rows do **not** use identical observation support:
+
+- mechanism/activity: **540** usable timestamps;
+- volatility/market context: **504** usable timestamps.
+
+The difference comes from the longer warm-up requirements of some added features. Therefore the raw incremental differences above cannot yet be interpreted as pure incremental information from the added family. A portion may arise from evaluating the models on different timestamps.
+
+This is especially important for market context: its apparent improvement is small (**+0.087 bps spread**) and must not be treated as evidence that market context adds a real residual alpha component until a common-support comparison is completed.
+
+### Interpretation
+
+The decomposition does not reveal a large obvious residual feature family. The locked 003H mechanism remains positive, while adding activity or volatility does not improve the reported development-test diagnostics. Market context is the only block with a positive reported increment, but the support mismatch prevents a clean attribution.
+
+The appropriate next experiment is therefore **not** another feature search. It is a common-support nested comparison that evaluates the locked mechanism and each one-family extension on exactly the same observations. This will separate genuine incremental information from sample-composition effects.
+
+Protected validation and final holdout remain untouched.
