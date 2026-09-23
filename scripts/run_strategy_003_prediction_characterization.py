@@ -432,7 +432,8 @@ def main() -> None:
     for family, bases in MODEL_FAMILIES.items():
         features = _model_features(panel, bases)
         family_scored, _ = _fit_frozen_model(panel, features)
-        q = _quintile_distribution(family_scored)
+        family_quintiles = _quintile_table(family_scored)
+        q = _quintile_distribution(family_quintiles)
         for model, frame in q.groupby("model"):
             ablation_rows.append({
                 "feature_family": family,
