@@ -101,6 +101,24 @@ This remains a hypothesis, not a claim of causality.
 
 The current registered feature set does not explicitly reproduce the signed-return event mechanisms owned by Strategies 001 and 002. The mechanism still has to be tested against those lineage boundaries.
 
+
+## 003H mechanism decomposition result
+
+The preregistered 003H test was completed using only the development framework. The three-feature mechanism model retained a positive next-bar cross-sectional relationship:
+
+- development-test mean IC: **+0.0585**
+- development-test mean rank IC: **+0.0727**
+- development-test Q1-to-Q5 spread: **+1.78 bps**
+- frozen full-model development-test spread: **+2.22 bps**
+
+The mechanism quintiles were Q1 **−0.6272**, Q2 **−0.6268**, Q3 **−0.2214**, Q4 **+0.3182**, Q5 **+1.1572** bps. This is broad directional ordering with a non-monotonic middle, not strict monotonicity.
+
+The result supports the view that the locked intrabar/intraday-state variables contain a meaningful component of the discovery relationship, but they do not account for all of it. The residual contribution is unresolved; it is not assigned retrospectively to activity, volatility or market context.
+
+The explicit lineage audit found no direct 001 signed-return or 002 peer-residual encoding in the three locked variables. This is a feature-definition distinction, not proof of complete economic independence.
+
+Both 003H mechanism and full-model scoring have zero observations before 14:00 because the frozen 60-bar features require a long warm-up. Therefore all-day stability remains untested and the late-session result must not be interpreted as an intrinsic afternoon effect.
+
 ## Current decision
 
 **🟡 Advance from characterization to a controlled economic-mechanism test.**
