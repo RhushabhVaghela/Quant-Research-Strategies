@@ -277,3 +277,29 @@ This result does not establish causal independence, profitability, cost resilien
 ### Next controlled question
 
 Move to **economic-form decomposition of the 003H two-variable core** using a finite preregistered representation set and common-support control. Do not reopen 001/002 or perform unrestricted feature, threshold, holding-period, cost, nonlinear, portfolio, validation, or holdout search.
+## 14. 003H economic-form decomposition — result and final exploratory closure (2026-09-23)
+
+The final preregistered development-stage decomposition was completed on common support using exactly four fixed specifications. The interaction branch did not produce a materially different predictive structure from the additive core.
+
+| Specification | Dev-test Mean IC | Dev-test Rank IC | Dev-test Q1–Q5 spread |
+|---|---:|---:|---:|
+| close-location only | **+0.08419** | **+0.09205** | **+2.358 bps** |
+| intraday-position only | **+0.00309** | **+0.02768** | **+0.219 bps** |
+| additive core | **+0.05928** | **+0.07355** | **+1.780 bps** |
+| joint interaction | **+0.06070** | **+0.07258** | **+1.871 bps** |
+
+The fixed interaction changes the additive development-test result by only +0.00142 mean IC and +0.090 bps Q1–Q5 spread, while rank IC slightly decreases by 0.00097. The interaction coefficient on standardized inputs is approximately +1.96e-05. Validation shows the same qualitative pattern, so there is no compelling evidence for a distinct joint interaction mechanism under the registered form.
+
+The strongest descriptive relationship in this decomposition is the current-bar close-location variable by itself. That finding is retained as explanatory evidence only; it is **not** a post-hoc feature-selection result and does not authorize replacing the frozen 003H core and treating the replacement as if it had been validated.
+
+### Final development-stage decision
+
+**Strategy 003 has completed its authorized exploratory decomposition.** The joint-interaction branch is closed. The remaining evidence is most consistent with a simple close-location-dominant/additive interpretation, but the gross magnitude remains small and no final trading model has been selected.
+
+Protected validation beginning 2026-06-10 and final holdout beginning 2026-08-20 remain untouched. No further feature-family, transform, interaction, threshold, holding-period, cost, nonlinear, portfolio, or lineage search is authorized under this research line.
+
+### Next gate
+
+The next step is a hard promotion/closure decision: either freeze a narrowly specified explanatory form and register a protected-validation experiment, or close Strategy 003 as insufficient for further work. This decision must be made before reading or using the protected validation period.
+
+Protocol: `research/journal/003h_economic_form_decomposition_protocol.md`.
