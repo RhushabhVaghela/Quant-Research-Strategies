@@ -1,0 +1,14 @@
+strategy,feature,directly_encodes_001_signed_return,directly_encodes_002_peer_residual_return
+003,close_location_1bar,False,False
+003,intraday_position_60bar,False,False
+003,bars_since_session_open,False,False
+003,log_volume,False,False
+003,volume_change_1bar,False,False
+003,volume_z_12bar,False,False
+003,volume_z_60bar,False,False
+003,realized_vol_12bar,False,False
+003,realized_vol_60bar,False,False
+003,range_1bar,False,False
+003,range_z_60bar,False,False
+003,market_return_1bar,False,False
+003,market_vol_60bar,False,False

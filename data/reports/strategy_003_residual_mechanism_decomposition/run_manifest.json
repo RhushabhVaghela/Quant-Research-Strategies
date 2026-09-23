@@ -1,0 +1,61 @@
+{
+  "strategy_id": "003",
+  "experiment": "003_residual_mechanism_decomposition",
+  "status": "hypothesis_test_only",
+  "base_features": [
+    "close_location_1bar",
+    "intraday_position_60bar",
+    "bars_since_session_open"
+  ],
+  "family_blocks": {
+    "activity": [
+      "log_volume",
+      "volume_change_1bar",
+      "volume_z_12bar",
+      "volume_z_60bar"
+    ],
+    "volatility": [
+      "realized_vol_12bar",
+      "realized_vol_60bar",
+      "range_1bar",
+      "range_z_60bar"
+    ],
+    "market_context": [
+      "market_return_1bar",
+      "market_vol_60bar"
+    ]
+  },
+  "raw_features_only": true,
+  "models": [
+    "zero_baseline",
+    "mechanism",
+    "activity",
+    "volatility",
+    "market_context"
+  ],
+  "exploratory_start": "2025-09-18",
+  "exploratory_end": "2026-06-09",
+  "project_validation_start": "2026-06-10",
+  "final_holdout_start": "2026-08-20",
+  "horizon_bars": 1,
+  "horizon_minutes": 5,
+  "holdout_used": false,
+  "parameter_search": false,
+  "feature_family_selection": false,
+  "holding_period_search": false,
+  "cost_optimization": false,
+  "internal_split": {
+    "train_start": "2025-09-18 09:15:00+05:30",
+    "train_end": "2026-02-20 12:25:00+05:30",
+    "validation_start": "2026-02-20 12:35:00+05:30",
+    "validation_end": "2026-04-17 13:50:00+05:30",
+    "test_start": "2026-04-17 14:00:00+05:30",
+    "test_end": "2026-06-09 15:25:00+05:30",
+    "train_end_unpurged": "2026-02-20 12:30:00+05:30",
+    "validation_end_unpurged": "2026-04-17 13:55:00+05:30",
+    "train_purge_count": 1,
+    "validation_purge_count": 1,
+    "purge_unit": "decision_timestamp",
+    "horizon_bars": 1
+  }
+}

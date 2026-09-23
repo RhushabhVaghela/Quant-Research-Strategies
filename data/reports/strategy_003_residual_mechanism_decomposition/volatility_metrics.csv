@@ -1,0 +1,3 @@
+model,split,feature_count,features,purged,horizon_bars,horizon_minutes,usable_timestamps,mean_ic,mean_rank_ic,ic_ir,positive_ic_fraction,mean_top_bottom_spread_bps
+volatility,validation,7,close_location_1bar;intraday_position_60bar;bars_since_session_open;realized_vol_12bar;realized_vol_60bar;range_1bar;range_z_60bar,True,1,5,490,0.05653832025236122,0.05667670625904751,4.338437029798182,0.5693877551020409,1.6949707661519025
+volatility,development_test,7,close_location_1bar;intraday_position_60bar;bars_since_session_open;realized_vol_12bar;realized_vol_60bar;range_1bar;range_z_60bar,True,1,5,504,0.05035864026719313,0.06586794581020301,3.4165351555650054,0.5793650793650794,1.5236336475124883

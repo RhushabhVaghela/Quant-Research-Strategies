@@ -1,0 +1,5 @@
+time_bucket,scored_rows,timestamps,mean_target_excess_bps
+09:15-09:59,0,0,
+10:00-11:59,0,0,
+12:00-13:59,0,0,
+14:00-15:30,7560,504,-9.178431089824376e-18
