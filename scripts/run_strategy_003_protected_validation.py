@@ -26,6 +26,7 @@ from scripts.run_strategy_003_prediction_discovery import (
 )
 
 FEATURES = ["close_location_1bar", "intraday_position_60bar"]
+DEVELOPMENT_START = pd.Timestamp("2025-09-18 00:00:00", tz="Asia/Kolkata")
 DEVELOPMENT_END = pd.Timestamp("2026-06-09 23:59:59", tz="Asia/Kolkata")
 VALIDATION_START = pd.Timestamp("2026-06-10 00:00:00", tz="Asia/Kolkata")
 VALIDATION_END = pd.Timestamp("2026-08-19 23:59:59", tz="Asia/Kolkata")
@@ -95,7 +96,7 @@ def main() -> None:
     panel = panel.dropna(subset=FEATURES + ["target_excess_1bar"]).copy()
 
     train = panel.loc[
-        (panel.timestamp >= EXPLORATORY_START) & (panel.timestamp <= DEVELOPMENT_END)
+        (panel.timestamp >= DEVELOPMENT_START) & (panel.timestamp <= DEVELOPMENT_END)
     ].copy()
     validation = panel.loc[
         (panel.timestamp >= VALIDATION_START) & (panel.timestamp <= VALIDATION_END)
@@ -159,7 +160,7 @@ def main() -> None:
         "status": "executed_prediction_only",
         "frozen_features": FEATURES,
         "model": "additive_OLS_training_only_standardization",
-        "development_start": str(EXPLORATORY_START),
+        "development_start": str(DEVELOPMENT_START),
         "development_end": str(DEVELOPMENT_END),
         "validation_start": str(VALIDATION_START),
         "validation_end": str(VALIDATION_END),
