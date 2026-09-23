@@ -51,6 +51,8 @@ Discovery runner: `scripts/run_strategy_003_prediction_discovery.py`.
 
 Characterization runner: `scripts/run_strategy_003_prediction_characterization.py`.
 
+003H mechanism runner: `scripts/run_strategy_003_hypothesis_003h_mechanism.py`.
+
 | 004 | — | Reserved | — | Planned |
 | 005 | — | Reserved | — | Planned |
 
