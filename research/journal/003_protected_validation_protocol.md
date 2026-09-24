@@ -124,3 +124,13 @@ The protected Q1–Q5 spread retains approximately **76%** of the development-te
 The 711 protected timestamps occur only from approximately **14:10 through 15:20 IST** because of the frozen 60-bar within-session warm-up. The sample covers **50 trading dates**, but it does not establish all-day stability. This limitation is recorded rather than repaired after seeing the result.
 
 The final holdout beginning **2026-08-20 remains untouched**.
+
+## Economic follow-through — 24 September 2026
+
+The protected prediction gate passed, so the preregistered economic execution test was run on the frozen signal. That economic test failed even under the fee-floor scenario: the frozen Q5-long/Q1-short one-bar portfolio generated +6.1708% gross compounded return, but ₹53,091.53 of broker/statutory costs on the ₹1,00,000 notional produced −46.9207% net cumulative return. The final holdout remained untouched.
+
+**Historical protected-validation decision:** prediction gate passed.
+
+**Subsequent economic decision:** executable Strategy 003 line closed.
+
+No post-result prediction or execution rescue search is authorized.
