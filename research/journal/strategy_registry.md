@@ -20,11 +20,12 @@ No two promoted strategies should be materially the same economic mechanism appl
 
 ## Current registry
 
-| Strategy ID | Asset class | Economic hypothesis / mechanism | Current experiment | Status |
+| Strategy ID | Asset class | Economic mechanism / research question | Key validation / economic evidence | Current status |
 |---|---|---|---|---|
-| 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
-| 002 | Indian equities | Short-horizon cross-sectional residual reversal: unusually negative peer-relative returns are followed by positive relative returns, and vice versa | Initial audit → locked split → pattern discovery → pattern characterization → reversal mechanism decomposition → cross-sectional residual investigation → leave-one-out residual mechanism decomposition → temporal stability characterization → fixed-baseline validation → cost-resilience gate failed → turnover/execution decomposition → H2/H3/H6 turnover-reduction development | **Closed; no candidate frozen** |
-| 003 | Indian equities | Intraday prediction-driven discovery using liquidity/activity, volatility/state, bar-shape/intraday-state and market context; first pass excludes 001/002 signed-return mechanisms | Development gates complete → frozen 003H candidate → protected validation → economic execution viability test | **Closed; prediction gate passed, economic execution gate failed** |
+| 001 | Indian equities | Intraday continuation after unusually strong positive deviations conditioned on prior positive short-term trend | 001D: +4.77 bps mean gross/trade; 310 trades. 001I: two genuine prospective trades, too sparse for statistical rejection. 001J: broader cross-sectional implementation remained only a few-bps gross and did not produce a frozen candidate. | **Closed; no promoted implementation** |
+| 002 | Indian equities | Short-horizon cross-sectional residual reversal | Fixed one-bar baseline: +0.0896 bps mean gross/portfolio observation; predefined cost sensitivity overwhelmed it. H2/H3/H6 development variants remained small and/or negative after costs. | **Closed; no frozen candidate** |
+| 003 | Indian equities | Prediction-driven next-5-minute cross-sectional excess-return discovery using non-signed-return state features; frozen 003H core = close-location + intraday-position | Protected prediction: +0.08136 mean IC, +0.10082 rank IC, +1.687 bps Q1–Q5. Economic execution: +6.1708% gross compounded but −46.9207% net even at fee floor; worse under all friction scenarios. | **Closed; prediction gate passed, economic gate failed** |
+
 ## Strategy 003 — intraday prediction-driven alpha discovery
 
 ### Strategy 003H mechanism decomposition — result
@@ -325,3 +326,16 @@ The result therefore fails the preregistered economic decision gate even under t
 **Current Strategy 003 status: CLOSED for the current executable/capital-pursuit program.**
 
 This does not reject the existence of the underlying predictive relationship. It closes the frozen prediction-to-portfolio translation because it does not clear the economic gate. No post-result rescue search, paper/shadow transition, or final-holdout evaluation is authorized for this candidate.
+
+
+## Portfolio-level status table — 24 September 2026
+
+The following table is the compact decision record for the completed Strategy 001–003 research families. It separates predictive/research evidence from executable/economic status and is intended as the canonical high-level status summary.
+
+| Strategy ID | Asset class | Economic mechanism / research question | Key validation / economic evidence | Current status |
+|---|---|---|---|---|
+| 001 | Indian equities | Intraday continuation after unusually strong positive deviations conditioned on prior positive short-term trend | 001D: +4.77 bps mean gross/trade; 310 trades. 001I: two genuine prospective trades, too sparse for statistical rejection. 001J: broader cross-sectional implementation remained only a few-bps gross and did not produce a frozen candidate. | **Closed; no promoted implementation** |
+| 002 | Indian equities | Short-horizon cross-sectional residual reversal | Fixed one-bar baseline: +0.0896 bps mean gross/portfolio observation; predefined cost sensitivity overwhelmed it. H2/H3/H6 development variants remained small and/or negative after costs. | **Closed; no frozen candidate** |
+| 003 | Indian equities | Prediction-driven next-5-minute cross-sectional excess-return discovery using non-signed-return state features; frozen 003H core = close-location + intraday-position | Protected prediction: +0.08136 mean IC, +0.10082 rank IC, +1.687 bps Q1–Q5. Economic execution: +6.1708% gross compounded but −46.9207% net even at fee floor; worse under all friction scenarios. | **Closed; prediction gate passed, economic gate failed** |
+
+**Portfolio conclusion:** none of Strategies 001–003 has a promoted executable implementation. The research program has preserved distinct negative/inconclusive outcomes without using the final holdout to rescue a failed economic gate.
