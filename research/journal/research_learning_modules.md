@@ -319,3 +319,24 @@ Current fee-only reference:
 | ₹50 lakh | **3.6 bps** |
 
 These are before spread, slippage and market impact.
+
+
+## Strategy 003 learning update — 24 September 2026
+
+The economic execution lesson is now complete.
+
+The protected prediction relationship survived chronological validation, but the frozen portfolio translation failed before discretionary execution assumptions were even added:
+
+- gross compounded return: +6.1708%;
+- fee-floor net cumulative return: −46.9207%;
+- low/base/stress net cumulative returns: −57.5241% / −62.8257% / −78.7307%;
+- cumulative turnover: 1,060.333× initial gross portfolio notional;
+- 5,720 executed orders.
+
+The key lesson is that **predictive validity and economic validity are separate gates**. A positive IC or quintile spread does not imply a tradable strategy. For high-turnover intraday research, the relevant question is whether the expected return per unit of deployed capital survives the actual order-level fee burden before adding spread, slippage and market impact.
+
+The project also preserves an important discipline lesson: once a preregistered economic gate fails, do not rescue the candidate by changing thresholds, holding periods, symbols, time windows, leverage, costs, or universe selection on the same evidence. The correct action is to close the executable branch and preserve the predictive result as historical research.
+
+Strategy 003 therefore provides a complete example of the research lifecycle:
+
+**predictive discovery → characterization → mechanism interpretation → lineage separation → protected validation → economic execution test → disciplined closure.**
