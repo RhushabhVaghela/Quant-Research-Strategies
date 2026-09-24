@@ -19,7 +19,10 @@ def test_brokerage_respects_per_order_cap():
     assert brokerage(50_000) == pytest.approx(15.0)
 
 def test_execution_flags():
-    assert execution_flags(pd.Timestamp("2026-09-24 15:20:00", tz="Asia/Kolkata"))["closing_auction_window"]
+    assert execution_flags(pd.Timestamp("2026-09-24 15:14:00", tz="Asia/Kolkata"))["closing_auction_window"] is False
+    assert execution_flags(pd.Timestamp("2026-09-24 15:15:00", tz="Asia/Kolkata"))["closing_auction_window"] is True
+    assert execution_flags(pd.Timestamp("2026-09-24 15:34:00", tz="Asia/Kolkata"))["closing_auction_window"] is True
+    assert execution_flags(pd.Timestamp("2026-09-24 15:35:00", tz="Asia/Kolkata"))["closing_auction_window"] is False
     assert execution_flags(pd.Timestamp("2026-09-24 14:55:00", tz="Asia/Kolkata"))["late_session"] is False
 
 def test_holdout_start_is_not_in_validation_source():
