@@ -36,10 +36,10 @@ FRICTIONS = {
 
 DEFAULT_PORTFOLIO_NOTIONAL = 100_000.0
 HOLDOUT_START = pd.Timestamp("2026-08-20 00:00:00", tz="Asia/Kolkata")
-CAS_START = pd.Timedelta(minutes=915)
-CAS_END = pd.Timedelta(minutes=935)
-NORMAL_CLOSE = pd.Timedelta(minutes=930)
-LATE_SESSION_START = pd.Timedelta(minutes=900)
+CAS_START = pd.Timedelta(15, unit="h") + pd.Timedelta(15, unit="m")
+CAS_END = pd.Timedelta(15, unit="h") + pd.Timedelta(35, unit="m")
+NORMAL_CLOSE = pd.Timedelta(15, unit="h") + pd.Timedelta(30, unit="m")
+LATE_SESSION_START = pd.Timedelta(15, unit="h")
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
@@ -213,32 +213,35 @@ def main() -> None:
     late_count = int(bars["late_session"].sum())
     auction_count = int(bars["closing_auction_window"].sum())
 
-    total_gross_return = float(bars["gross_return"].sum())
+    gross_returns = bars["gross_return"].to_numpy(dtype=float)
+    gross_cumulative_return = float(np.prod(1.0 + gross_returns) - 1.0)
     gross_bps_per_bar = float(bars["gross_return"].mean() * 1e4)
+
     total_turnover = float(orders["notional"].sum())
     turnover_multiple = total_turnover / args.portfolio_notional
-    fee_only_return = fees["fee_total"] / args.portfolio_notional
+    fee_only_bps_on_turnover = (
+        fees["fee_total"] / total_turnover * 1e4 if total_turnover else 0.0
+    )
 
     out = []
     for name, (spread, impact) in FRICTIONS.items():
-        # Each executed rupee of turnover incurs the frozen per-side friction.
         extra_cost = float((spread + impact) * total_turnover)
         total_cost = fees["fee_total"] + extra_cost
-        net_currency = total_gross_return * args.portfolio_notional - total_cost
+        net_currency = gross_cumulative_return * args.portfolio_notional - total_cost
         net_return = net_currency / args.portfolio_notional
         out.append(
             {
                 "scenario": name,
                 "portfolio_notional_inr": args.portfolio_notional,
                 "timestamps": int(len(bars)),
-                "gross_cumulative_return": total_gross_return,
-                "gross_cumulative_bps": total_gross_return * 1e4,
+                "gross_cumulative_return": gross_cumulative_return,
+                "gross_cumulative_bps": gross_cumulative_return * 1e4,
                 "mean_gross_bps_per_bar": gross_bps_per_bar,
                 "fee_only_cost_inr": fees["fee_total"],
-                "fee_only_cost_bps_on_portfolio": fee_only_return * 1e4,
+                "fee_only_cost_bps_on_turnover": fee_only_bps_on_turnover,
                 "additional_execution_friction_inr": extra_cost,
                 "total_cost_inr": total_cost,
-                "total_cost_bps_on_portfolio": total_cost / args.portfolio_notional * 1e4,
+                "total_cost_bps_on_turnover": total_cost / total_turnover * 1e4 if total_turnover else 0.0,
                 "net_cumulative_return": net_return,
                 "net_cumulative_bps": net_return * 1e4,
                 "mean_net_bps_per_bar": net_return / len(bars) * 1e4,
