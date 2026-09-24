@@ -16,7 +16,7 @@ Strategy 001 began as a GOLDBEES mean-reversion hypothesis. The mean-reversion h
 
 ### Research status
 
-| Stage | Status | Key result |
+| Strategy / Stage | Status | Key result |
 |---|---|---|
 | 001 mean reversion | 🔴 Rejected | Large positive deviations did not reliably revert |
 | 001A diagnostics | 🟢 Complete | Positive continuation and prior-trend conditioning identified |
@@ -28,7 +28,43 @@ Strategy 001 began as a GOLDBEES mean-reversion hypothesis. The mean-reversion h
 | 001G replay | 🟡 Complete | 310/310 trades reconciled; forward path and MFE/MAE recovered |
 | 001H robustness/chronological holdout | 🟡 Complete | Positive gross performance across examined periods; costs remain unresolved |
 | 001I prospective OOS / paper-shadow | 🔵 Closed | Two genuine prospective trades on 2026-09-17; too low-frequency for current capital-pursuit sprint; not statistically rejected |
-| **001J cross-sectional equity experiment** | **🔵 Closed** | Same economic hypothesis tested cross-sectionally using a broker-native liquid NSE EQ universe; no candidate frozen |
+| 001J cross-sectional equity experiment | 🔵 Closed | Same economic hypothesis tested cross-sectionally using a broker-native liquid NSE EQ universe; no candidate frozen |
+| **Strategy 002 — research program** | **🔵 Closed** | Fixed one-bar baseline and pre-registered H2/H3/H6 turnover-reduction branch failed the economic selection gate |
+| **Strategy 003 — research program** | **🔵 Closed** | Protected prediction gate passed, but frozen economic execution failed even at the fee-floor scenario |
+
+### Strategy comparison — current research state
+
+This table separates the research programs by what actually happened at the prediction/economic gates. “Passed” means the preregistered gate produced the required evidence; it does not mean the broader phenomenon is guaranteed or tradable.
+
+| Strategy | Economic mechanism | Horizon | Core research outcome | Prediction / validation outcome | Economic execution outcome | Current status |
+|---|---|---|---|---|---|---|
+| 001 | Intraday continuation after unusually large positive deviations, conditioned on prior positive direction | 5-minute data; frozen 001D held to t+6 | Continuation evidence persisted through attribution, PIT baseline, replay, and chronological robustness | Prospective 001I produced only two trades; too sparse for statistical rejection | Tested implementations remained too small / friction-sensitive; 001J found no promotable candidate | **Closed** |
+| 002 | Short-horizon cross-sectional residual reversal | 5-minute | Broad reversal/residual-reversal pattern characterized; fixed executable baseline frozen | Fixed chronological validation produced only +0.0896 bps mean gross per portfolio observation | Predefined cost sensitivity overwhelmed baseline; H2/H3/H6 did not produce a viable candidate | **Closed** |
+| 003 | Prediction-driven cross-sectional next-5-minute return ordering, ultimately explained by close-location + intraday-position core | 5-minute | Discovery → characterization → mechanism decomposition → lineage separation → economic-form decomposition completed | Protected validation passed: +0.08136 mean IC, +0.10082 rank IC, +1.687 bps Q1–Q5 | Frozen Q5-long/Q1-short one-bar portfolio failed even fee-floor economics: +6.1708% gross vs −46.9207% net | **Closed** |
+
+### Strategy 003 final economic result
+
+The corrected economic execution test used only the frozen protected-validation sample (2026-06-10 through 2026-08-19); the final holdout beginning 2026-08-20 was not used.
+
+| Metric | Result |
+|---|---:|
+| Portfolio notional | ₹1,00,000 |
+| Portfolio timestamps | 711 |
+| Executed orders | 5,720 |
+| Cumulative executed turnover | ₹106,033,333.33 |
+| Turnover / initial gross notional | 1,060.333× |
+| Gross compounded return | +6.1708% |
+| Fee-floor cost | ₹53,091.53 |
+| Fee-floor net cumulative return | **−46.9207%** |
+| Low / base / stress net cumulative return | **−57.5241% / −62.8257% / −78.7307%** |
+| Late-session timestamps | 211 |
+| Closing-auction flags | 74 |
+
+The fee breakdown was brokerage ₹31,810.00, STT ₹13,254.17, stamp duty ₹1,590.50, SEBI ₹106.03, and GST ₹6,330.83. Because the fee-floor scenario already yields a strongly negative net result, the candidate does not advance to paper/shadow execution.
+
+This closes the **current executable Strategy 003 line**, not the broader statement that the predictive relationship can never exist. No post-result rescue search is authorized.
+
+Repository evidence: `data/reports/strategy_003_economic_execution/`.
 
 ### Why Strategy 001 was closed
 
