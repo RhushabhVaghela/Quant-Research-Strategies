@@ -35,37 +35,43 @@ def test_timedelta_constants_are_explicit_units():
     from scripts.run_strategy_003_economic_execution import (
         CAS_START, CAS_END, NORMAL_CLOSE, LATE_SESSION_START
     )
-    assert CAS_START == pd.Timedelta(seconds=54900)
-    assert CAS_END == pd.Timedelta(seconds=56100)
-    assert NORMAL_CLOSE == pd.Timedelta(seconds=55800)
-    assert LATE_SESSION_START == pd.Timedelta(seconds=54000)
+    assert CAS_START == pd.Timedelta("15:15:00")
+    assert CAS_END == pd.Timedelta("15:35:00")
+    assert NORMAL_CLOSE == pd.Timedelta("15:30:00")
+    assert LATE_SESSION_START == pd.Timedelta("15:00:00")
 
 def test_position_turnover_is_not_fixed_at_two_x():
-    from scripts.run_strategy_003_economic_execution import build_target_portfolios
-    scored = pd.DataFrame([
-        {"timestamp": pd.Timestamp("2026-06-10 14:10:00", tz="Asia/Kolkata"), "symbol": "A", "prediction": 3.0, "target_excess_1bar": 0.001},
-        {"timestamp": pd.Timestamp("2026-06-10 14:10:00", tz="Asia/Kolkata"), "symbol": "B", "prediction": 2.0, "target_excess_1bar": 0.0005},
-        {"timestamp": pd.Timestamp("2026-06-10 14:10:00", tz="Asia/Kolkata"), "symbol": "C", "prediction": 1.0, "target_excess_1bar": 0.0},
-        {"timestamp": pd.Timestamp("2026-06-10 14:10:00", tz="Asia/Kolkata"), "symbol": "D", "prediction": 0.0, "target_excess_1bar": -0.0005},
-        {"timestamp": pd.Timestamp("2026-06-10 14:10:00", tz="Asia/Kolkata"), "symbol": "E", "prediction": -1.0, "target_excess_1bar": -0.001},
-        {"timestamp": pd.Timestamp("2026-06-10 14:10:00", tz="Asia/Kolkata"), "symbol": "F", "prediction": -2.0, "target_excess_1bar": -0.001},
-        {"timestamp": pd.Timestamp("2026-06-10 14:15:00", tz="Asia/Kolkata"), "symbol": "A", "prediction": 3.0, "target_excess_1bar": 0.001},
-        {"timestamp": pd.Timestamp("2026-06-10 14:15:00", tz="Asia/Kolkata"), "symbol": "B", "prediction": 2.0, "target_excess_1bar": 0.0005},
-        {"timestamp": pd.Timestamp("2026-06-10 14:15:00", tz="Asia/Kolkata"), "symbol": "C", "prediction": 1.0, "target_excess_1bar": 0.0},
-        {"timestamp": pd.Timestamp("2026-06-10 14:15:00", tz="Asia/Kolkata"), "symbol": "D", "prediction": 0.0, "target_excess_1bar": -0.0005},
-        {"timestamp": pd.Timestamp("2026-06-10 14:15:00", tz="Asia/Kolkata"), "symbol": "E", "prediction": -1.0, "target_excess_1bar": -0.001},
-        {"timestamp": pd.Timestamp("2026-06-10 14:15:00", tz="Asia/Kolkata"), "symbol": "F", "prediction": -2.0, "target_excess_1bar": -0.001},
-        {"timestamp": pd.Timestamp("2026-06-10 14:20:00", tz="Asia/Kolkata"), "symbol": "A", "prediction": 3.0, "target_excess_1bar": 0.001},
-        {"timestamp": pd.Timestamp("2026-06-10 14:20:00", tz="Asia/Kolkata"), "symbol": "B", "prediction": 2.0, "target_excess_1bar": 0.0005},
-        {"timestamp": pd.Timestamp("2026-06-10 14:20:00", tz="Asia/Kolkata"), "symbol": "C", "prediction": 1.0, "target_excess_1bar": 0.0},
-        {"timestamp": pd.Timestamp("2026-06-10 14:20:00", tz="Asia/Kolkata"), "symbol": "D", "prediction": 0.0, "target_excess_1bar": -0.0005},
-        {"timestamp": pd.Timestamp("2026-06-10 14:20:00", tz="Asia/Kolkata"), "symbol": "E", "prediction": -1.0, "target_excess_1bar": -0.001},
-        {"timestamp": pd.Timestamp("2026-06-10 14:20:00", tz="Asia/Kolkata"), "symbol": "F", "prediction": -2.0, "target_excess_1bar": -0.001},
-    ])
-    scored = assign_quintiles(scored)
-    _, orders = build_target_portfolios(scored, 100000.0)
-    assert orders["notional"].sum() < 200000.0 * 3
+    from scripts.run_strategy_003_economic_execution import (
+        assign_quintiles,
+        build_target_portfolios,
+    )
 
+    # The production portfolio requires 3 Q5 longs and 3 Q1 shorts.
+    # Use 15 symbols so the quintile construction matches the frozen
+    # production universe structure.
+    rows = []
+    for ts, offset in [
+        (pd.Timestamp("2026-06-10 14:10:00", tz="Asia/Kolkata"), 0.0),
+        (pd.Timestamp("2026-06-10 14:15:00", tz="Asia/Kolkata"), 0.0),
+        (pd.Timestamp("2026-06-10 14:20:00", tz="Asia/Kolkata"), 0.0),
+    ]:
+        for i in range(15):
+            rows.append(
+                {
+                    "timestamp": ts,
+                    "symbol": f"S{i:02d}",
+                    "prediction": float(15 - i) + offset,
+                    "target_excess_1bar": float(7 - i) / 10000.0,
+                }
+            )
+
+    scored = assign_quintiles(pd.DataFrame(rows))
+    _, orders = build_target_portfolios(scored, 100000.0)
+
+    # The same six names remain in the same Q1/Q5 portfolios, so the
+    # intermediate rebalances should not create a full 2x turnover each bar.
+    # Only the initial entry and final close are required here.
+    assert orders["notional"].sum() < 200000.0 * 3
 
 def test_gross_return_is_compounded():
     # Three +1% one-bar returns should compound to 3.0301%, not sum to 3%.
