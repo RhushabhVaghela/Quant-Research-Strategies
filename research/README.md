@@ -307,14 +307,15 @@ The scored protected timestamps are late-session (approximately 14:10–15:20) b
 
 ## Strategy 003 — economic execution status (24 September 2026)
 
-The first economic execution attempt is **invalidated** and is not used for the Strategy 003 decision gate. The run reported 1,060.333× cumulative turnover and ₹53,091.53 of fees on a ₹1,00,000 portfolio notional, exposing an implementation/accounting problem.
+The first economic execution attempt is **invalidated** and is not used for any Strategy 003 decision. It reported 1,060.333× cumulative executed turnover and ₹53,091.53 of broker/statutory charges on a ₹1,00,000 starting gross portfolio notional. The large cumulative turnover can arise from repeatedly deploying the same portfolio over 711 sequential intraday timestamps, but the initial implementation also presented cumulative gross return as a simple sum of one-bar returns.
 
-The runner has since been corrected to:
-- compound the sequence of one-bar portfolio returns;
-- distinguish cumulative portfolio P&L from cumulative executed turnover;
+The economic runner has now been corrected to:
+- compound the sequence of one-bar portfolio returns for cumulative gross return;
+- distinguish cumulative executed turnover from starting portfolio notional;
 - apply per-order brokerage and statutory charges to actual rupee turnover;
-- preserve the frozen Q5-long/Q1-short, equal-notional, one-bar portfolio rule;
+- retain the frozen Q5-long/Q1-short, equal-notional, one-bar portfolio rule;
 - retain late-session/CAS diagnostics;
 - keep the final holdout beginning 2026-08-20 untouched.
 
-**Economic execution first run invalidated; corrected rerun required before any pass/fail decision.**
+**Current status: corrected economic rerun required; no economic pass/fail decision is recorded from the superseded run.**
+
