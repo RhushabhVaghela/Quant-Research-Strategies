@@ -1,7 +1,7 @@
 import numpy as np
 from scripts.run_strategy_003_economic_execution import (
     FRICTIONS, STT_RATE, STAMP_RATE, NSE_TX_RATE, GST_RATE,
-    brokerage, execution_flags,
+    brokerage, execution_flags, assign_quintiles,
 )
 import pandas as pd
 import pytest
@@ -35,10 +35,10 @@ def test_timedelta_constants_are_explicit_units():
     from scripts.run_strategy_003_economic_execution import (
         CAS_START, CAS_END, NORMAL_CLOSE, LATE_SESSION_START
     )
-    assert CAS_START == pd.Timedelta(hours=15, minutes=15)
-    assert CAS_END == pd.Timedelta(hours=15, minutes=35)
-    assert NORMAL_CLOSE == pd.Timedelta(hours=15, minutes=30)
-    assert LATE_SESSION_START == pd.Timedelta(hours=15)
+    assert CAS_START == pd.Timedelta(seconds=54900)
+    assert CAS_END == pd.Timedelta(seconds=56100)
+    assert NORMAL_CLOSE == pd.Timedelta(seconds=55800)
+    assert LATE_SESSION_START == pd.Timedelta(seconds=54000)
 
 def test_position_turnover_is_not_fixed_at_two_x():
     from scripts.run_strategy_003_economic_execution import build_target_portfolios
@@ -62,6 +62,7 @@ def test_position_turnover_is_not_fixed_at_two_x():
         {"timestamp": pd.Timestamp("2026-06-10 14:20:00", tz="Asia/Kolkata"), "symbol": "E", "prediction": -1.0, "target_excess_1bar": -0.001},
         {"timestamp": pd.Timestamp("2026-06-10 14:20:00", tz="Asia/Kolkata"), "symbol": "F", "prediction": -2.0, "target_excess_1bar": -0.001},
     ])
+    scored = assign_quintiles(scored)
     _, orders = build_target_portfolios(scored, 100000.0)
     assert orders["notional"].sum() < 200000.0 * 3
 
