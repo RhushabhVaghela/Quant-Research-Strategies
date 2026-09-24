@@ -118,3 +118,26 @@ The runner reads only the protected-validation scored observations. It hard-reje
 ## 11. External source basis
 
 Current fee references should be rechecked on the day of any live/paper transition; this economic experiment uses the schedules verified on 24 September 2026. citeturn489292search0
+
+
+## 12. Implementation audit and invalidation — 24 September 2026
+
+The first local execution of the economic runner completed 711 portfolio timestamps but produced **1,060.333× cumulative turnover on a ₹1,00,000 portfolio notional** and ₹53,091.53 of fee charges. Those outputs are **invalid for the economic decision gate** because the accounting implementation was not yet acceptable.
+
+Two accounting issues were identified:
+
+1. cumulative gross return had been reported as a simple sum of one-bar returns rather than as a geometric sequence of one-bar portfolio returns;
+2. the turnover/cost result requires explicit treatment of repeated one-bar portfolio capital and order-level charges, with the ₹20 brokerage cap applied to actual rupee order notionals.
+
+The execution runner has been corrected and the superseded output must not be used as evidence.
+
+The corrected runner:
+- compounds the one-bar portfolio returns for cumulative gross return;
+- reports cumulative executed turnover separately from portfolio notional;
+- computes brokerage per executed order with the ₹20 cap;
+- applies statutory charges to actual executed turnover;
+- applies the frozen execution-friction assumptions to actual executed turnover;
+- retains the late-session / potential CAS diagnostics;
+- continues to reject any protected input on or after 2026-08-20.
+
+**No economic pass/fail decision is recorded from the superseded run. A clean rerun of the corrected implementation is required.**
