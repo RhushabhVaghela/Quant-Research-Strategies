@@ -232,20 +232,49 @@ A failure at any gate is recorded rather than repaired by post-hoc parameter tun
 **No Strategy 001 implementation was approved for deployment.**
 
 
-### Strategy 003 characterization
+### Strategy 003 — historical research path — CLOSED
 
-The first intraday discovery run is complete. The frozen model relationship is now being characterized before any economic hypothesis, strategy construction, nonlinear model escalation, or protected validation.
+The full authorized Strategy 003 sequence is now complete. The protected predictive relationship survived its prediction gate, but the frozen prediction-to-portfolio implementation failed the subsequent economic execution gate even under the fee-floor scenario.
 
-Runner: `../scripts/run_strategy_003_prediction_characterization.py`.
+```text
+003 prediction discovery
+        ↓
+characterization
+        ↓
+003H mechanism decomposition
+        ↓
+common-support controls
+        ↓
+component attribution
+        ↓
+lineage separation
+        ↓
+economic-form decomposition
+        ↓
+protected validation                         🟢 prediction gate passed
+        ↓
+frozen economic execution                   🔴 economic gate failed
+        ↓
+Strategy 003 closure                         🔵 no promoted implementation
+```
 
-Protocol: `journal/003_prediction_discovery_characterization_protocol.md`.
+The final holdout beginning 2026-08-20 remains untouched. No post-result rescue optimization or paper/shadow transition is authorized.
 
+
+
+## Research status — Strategies 001–003
+
+| Strategy | Economic mechanism | Main evidence | Economic gate | Current status |
+|---|---|---|---|---|
+| 001 | Intraday continuation after unusually large positive deviations, conditioned on prior direction | 001D/001H showed positive gross evidence; 001I produced 2 prospective observations; 001J broadened the universe without producing a candidate | Tested implementations remained friction-sensitive; no promotable candidate | **Closed** |
+| 002 | Short-horizon cross-sectional residual reversal | Broad exploratory reversal/residual evidence; fixed one-bar validation +0.0896 bps mean gross/portfolio observation | Cost sensitivity overwhelmed baseline; H2/H3/H6 turnover-reduction branch also failed | **Closed** |
+| 003 | Prediction-driven next-5-minute cross-sectional ordering; final frozen core = close-location + intraday-position | Protected validation passed: +0.08136 mean IC, +0.10082 rank IC, +1.687 bps Q1–Q5 | Fee-floor economic result −46.9207% net after +6.1708% gross; low/base/stress also negative | **Closed** |
 
 ## Learning curriculum
 
 A separate learning layer now maps the actual research history of Strategies 001–003 into reusable quant-research lessons. Start with `journal/research_learning_path.md`, then use `journal/research_learning_modules.md` as the detailed curriculum.
 
-The active Strategy 003 work is currently at the final authorized development gate: economic-form decomposition of the locked 003H two-variable core. See `journal/003h_economic_form_decomposition_protocol.md`.
+The Strategy 003 development and execution program is complete. The locked 003H form passed protected prediction validation but failed economic execution viability; see `journal/003_economic_execution_viability_protocol.md` and the preserved execution reports.
 
 
 ## Strategy 003 current gate
@@ -254,7 +283,7 @@ The final economic-form decomposition is complete. The interaction branch is clo
 
 Before deciding whether to continue, the project completed a current NSE cash-equity execution-cost basis review in `journal/003_execution_cost_basis_research_20260923.md`. The review concludes that the historical 5-bps round-trip sensitivity should be treated as a lower-bound/stress sensitivity, not a universal all-in retail execution-cost estimate.
 
-The next permitted action is either to freeze the registered additive 003H form and execute the protected-validation protocol (`journal/003_protected_validation_protocol.md`) or close Strategy 003. No further exploratory feature search is authorized.
+The protected-validation and economic execution protocols have now been executed. Strategy 003 is closed at the economic gate; no further alpha-discovery, rescue optimization, paper/shadow, or final-holdout evaluation is authorized for this candidate.
 
 
 ## Current Strategy 003 gate — 23 September 2026
@@ -303,7 +332,7 @@ The development references were +0.0696 IC, +0.0826 rank IC and +2.2168 bps spre
 
 The scored protected timestamps are late-session (approximately 14:10–15:20) because of the frozen 60-bar warm-up. This is a coverage limitation, not a post-validation filter.
 
-**Current decision:** Strategy 003 advances to economic execution viability testing. The final holdout remains untouched. Economic protocol: research/journal/003_economic_execution_viability_protocol.md.
+**Current decision:** Strategy 003's prediction gate passed, but its frozen economic execution gate failed. The executable line is closed. The final holdout remains untouched.
 
 ## Strategy 003 — economic execution status (24 September 2026)
 
