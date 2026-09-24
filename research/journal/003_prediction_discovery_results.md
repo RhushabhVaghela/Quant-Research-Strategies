@@ -346,3 +346,11 @@ Before economic results are accepted, the execution runner was corrected after c
 The corrected runner now uses an explicit rupee portfolio notional (default ₹1,00,000), per-executed-order brokerage with the ₹20 cap, actual position-change turnover plus explicit final closure, and late-session / potential Closing Auction Session flags. The frozen Q5-long/Q1-short portfolio construction, one-bar horizon, protected-validation-only evidence boundary, and pre-registered cost scenarios are unchanged.
 
 **Status:** no economic decision may use the superseded outputs; rerun the corrected implementation first.
+
+## 15. Economic execution run invalidated — 24 September 2026
+
+The first attempted economic execution run is **not valid evidence**. It reported ₹53,091.53 of fees and 1,060.333× cumulative turnover for a ₹1,00,000 portfolio notional, reflecting an implementation/accounting problem rather than a Strategy 003 economic result.
+
+The implementation was corrected to separate cumulative portfolio return from cumulative executed turnover, compound the one-bar portfolio returns, and apply brokerage/statutory/execution costs to actual order-level rupee turnover. Late-session/CAS flags remain diagnostic and the protected-validation boundary is unchanged.
+
+**Decision:** discard the superseded economic outputs for interpretation. Rerun the corrected economic implementation before making the Strategy 003 economic viability decision.
