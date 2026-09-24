@@ -328,3 +328,17 @@ A coverage limitation is recorded: the frozen 60-bar feature warm-up means score
 Economic runner: scripts/run_strategy_003_economic_execution.py.
 
 Economic protocol: research/journal/003_economic_execution_viability_protocol.md.
+
+## Strategy 003 — economic execution status (24 September 2026)
+
+The first economic execution attempt is **invalidated** and is not used for the Strategy 003 decision gate. The run reported 1,060.333× cumulative turnover and ₹53,091.53 of fees on a ₹1,00,000 portfolio notional, exposing an implementation/accounting problem.
+
+The runner has since been corrected to:
+- compound the sequence of one-bar portfolio returns;
+- distinguish cumulative portfolio P&L from cumulative executed turnover;
+- apply per-order brokerage and statutory charges to actual rupee turnover;
+- preserve the frozen Q5-long/Q1-short, equal-notional, one-bar portfolio rule;
+- retain late-session/CAS diagnostics;
+- keep the final holdout beginning 2026-08-20 untouched.
+
+**Economic execution first run invalidated; corrected rerun required before any pass/fail decision.**
