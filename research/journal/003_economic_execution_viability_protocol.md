@@ -1,6 +1,6 @@
 # Strategy 003 — Economic Execution Viability Protocol
 
-**Status:** 🟢 Protected prediction gate passed; economic execution test frozen.
+**Status:** 🔴 Protected prediction gate passed; economic execution viability gate failed; current Strategy 003 executable line closed.
 
 ## 1. Frozen economic question
 
@@ -149,3 +149,79 @@ The corrected runner:
 - continues to reject any protected input on or after 2026-08-20.
 
 **No economic pass/fail decision is recorded from the superseded run. A clean rerun of the corrected implementation is required.**
+
+
+## 13. Corrected economic execution result — 24 September 2026
+
+The corrected runner was executed on the frozen protected-validation signal after the superseded accounting run was discarded.
+
+### Frozen sample and implementation
+
+- 711 eligible portfolio timestamps.
+- 15-stock universe.
+- Protected validation only: 2026-06-10 through 2026-08-19.
+- Final holdout beginning 2026-08-20: **not used**.
+- ₹1,00,000 gross portfolio notional.
+- Q5 long / Q1 short, 50%/50%, equal-notional within each side.
+- One 5-minute holding bar.
+- 5,720 executed orders.
+- Average executed order notional: ₹18,537.30.
+- Cumulative executed turnover: ₹106,033,333.33 = **1,060.333×** initial gross portfolio notional.
+- 211 timestamps flagged as late-session.
+- 74 timestamps flagged as within the potential closing-auction window.
+- Short-side orders were present.
+
+### Corrected gross and cost results
+
+| Scenario | Gross cumulative return | Total cost | Net cumulative return |
+|---|---:|---:|---:|
+| Fee floor | +6.1708% | ₹53,091.53 | **−46.9207%** |
+| Low | +6.1708% | ₹63,694.86 | **−57.5241%** |
+| Base | +6.1708% | ₹68,996.53 | **−62.8257%** |
+| Stress | +6.1708% | ₹84,901.53 | **−78.7307%** |
+
+The fee-only cost is **5.0071 bps of cumulative executed turnover**. The gross portfolio return averages only **0.8435 bps per portfolio bar** before costs. The fee floor therefore eliminates the observed gross economics by a very wide margin; every additional predefined execution-friction scenario remains negative.
+
+The fee breakdown was:
+
+- brokerage: ₹31,810.00;
+- STT: ₹13,254.17;
+- stamp duty: ₹1,590.50;
+- SEBI fee: ₹106.03;
+- GST: ₹6,330.83;
+- total statutory/broker charges: ₹53,091.53.
+
+The current Zerodha published schedule supports the frozen brokerage/STT/NSE/SEBI/stamp/GST assumptions used by the runner. citeturn0search0turn0search1turn0search12
+
+### Economic decision
+
+The preregistered decision gate is **failed**.
+
+The failure is not caused by the base or stress assumptions. Even the **fee-floor scenario**, which adds zero spread/slippage/impact beyond published brokerage and statutory charges, produces a strongly negative net result.
+
+Therefore:
+
+1. Strategy 003's protected predictive relationship is **not sufficient for an executable intraday portfolio under the frozen implementation**.
+2. The current Strategy 003 executable line is **closed**.
+3. No threshold, holding-period, symbol, time-of-day, leverage, volatility-scaling, cost, or universe rescue search is authorized after this result.
+4. The final holdout remains untouched.
+5. The result should not be described as proof that the underlying bar-shape predictive phenomenon is impossible or nonexistent. It establishes that this frozen prediction-to-portfolio translation does not clear the project's economic gate.
+6. No paper/shadow transition is authorized for this candidate.
+
+### Execution caveats
+
+The test remains a close-to-close execution proxy rather than a fill-by-fill simulation. In addition, 211 timestamps are late-session and 74 are flagged within the CAS diagnostic window. NSE's current cash-market materials document normal trading through 15:30 and a Closing Auction Session applicable to qualifying securities; the experiment deliberately flags rather than silently removes those observations. citeturn0search3turn0search4
+
+Short feasibility is also theoretical at this stage because the runner does not model stock-borrow/SLB availability or broker-specific locate mechanics. This limitation does not rescue the result: the strategy already fails under the fee-floor scenario before those additional execution constraints are imposed.
+
+### Final Strategy 003 status
+
+**Prediction gate:** PASSED.
+
+**Economic execution gate:** FAILED.
+
+**Current candidate status:** CLOSED.
+
+**Final holdout:** UNTOUCHED.
+
+The protected prediction evidence remains part of the historical research record. The economic execution result closes the current executable branch without authorizing further post-result optimization.
