@@ -24,7 +24,7 @@ No two promoted strategies should be materially the same economic mechanism appl
 |---|---|---|---|---|
 | 001 | Indian equities | Short-horizon continuation after unusually strong intraday moves, conditioned on recent positive direction | 001J — Kite-native liquid NSE EQ cross-sectional experiment | **Closed; no candidate frozen** |
 | 002 | Indian equities | Short-horizon cross-sectional residual reversal: unusually negative peer-relative returns are followed by positive relative returns, and vice versa | Initial audit → locked split → pattern discovery → pattern characterization → reversal mechanism decomposition → cross-sectional residual investigation → leave-one-out residual mechanism decomposition → temporal stability characterization → fixed-baseline validation → cost-resilience gate failed → turnover/execution decomposition → H2/H3/H6 turnover-reduction development | **Closed; no candidate frozen** |
-| 003 | Indian equities | Intraday prediction-driven discovery using liquidity/activity, volatility/state, bar-shape/intraday-state and market context; first pass excludes 001/002 signed-return mechanisms | Development gates complete → frozen 003H candidate → protected validation → economic viability gate | **Protected prediction passed; economic execution testing authorized** |
+| 003 | Indian equities | Intraday prediction-driven discovery using liquidity/activity, volatility/state, bar-shape/intraday-state and market context; first pass excludes 001/002 signed-return mechanisms | Development gates complete → frozen 003H candidate → protected validation → economic execution viability test | **Closed; prediction gate passed, economic execution gate failed** |
 ## Strategy 003 — intraday prediction-driven alpha discovery
 
 ### Strategy 003H mechanism decomposition — result
@@ -309,3 +309,19 @@ The first economic execution run is invalidated. It reported **711 sequential po
 The corrected runner now compounds the sequence of one-bar portfolio returns while keeping cumulative executed turnover separate, calculates brokerage per executed order with the ₹20 cap, applies statutory charges to actual buy/sell turnover, and preserves the frozen late-session/CAS diagnostics.
 
 **Current status:** economic execution remains authorized but no pass/fail decision is valid until the corrected runner is rerun. Superseded economic outputs must not be used.
+
+### Strategy 003 economic execution — corrected rerun and closure (2026-09-24)
+
+The corrected economic runner was executed on the frozen protected-validation signal only. It used 711 portfolio timestamps, 15 equities, ₹1,00,000 gross portfolio notional, Q5-long/Q1-short equal-notional 50%/50% exposure, one 5-minute holding bar, and actual position-change turnover plus final closure.
+
+The run generated 5,720 executed orders and ₹106,033,333.33 cumulative turnover, or 1,060.333× the initial gross portfolio notional. This turnover multiple represents repeated deployment of the same intraday capital and is not simultaneous leverage.
+
+The gross compounded result was **+6.1708%**. However, the fee-only scenario charged **₹53,091.53** and produced **−46.9207%** net cumulative return. The predefined low, base, and stress scenarios produced **−57.5241%**, **−62.8257%**, and **−78.7307%**, respectively.
+
+The fee breakdown was ₹31,810.00 brokerage, ₹13,254.17 STT, ₹1,590.50 stamp duty, ₹106.03 SEBI fees, and ₹6,330.83 GST. The fee-only burden was 5.0071 bps of cumulative executed turnover. The gross return averaged only +0.8435 bps per portfolio bar before costs.
+
+The result therefore fails the preregistered economic decision gate even under the fee-floor scenario, before any additional spread/slippage/impact assumptions. The 211 late-session timestamps and 74 potential CAS-window flags remain documented rather than filtered after the fact. The final holdout beginning 2026-08-20 was not used.
+
+**Current Strategy 003 status: CLOSED for the current executable/capital-pursuit program.**
+
+This does not reject the existence of the underlying predictive relationship. It closes the frozen prediction-to-portfolio translation because it does not clear the economic gate. No post-result rescue search, paper/shadow transition, or final-holdout evaluation is authorized for this candidate.
