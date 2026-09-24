@@ -331,15 +331,27 @@ Economic protocol: research/journal/003_economic_execution_viability_protocol.md
 
 ## Strategy 003 — economic execution status (24 September 2026)
 
-The first economic execution attempt is **invalidated** and is not used for any Strategy 003 decision. It reported 1,060.333× cumulative executed turnover and ₹53,091.53 of broker/statutory charges on a ₹1,00,000 starting gross portfolio notional. The large cumulative turnover can arise from repeatedly deploying the same portfolio over 711 sequential intraday timestamps, but the initial implementation also presented cumulative gross return as a simple sum of one-bar returns.
+The corrected economic execution run has now been completed on the frozen protected-validation signal.
 
-The economic runner has now been corrected to:
-- compound the sequence of one-bar portfolio returns for cumulative gross return;
-- distinguish cumulative executed turnover from starting portfolio notional;
-- apply per-order brokerage and statutory charges to actual rupee turnover;
-- retain the frozen Q5-long/Q1-short, equal-notional, one-bar portfolio rule;
-- retain late-session/CAS diagnostics;
-- keep the final holdout beginning 2026-08-20 untouched.
+- 711 portfolio timestamps; 15 equities.
+- ₹1,00,000 gross portfolio notional.
+- Q5 long / Q1 short, 50%/50%, equal-notional within side.
+- One 5-minute holding bar.
+- 5,720 executed orders.
+- ₹106,033,333.33 cumulative executed turnover (**1,060.333×** initial gross portfolio notional).
+- Gross compounded return: **+6.1708%**.
+- Fee-only cost: **₹53,091.53**, producing **−46.9207%** net cumulative return.
+- Low / base / stress net cumulative returns: **−57.5241% / −62.8257% / −78.7307%**.
+- 211 late-session timestamps; 74 potential closing-auction flags.
+- Final holdout beginning 2026-08-20: **not used**.
 
-**Current status: corrected economic rerun required; no economic pass/fail decision is recorded from the superseded run.**
+The fee-floor case already fails, so additional spread/slippage/impact assumptions only worsen the economics. The published brokerage/statutory schedule used by the runner is documented in the cost-basis research and is consistent with the current Zerodha schedule. citeturn0search0turn0search1turn0search12
+
+**Decision: Strategy 003's current executable line is CLOSED.**
+
+The prediction gate passed, but the frozen prediction-to-portfolio translation did not clear the economic viability gate. This is not a claim that the underlying predictive relationship is nonexistent; it is a closure of this executable implementation. No post-result rescue optimization, paper/shadow transition, or final-holdout evaluation is authorized.
+
+Economic protocol: `research/journal/003_economic_execution_viability_protocol.md`.
+
+Economic evidence: `data/reports/strategy_003_economic_execution/`.
 
