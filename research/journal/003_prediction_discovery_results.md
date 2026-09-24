@@ -354,3 +354,22 @@ The first attempted economic execution run is **not valid evidence**. It reporte
 The implementation was corrected to separate cumulative portfolio return from cumulative executed turnover, compound the one-bar portfolio returns, and apply brokerage/statutory/execution costs to actual order-level rupee turnover. Late-session/CAS flags remain diagnostic and the protected-validation boundary is unchanged.
 
 **Decision:** discard the superseded economic outputs for interpretation. Rerun the corrected economic implementation before making the Strategy 003 economic viability decision.
+
+
+## 16. Corrected economic execution accounting — 24 September 2026
+
+The first economic execution output was reviewed before any strategy decision was recorded. The result contained **711 sequential signal timestamps**, ₹1,00,000 initial gross portfolio notional, **₹106.03 million cumulative executed turnover (1,060.333× initial gross notional)**, and ₹53,091.53 of broker/statutory charges.
+
+The high cumulative turnover is not, by itself, an error: the same ₹1,00,000 portfolio can be repeatedly deployed across 711 sequential intraday observations. However, the earlier output combined cumulative turnover with a simple sum of one-bar returns, so its economic P&L presentation was not acceptable.
+
+The corrected accounting now:
+
+- compounds the sequence of one-bar gross portfolio returns for cumulative gross return;
+- reports cumulative executed turnover separately as an execution-intensity measure;
+- calculates broker charges per executed order using the ₹20 cap;
+- calculates statutory charges from actual buy/sell turnover;
+- applies the frozen spread/slippage and impact assumptions to actual executed turnover;
+- retains late-session/CAS flags;
+- keeps the final holdout starting 2026-08-20 excluded.
+
+**No economic pass/fail decision has been made from the superseded output. The corrected runner must be rerun before interpreting Strategy 003 economics.**
