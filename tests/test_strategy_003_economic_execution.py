@@ -35,10 +35,10 @@ def test_timedelta_constants_are_explicit_units():
     from scripts.run_strategy_003_economic_execution import (
         CAS_START, CAS_END, NORMAL_CLOSE, LATE_SESSION_START
     )
-    assert CAS_START == pd.to_timedelta("15:15:00")
-    assert CAS_END == pd.to_timedelta("15:35:00")
-    assert NORMAL_CLOSE == pd.to_timedelta("15:30:00")
-    assert LATE_SESSION_START == pd.to_timedelta("15:00:00")
+    assert CAS_START == pd.Timedelta(15, unit="h") + pd.Timedelta(15, unit="m")
+    assert CAS_END == pd.Timedelta(15, unit="h") + pd.Timedelta(35, unit="m")
+    assert NORMAL_CLOSE == pd.Timedelta(15, unit="h") + pd.Timedelta(30, unit="m")
+    assert LATE_SESSION_START == pd.Timedelta(15, unit="h")
 
 def test_position_turnover_is_not_fixed_at_two_x():
     from scripts.run_strategy_003_economic_execution import (
