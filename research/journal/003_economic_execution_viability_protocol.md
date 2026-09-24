@@ -33,35 +33,43 @@ At every eligible protected-validation timestamp:
 
 The validated target is close(t) to close(t+1), so the implementation is a **close-to-close execution proxy**, not an assertion that a real order receives the recorded close.
 
-## 3. Portfolio notional
+## 3. Portfolio notional and return accounting
 
 Brokerage is charged per executed order, so the test must use **real rupee notional**, not normalized unit weights.
 
 Default reported size: **₹1,00,000 gross portfolio notional**.
 
-The portfolio notional is a capital-scale input; it does not change rankings, weights, holding period, or signal selection. The runner may be repeated at other pre-declared sizes for sensitivity, but a size should not be chosen after observing results because it creates a favorable cost result.
+The portfolio notional is a capital-scale input; it does not change rankings, weights, holding period, or signal selection. The runner may be repeated at other pre-declared sizes for sensitivity, but a size must not be chosen after observing results to manufacture a favorable cost outcome.
 
-The economic record must clearly distinguish:
+The economic record must distinguish four different quantities:
 
-- gross portfolio return (%);
-- rupee gross P&L at the selected notional;
-- statutory/broker cost in rupees and bps;
-- additional spread/slippage/impact cost;
-- net return after all costs.
+- the **per-bar portfolio return**, produced by the fixed 50% long / 50% short portfolio;
+- the **cumulative gross portfolio return**, calculated by compounding the sequence of one-bar returns;
+- **cumulative executed turnover**, measured in rupees and as a multiple of the initial gross portfolio notional;
+- **costs and net cumulative P&L**, calculated from actual executed turnover and the selected portfolio notional.
+
+Cumulative turnover can legitimately exceed the starting portfolio notional by hundreds of times over a 711-bar sample because the same capital is repeatedly deployed. That is an execution-intensity measure, not evidence that more than the starting capital was held simultaneously.
 
 ## 4. Turnover
 
-The theoretical fully refreshed one-bar portfolio has 2.0× gross turnover for entry + exit. However, the implementation must calculate **actual position-change turnover** because a stock can remain in the same portfolio across adjacent timestamps.
-
-Turnover is:
+For each signal timestamp, target weights are +1/6 for each of three Q5 longs and −1/6 for each of three Q1 shorts. The runner calculates executed turnover from **changes in target weights** between adjacent signal timestamps:
 
 ```
 sum(abs(current_weight_i - previous_weight_i)) × portfolio_notional
 ```
 
-with the final portfolio explicitly closed after the last signal.
+and then explicitly closes the final portfolio.
 
-This prevents overcharging costs when names persist and avoids assuming that every timestamp creates six new buys plus six new sells.
+This is the correct way to avoid pretending that every timestamp necessarily creates six fresh buys plus six fresh sells. A persistent position can generate zero or partial turnover at the next rebalance.
+
+The reported turnover multiple is:
+
+```
+cumulative executed turnover / initial gross portfolio notional
+```
+
+It is therefore expected to be greater than 1× in a sequential intraday strategy.
+
 
 ## 5. Fee model
 
