@@ -338,3 +338,11 @@ A major limitation remains: all protected scored timestamps are late-session, ap
 **Current decision: Strategy 003 passes the protected prediction gate. The next authorized stage is the frozen economic execution viability test.**
 
 No final-holdout data were used.
+
+## 14. Economic execution implementation correction — 24 September 2026
+
+Before economic results are accepted, the execution runner was corrected after code audit. The superseded prototype used normalized unit notionals for brokerage and hard-coded fully refreshed 2× turnover, and it did not operationally flag the late-session closing-auction regime.
+
+The corrected runner now uses an explicit rupee portfolio notional (default ₹1,00,000), per-executed-order brokerage with the ₹20 cap, actual position-change turnover plus explicit final closure, and late-session / potential Closing Auction Session flags. The frozen Q5-long/Q1-short portfolio construction, one-bar horizon, protected-validation-only evidence boundary, and pre-registered cost scenarios are unchanged.
+
+**Status:** no economic decision may use the superseded outputs; rerun the corrected implementation first.
