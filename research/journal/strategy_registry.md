@@ -295,3 +295,9 @@ The protected spread retains approximately 76% of the development-test spread (+
 **Current status: protected prediction gate passed; economic execution viability testing authorized.**
 
 The next test is fixed Q5-long/Q1-short equal-notional one-bar implementation with current published brokerage/statutory charges and frozen low/base/stress execution-friction scenarios. No further prediction search is authorized.
+
+### Strategy 003 economic execution — implementation correction (2026-09-24)
+
+The economic runner was audited before accepting execution results. The prototype's normalized notional brokerage accounting and fixed turnover assumption were replaced with explicit rupee notional, per-order brokerage, actual position-change turnover, final position closure, and late-session / potential CAS diagnostics. The frozen signal and portfolio rule are unchanged.
+
+**Next action:** rerun the corrected economic execution test on the protected-validation sample. Superseded economic outputs are not valid evidence for the decision gate.
