@@ -36,8 +36,10 @@ FRICTIONS = {
 
 DEFAULT_PORTFOLIO_NOTIONAL = 100_000.0
 HOLDOUT_START = pd.Timestamp("2026-08-20 00:00:00", tz="Asia/Kolkata")
-CAS_START = pd.Timedelta(hours=15, minutes=15)
-NORMAL_CLOSE = pd.Timedelta(hours=15, minutes=30)
+CAS_START = pd.Timedelta(minutes=15 * 60 + 15 * 1)
+CAS_END = pd.Timedelta(minutes=15 * 60 + 35 * 1)
+NORMAL_CLOSE = pd.Timedelta(minutes=15 * 60 + 30 * 1)
+LATE_SESSION_START = pd.Timedelta(minutes=15 * 60)
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
@@ -179,9 +181,9 @@ def execution_flags(timestamp: pd.Timestamp) -> dict[str, object]:
     local = pd.Timestamp(timestamp).tz_convert("Asia/Kolkata")
     tod = local - local.normalize()
     return {
-        "late_session": bool(tod >= pd.Timedelta(hours=15)),
+        "late_session": bool(tod >= LATE_SESSION_START),
         "closing_auction_window": bool(
-            tod >= CAS_START and tod < pd.Timedelta(hours=15, minutes=35)
+            tod >= CAS_START and tod < CAS_END
         ),
         "continuous_trading_window_ends": bool(tod < NORMAL_CLOSE),
     }
