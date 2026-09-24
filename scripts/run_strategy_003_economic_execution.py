@@ -36,10 +36,10 @@ FRICTIONS = {
 
 DEFAULT_PORTFOLIO_NOTIONAL = 100_000.0
 HOLDOUT_START = pd.Timestamp("2026-08-20 00:00:00", tz="Asia/Kolkata")
-CAS_START = pd.Timedelta(minutes=15 * 60 + 15 * 1)
-CAS_END = pd.Timedelta(minutes=15 * 60 + 35 * 1)
-NORMAL_CLOSE = pd.Timedelta(minutes=15 * 60 + 30 * 1)
-LATE_SESSION_START = pd.Timedelta(minutes=15 * 60)
+CAS_START = pd.Timedelta(minutes=915)
+CAS_END = pd.Timedelta(minutes=935)
+NORMAL_CLOSE = pd.Timedelta(minutes=930)
+LATE_SESSION_START = pd.Timedelta(minutes=900)
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
