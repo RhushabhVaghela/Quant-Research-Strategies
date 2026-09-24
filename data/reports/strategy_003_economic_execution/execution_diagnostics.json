@@ -1,0 +1,13 @@
+{
+  "portfolio_notional_inr": 100000.0,
+  "portfolio_rule": "Q5 long / Q1 short, equal-notional within side, 50%/50%, one-bar hold",
+  "timestamps": 711,
+  "late_session_timestamps": 211,
+  "closing_auction_flagged_timestamps": 74,
+  "turnover_inr": 106033333.33333331,
+  "turnover_multiple_of_gross_portfolio": 1060.333333333333,
+  "brokerage_order_count": 5720,
+  "average_order_notional_inr": 18537.296037296033,
+  "short_side_present": true,
+  "final_holdout_used": false
+}

@@ -1,0 +1,19 @@
+{
+  "experiment": "003_economic_execution",
+  "status": "executed_on_frozen_protected_validation_signal",
+  "portfolio_notional_inr": 100000.0,
+  "portfolio": "top_Q5_long_bottom_Q1_short_equal_notional_50_50_gross",
+  "holding_bars": 1,
+  "gross_exposure": 1.0,
+  "net_exposure": 0.0,
+  "turnover_accounting": "actual_position_changes_plus_final_close",
+  "brokerage_accounting": "per_executed_order_with_20_inr_cap",
+  "protected_validation_source_only": true,
+  "final_holdout_used": false,
+  "closing_auction_timestamps_flagged": true,
+  "feature_search": false,
+  "threshold_search": false,
+  "holding_period_search": false,
+  "universe_search": false,
+  "cost_search": false
+}
