@@ -301,3 +301,11 @@ The next test is fixed Q5-long/Q1-short equal-notional one-bar implementation wi
 The economic runner was audited before accepting execution results. The prototype's normalized notional brokerage accounting and fixed turnover assumption were replaced with explicit rupee notional, per-order brokerage, actual position-change turnover, final position closure, and late-session / potential CAS diagnostics. The frozen signal and portfolio rule are unchanged.
 
 **Next action:** rerun the corrected economic execution test on the protected-validation sample. Superseded economic outputs are not valid evidence for the decision gate.
+
+### Strategy 003 economic execution — first run invalidated (2026-09-24)
+
+The first economic execution run is invalidated. It produced 1,060.333× cumulative turnover and ₹53,091.53 of fees on a ₹1,00,000 portfolio notional because the implementation/accounting was not yet acceptable for a one-bar sequential portfolio.
+
+The runner has been corrected to compound one-bar portfolio returns, keep cumulative turnover as a separate execution quantity, and calculate charges from actual order-level rupee turnover. No economic decision is based on the superseded outputs.
+
+**Current status:** economic execution test remains authorized but pending a clean corrected rerun.
