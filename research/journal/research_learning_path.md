@@ -40,3 +40,18 @@ Modules 2–9, 11–15.
 The modules are based on the project's actual research record. They are educational summaries and do not override any experiment's original protocol.
 
 See `research/journal/research_learning_modules.md`.
+
+
+## Completed research cycle — 24 September 2026
+
+Strategies 001–003 now provide three distinct completed lessons.
+
+| Strategy | Primary lesson | Outcome |
+|---|---|---|
+| 001 | A visually strong continuation pattern must still clear execution and prospective-frequency constraints | Closed; no promoted implementation |
+| 002 | A weak but broad cross-sectional reversal can fail once its executable baseline is translated into costs | Closed; no frozen candidate |
+| 003 | Stronger predictive metrics can still fail the economic gate when the portfolio turns over too rapidly | Protected prediction passed; frozen economic execution failed; executable line closed |
+
+Strategy 003 is particularly useful as the complete example of why **prediction ≠ trading economics**. Its protected prediction relationship passed, but the fee-floor case already produced negative net economics, so no extra execution-friction assumption was needed to close the candidate.
+
+The research repository therefore enters the next strategy-search stage with Strategies 001–003 preserved as historical evidence rather than active executable candidates. New work should begin from a genuinely different economic mechanism and should first inspect the repository's existing resources before registering a new Strategy ID.
