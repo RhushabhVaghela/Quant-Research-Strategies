@@ -373,3 +373,55 @@ The corrected accounting now:
 - keeps the final holdout starting 2026-08-20 excluded.
 
 **No economic pass/fail decision has been made from the superseded output. The corrected runner must be rerun before interpreting Strategy 003 economics.**
+
+
+## 17. Corrected economic execution result — 24 September 2026
+
+The corrected economic execution runner was rerun on the frozen protected-validation signal after the superseded accounting output was invalidated.
+
+### Execution record
+
+- Protected validation only: **2026-06-10 through 2026-08-19**
+- Final holdout beginning **2026-08-20: not used**
+- 711 portfolio timestamps
+- 15 eligible equities
+- ₹1,00,000 gross portfolio notional
+- Q5 long / Q1 short, 50%/50%, equal-notional within side
+- one-bar (5-minute) holding period
+- 5,720 executed orders
+- average order notional: ₹18,537.30
+- cumulative executed turnover: **₹106,033,333.33 / 1,060.333×**
+- late-session timestamps: 211
+- potential closing-auction flagged timestamps: 74
+
+### Corrected scenario results
+
+| Scenario | Gross cumulative return | Total cost | Net cumulative return |
+|---|---:|---:|---:|
+| Fee floor | +6.1708% | ₹53,091.53 | **−46.9207%** |
+| Low | +6.1708% | ₹63,694.86 | **−57.5241%** |
+| Base | +6.1708% | ₹68,996.53 | **−62.8257%** |
+| Stress | +6.1708% | ₹84,901.53 | **−78.7307%** |
+
+Gross return averaged **+0.8435 bps per portfolio bar**. Published brokerage/statutory charges alone amounted to **₹53,091.53**, or **5.0071 bps of cumulative executed turnover**. Because the fee-floor scenario already produces a strongly negative net result, the predefined low/base/stress execution assumptions cannot change the decision.
+
+### Fee breakdown
+
+| Charge | INR |
+|---|---:|
+| Brokerage | 31,810.00 |
+| STT | 13,254.17 |
+| Stamp duty | 1,590.50 |
+| SEBI | 106.03 |
+| GST | 6,330.83 |
+| **Total** | **53,091.53** |
+
+### Decision
+
+The protected predictive relationship survives the prediction gate, but the frozen Q5/Q1 one-bar portfolio does **not** survive the economic execution gate.
+
+**Strategy 003 current executable line: CLOSED.**
+
+This is an economic/tradability conclusion for the frozen implementation, not a claim that the underlying bar-shape predictive relationship is statistically nonexistent. No post-result threshold, holding-period, time-of-day, symbol, leverage, volatility-scaling, universe, or cost rescue search is authorized. The final holdout remains untouched, and no paper/shadow transition is authorized.
+
+The full machine-readable evidence is preserved under `data/reports/strategy_003_economic_execution/`, including `economic_scenario_summary.csv`, `fee_breakdown.csv`, `execution_diagnostics.json`, `executed_order_turnover.csv`, `gross_portfolio_bars.csv`, and `run_manifest.json`.
