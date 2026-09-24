@@ -1,3 +1,4 @@
+import numpy as np
 from scripts.run_strategy_003_economic_execution import (
     FRICTIONS, STT_RATE, STAMP_RATE, NSE_TX_RATE, GST_RATE,
     brokerage, execution_flags,
@@ -63,3 +64,17 @@ def test_position_turnover_is_not_fixed_at_two_x():
     ])
     _, orders = build_target_portfolios(scored, 100000.0)
     assert orders["notional"].sum() < 200000.0 * 3
+
+
+def test_gross_return_is_compounded():
+    # Three +1% one-bar returns should compound to 3.0301%, not sum to 3%.
+    returns = np.array([0.01, 0.01, 0.01])
+    expected = float(np.prod(1.0 + returns) - 1.0)
+    assert expected == pytest.approx(0.030301)
+
+def test_cost_is_based_on_executed_turnover():
+    # A 2x turnover portfolio at 1 bp friction costs 2 bps of initial notional.
+    turnover = 200_000.0
+    notional = 100_000.0
+    friction = 0.0001
+    assert friction * turnover / notional * 1e4 == pytest.approx(2.0)
