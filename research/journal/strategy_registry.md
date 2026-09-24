@@ -302,10 +302,10 @@ The economic runner was audited before accepting execution results. The prototyp
 
 **Next action:** rerun the corrected economic execution test on the protected-validation sample. Superseded economic outputs are not valid evidence for the decision gate.
 
-### Strategy 003 economic execution — first run invalidated (2026-09-24)
+### Strategy 003 economic execution — first run invalidated; corrected rerun required (2026-09-24)
 
-The first economic execution run is invalidated. It produced 1,060.333× cumulative turnover and ₹53,091.53 of fees on a ₹1,00,000 portfolio notional because the implementation/accounting was not yet acceptable for a one-bar sequential portfolio.
+The first economic execution run is invalidated. It reported **711 sequential portfolio timestamps**, **1,060.333× cumulative executed turnover** and **₹53,091.53 of broker/statutory fees** on a ₹1,00,000 starting gross portfolio notional. The high cumulative turnover is compatible with repeated deployment of the same capital, but the implementation also presented cumulative gross return as a simple sum of one-bar returns, so the economic output was not acceptable for a decision.
 
-The runner has been corrected to compound one-bar portfolio returns, keep cumulative turnover as a separate execution quantity, and calculate charges from actual order-level rupee turnover. No economic decision is based on the superseded outputs.
+The corrected runner now compounds the sequence of one-bar portfolio returns while keeping cumulative executed turnover separate, calculates brokerage per executed order with the ₹20 cap, applies statutory charges to actual buy/sell turnover, and preserves the frozen late-session/CAS diagnostics.
 
-**Current status:** economic execution test remains authorized but pending a clean corrected rerun.
+**Current status:** economic execution remains authorized but no pass/fail decision is valid until the corrected runner is rerun. Superseded economic outputs must not be used.
