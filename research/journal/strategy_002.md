@@ -1,50 +1,88 @@
 # Strategy 002 — Cross-Sectional Statistical Research
 
-## What I tested
+## 1. Why I started a second strategy
 
-I investigated whether short-horizon price moves could be separated into:
+After Strategy 001, I did not want to build another version of the same single-instrument continuation idea.
 
-1. movement explained by the broader market, and
-2. movement specific to the individual asset.
+I changed the question completely:
 
-I then tested whether the asset-specific part showed a tendency to reverse.
+> **Can I separate broad market movement from asset-specific movement, and does that asset-specific component tend to reverse?**
 
-## What I found
+This led to a **cross-sectional residual** approach.
 
-The exploratory research showed an interesting cross-sectional pattern, so I moved from simple observation to a more formal residual-based test.
+Cross-sectional analysis compares several assets at the same point in time. A residual is the part of a return left after removing the component explained by another variable, such as the broader market.
 
-The fixed trading version produced only a very small gross return relative to the amount of trading required.
+## 2. Why I chose a cross-sectional equity dataset
 
-I also tested changes to the holding period to see whether lower turnover would improve the economics. The tested versions still did not produce enough net performance to justify promotion.
+I used a group of Indian equities with common five-minute observations.
 
-## Why I closed it
+The five-minute frequency kept the research intraday, while several equities allowed me to compare stocks against one another at the same timestamp. That was important because the hypothesis was about **relative behaviour**, not the direction of one individual asset.
 
-The main problem was not the absence of an observable statistical relationship. The problem was that the effect was too small compared with the cost of trading it.
+I also used market-level information so that the residual was not simply measuring whether the whole market was rising or falling.
 
-I therefore closed this research line instead of repeatedly tuning it on the same historical sample.
+## 3. First step: look for cross-sectional structure
 
-## What I learned
+I first examined whether the individual stock returns had a common market component and whether the remaining residuals showed a repeatable pattern.
 
-This project helped me understand:
+The exploratory work showed enough structure to justify a more formal test.
 
-- residual returns
-- cross-sectional modelling
-- market neutral thinking
-- turnover
-- cost sensitivity
-- why statistical significance and economic usefulness are different questions
+That led to the next question:
 
-## Key terms
+> **Does a simple residual-reversal portfolio actually make money after the signal is turned into a trade?**
 
-**Cross-sectional:** comparing several assets at the same time.
+## 4. Formal baseline
 
-**Residual:** the part of a return that remains after removing an estimated market-related component.
+I built a fixed, one-bar executable baseline.
 
-**Residual return:** the asset-specific movement left after that adjustment.
+The idea was straightforward: rank stocks using their residual behaviour and test whether the stocks with the most unusual residuals tended to move back toward the cross-sectional centre on the next five-minute bar.
 
-**Turnover:** how much trading is done relative to the portfolio size.
+The baseline was intentionally simple because I wanted to measure the underlying effect before adding more conditions.
 
-**Market neutral:** a portfolio designed to reduce exposure to broad market direction.
+The chronological validation produced only a very small positive gross effect.
+
+That result changed the focus from signal discovery to economics.
+
+## 5. Why I tested holding periods
+
+One possible problem was turnover.
+
+**Turnover** measures how much of the portfolio is traded relative to its size. A strategy that makes many small trades can show a statistical relationship but still lose money after costs.
+
+I therefore tested longer holding periods to see whether reducing trading frequency improved the result.
+
+The tested holding-period variants did not produce enough gross return to create a viable cost-adjusted candidate.
+
+## 6. Why I stopped
+
+At this point, continuing to tune the same idea would have meant repeatedly searching the same historical sample for a better result.
+
+That creates **data-snooping** and overfitting risk: the more choices I make after seeing the data, the harder it becomes to tell whether the final result is genuine.
+
+I therefore closed the tested research line rather than trying to manufacture a stronger backtest.
+
+## 7. Conclusion
+
+Strategy 002 did not establish enough economic value to justify promotion.
+
+The research was still useful because it showed me the difference between:
+
+- finding a statistical relationship;
+- building an executable portfolio;
+- and finding an effect large enough to survive trading costs.
+
+### Key terms
+
+**Cross-sectional:** comparing multiple assets at the same time.
+
+**Residual:** the part left after removing an estimated explanatory component.
+
+**Residual reversal:** a hypothesis that an unusually positive residual may be followed by a negative return, and vice versa.
+
+**Market neutral:** reducing exposure to broad market direction.
+
+**Turnover:** trading volume relative to portfolio size.
+
+**Data snooping:** using repeated choices based on the same historical data in a way that can make a result look stronger than it really is.
 
 ## Status
 
