@@ -1,14 +1,13 @@
 # Research
 
-This folder contains the main research notes for my strategy work.
+Each strategy has one document.
 
-I keep one document for each strategy so that the reasoning, results and lessons are easy to follow.
+The documents are written as a research story rather than as a collection of separate experiment notes. Each section explains:
 
-## Files
+- what I wanted to find out;
+- why I chose the data;
+- what the result meant;
+- why that result led me to the next test;
+- what finally happened when I checked the idea as a trading strategy.
 
-- [Strategy 001](journal/strategy_001.md)
-- [Strategy 002](journal/strategy_002.md)
-- [Strategy 003](journal/strategy_003.md)
-- [Methodology](methodology.md)
-
-The strategy documents are intentionally concise. Detailed implementation history is preserved by the Git commit history.
+The detailed code and data remain in the repository, while the strategy documents explain the reasoning behind them.
