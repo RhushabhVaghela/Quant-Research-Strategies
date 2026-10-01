@@ -2,6 +2,7 @@
 .env.*
 !.env.example
 access_token.txt
+**/access_token.txt
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -13,6 +14,7 @@ data/processed/*.csv
 data/processed/*.parquet
 data/prospective/*
 !data/prospective/README.md
+.ipynb_checkpoints/
 .vscode/
 .idea/
 .DS_Store
